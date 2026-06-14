@@ -16,6 +16,13 @@ export interface Category {
   created_at: string;
 }
 
+export interface ProductVariant {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -30,6 +37,7 @@ export interface Product {
   preview_image: string;
   is_active: boolean;
   badges: ProductBadge[];
+  variants?: ProductVariant[];
   features: string[];
   faq: { question: string; answer: string }[];
   format: string;
@@ -37,6 +45,7 @@ export interface Product {
   update_policy: string;
   support: string;
   created_at: string;
+  stock?: number;
 }
 
 export type ProductType = 

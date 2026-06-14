@@ -1,253 +1,182 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
-import { products, subscriptionPlans } from '@/lib/data';
-import { formatPrice, WHATSAPP_LINK } from '@/lib/utils';
+import { products } from '@/lib/data';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  // Auth guard
+  if (!isLoading && !user) {
+    router.push('/login');
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading...</p>
+      </div>
+    );
+  }
   
   const productId = searchParams?.get('product');
-  const planName = searchParams?.get('plan');
+  const variantId = searchParams?.get('variant');
   
   const product = productId ? products.find(p => p.id === productId) : undefined;
-  const plan = planName ? subscriptionPlans.find(p => p.name === planName) : undefined;
-  const item = product || plan;
-
+  const variant = variantId && product?.variants ? product.variants.find(v => v.id === variantId) : undefined;
+  
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
     whatsapp: user?.phone || '',
-    paymentMethod: 'bank_transfer' as 'bank_transfer' | 'qris' | 'whatsapp',
+    paymentMethod: 'qris' as 'bank_transfer' | 'qris' | 'ewallet',
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!item) {
+  if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">No Item Selected</h1>
-          <Link href="/products" className="text-primary hover:underline">
-            Browse Products
-          </Link>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Produk tidak ditemukan</h1>
+          <Link href="/dashboard" style={{ color: '#0ea5e9', textDecoration: 'none' }}>Kembali ke Dashboard</Link>
         </div>
       </div>
     );
   }
 
-  const totalPrice = product ? product.price : plan ? plan.price : 0;
+  const displayPrice = variant ? variant.price : product.price;
+  const displayName = variant ? variant.name : product.name;
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulate order creation
     setTimeout(() => {
-      alert('Order submitted! Admin will confirm your payment soon. Check your dashboard for updates.');
+      alert('Pesanan berhasil! Admin akan menghubungi Anda via WhatsApp.');
       router.push('/dashboard');
     }, 1000);
   };
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Checkout</h1>
-          <p className="text-text-secondary">Complete your purchase</p>
+    <div style={{ minHeight: '100vh', padding: '40px 16px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '32px' }}>
+          <Link href={`/dashboard/${product.slug}`} style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            Kembali
+          </Link>
+          <h1 style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>Checkout</h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left: Form */}
-          <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-6 space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary"
-                      placeholder="John Doe"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary"
-                      placeholder="you@example.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">
-                      WhatsApp Number *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.whatsapp}
-                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text-primary focus:outline-none focus:border-primary"
-                      placeholder="628123456789"
-                    />
-                  </div>
-                </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
+          {/* Order Summary */}
+          <div style={{ background: '#161b22', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.08)', padding: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Pesanan Anda</h2>
+            
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '12px', background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(139,92,246,0.2))', overflow: 'hidden', flexShrink: 0 }}>
+                <img src={product.preview_image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
-                
-                <div className="space-y-3">
-                  <label className="flex items-start gap-3 p-4 border border-border rounded-lg cursor-pointer hover:border-primary/50 transition-colors">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="bank_transfer"
-                      checked={formData.paymentMethod === 'bank_transfer'}
-                      onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value as any })}
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <div className="font-medium text-text-primary">Bank Transfer</div>
-                      <div className="text-sm text-text-secondary">Transfer to our bank account</div>
-                    </div>
-                  </label>
-
-                  <label className="flex items-start gap-3 p-4 border border-border rounded-lg cursor-pointer hover:border-primary/50 transition-colors">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="qris"
-                      checked={formData.paymentMethod === 'qris'}
-                      onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value as any })}
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <div className="font-medium text-text-primary">QRIS</div>
-                      <div className="text-sm text-text-secondary">Scan QR code to pay</div>
-                    </div>
-                  </label>
-
-                  <label className="flex items-start gap-3 p-4 border border-border rounded-lg cursor-pointer hover:border-primary/50 transition-colors">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="whatsapp"
-                      checked={formData.paymentMethod === 'whatsapp'}
-                      onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value as any })}
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <div className="font-medium text-text-primary">WhatsApp Order</div>
-                      <div className="text-sm text-text-secondary">Confirm via WhatsApp</div>
-                    </div>
-                  </label>
-                </div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ color: 'white', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>{product.name}</h3>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>{displayName}</p>
               </div>
-
-              <div className="pt-4 border-t border-border">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 rounded-xl gradient-bg text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  {isSubmitting ? 'Processing...' : 'Complete Order'}
-                </button>
-                
-                <p className="text-xs text-text-muted text-center mt-4">
-                  By completing this order, you agree to our terms of service.
-                </p>
-              </div>
-            </form>
-          </div>
-
-          {/* Right: Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-card border border-border rounded-xl p-6 sticky top-24">
-              <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-              
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 bg-surface-light rounded-lg flex items-center justify-center text-2xl shrink-0">
-                    {product ? (
-                      product.product_type === 'prompt_pack' ? '💬' :
-                      product.product_type === 'template' ? '📄' :
-                      product.product_type === 'workflow' ? '⚙️' : '💎'
-                    ) : '🔄'}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-text-primary">{product ? product.name : plan?.display_name}</h3>
-                    <p className="text-sm text-text-secondary">
-                      {product ? product.short_description.slice(0, 50) + '...' : plan?.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-border space-y-3">
-                  <div className="flex justify-between text-text-secondary">
-                    <span>Subtotal</span>
-                    <span>{formatPrice(totalPrice)}</span>
-                  </div>
-                  <div className="flex justify-between text-text-secondary">
-                    <span>Tax</span>
-                    <span>Included</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-bold text-text-primary pt-3 border-t border-border">
-                    <span>Total</span>
-                    <span className="text-primary">{formatPrice(totalPrice)}</span>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-border">
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2 flex items-center gap-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Next Steps
-                    </h4>
-                    <ol className="text-sm text-text-secondary space-y-1 list-decimal list-inside">
-                      <li>Complete this form</li>
-                      <li>Make payment</li>
-                      <li>Admin confirms payment</li>
-                      <li>Access product in dashboard</li>
-                    </ol>
-                  </div>
-                </div>
-
-                <a
-                  href={WHATSAPP_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-center py-3 rounded-lg bg-success/10 text-success border border-success/30 font-medium hover:bg-success/20 transition-colors"
-                >
-                  💬 Need Help? Chat Us
-                </a>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ color: '#0ea5e9', fontSize: '18px', fontWeight: 'bold' }}>{formatPrice(displayPrice)}</p>
               </div>
             </div>
+          </div>
+
+          {/* Payment Method */}
+          <div style={{ background: '#161b22', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.08)', padding: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Metode Pembayaran</h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {[
+                { id: 'qris', name: 'QRIS', desc: 'Scan QR untuk bayar' },
+                { id: 'bank_transfer', name: 'Bank Transfer', desc: 'Transfer ke rekening bank' },
+                { id: 'ewallet', name: 'E-Wallet', desc: 'GoPay, OVO, Dana, ShopeePay' },
+              ].map(method => (
+                <button
+                  key={method.id}
+                  onClick={() => setFormData({ ...formData, paymentMethod: method.id as any })}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '14px 16px',
+                    borderRadius: '12px',
+                    border: formData.paymentMethod === method.id ? '1px solid rgba(14,165,233,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    background: formData.paymentMethod === method.id ? 'rgba(14,165,233,0.1)' : 'rgba(255,255,255,0.03)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    width: '100%',
+                    textAlign: 'left',
+                  }}
+                >
+                  <div>
+                    <p style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{method.name}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{method.desc}</p>
+                  </div>
+                  <div style={{ 
+                    width: '20px', 
+                    height: '20px', 
+                    borderRadius: '50%', 
+                    border: formData.paymentMethod === method.id ? '6px solid #0ea5e9' : '2px solid rgba(255,255,255,0.2)',
+                    transition: 'all 0.2s',
+                  }} />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Total & Pay */}
+          <div style={{ background: '#161b22', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.08)', padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px' }}>Total Pembayaran</span>
+              <span style={{ color: 'white', fontSize: '24px', fontWeight: 'bold' }}>{formatPrice(displayPrice)}</span>
+            </div>
+            
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              style={{
+                width: '100%',
+                padding: '16px',
+                borderRadius: '12px',
+                background: isSubmitting ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #e84393, #6c5ce7)',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                border: 'none',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                opacity: isSubmitting ? 0.7 : 1,
+              }}
+            >
+              {isSubmitting ? 'Memproses...' : 'Bayar Sekarang'}
+            </button>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading...</p></div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }
