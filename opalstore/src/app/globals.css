@@ -5,10 +5,10 @@
   --color-card: #141414;
   --color-card-hover: #1a1a1a;
   --color-border: rgba(255, 255, 255, 0.06);
-  --color-primary: #d97706;
-  --color-primary-dark: #b45309;
-  --color-primary-light: #f59e0b;
-  --color-accent: #d97706;
+  --color-primary: #c49a6c;
+  --color-primary-dark: #a67c52;
+  --color-primary-light: #d4aa7d;
+  --color-accent: #c49a6c;
   --color-success: #22c55e;
   --color-warning: #eab308;
   --color-danger: #ef4444;
@@ -123,7 +123,7 @@ textarea::placeholder {
 
 input[type="radio"],
 input[type="checkbox"] {
-  accent-color: #d97706;
+  accent-color: #c49a6c;
 }
 
 select option {
