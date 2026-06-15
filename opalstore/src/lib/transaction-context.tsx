@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useSession } from "next-auth/react";
 
 export interface Transaction {
   id: string;
@@ -18,10 +19,12 @@ export interface Transaction {
 
 interface TransactionContextType {
   transactions: Transaction[];
+  isLoading: boolean;
   addTransaction: (trx: Transaction) => void;
   updateTransactionStatus: (orderId: string, status: Transaction["status"]) => void;
   cancelTransaction: (orderId: string) => void;
   getTransaction: (orderId: string) => Transaction | undefined;
+  refreshTransactions: () => void;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -29,19 +32,90 @@ const TransactionContext = createContext<TransactionContextType | undefined>(und
 export function TransactionProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { data: session } = useSession();
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("opalstore_transactions");
-    if (saved) {
-      try {
-        setTransactions(JSON.parse(saved));
-      } catch {
-        localStorage.removeItem("opalstore_transactions");
+  // Get user email for API calls
+  const getUserEmail = (): string | null => {
+    // Priority 1: NextAuth session
+    if (session?.user?.email) return session.user.email;
+    // Priority 2: localStorage user
+    try {
+      const saved = localStorage.getItem("opalstore_user");
+      if (saved) {
+        const user = JSON.parse(saved);
+        if (user.email) return user.email;
       }
+    } catch {}
+    return null;
+  };
+
+  // Fetch from MongoDB API
+  const fetchFromAPI = async (email: string): Promise<Transaction[]> => {
+    try {
+      const res = await fetch("/api/transactions?userId=" + encodeURIComponent(email));
+      const data = await res.json();
+      if (data.success && data.data) {
+        // Map MongoDB fields to frontend Transaction interface
+        return data.data.map((t: any) => ({
+          id: t._id || t.orderId,
+          orderId: t.orderId,
+          date: t.createdAt || t.date,
+          product: t.productName || t.product,
+          variant: t.variantName || t.variant,
+          quantity: t.quantity,
+          total: t.amount || t.total,
+          paymentMethod: t.paymentMethod,
+          status: t.status,
+          customerEmail: t.email || t.customerEmail,
+          customerWhatsapp: t.whatsappNumber || t.customerWhatsapp,
+        }));
+      }
+      return [];
+    } catch (err) {
+      console.error("Failed to fetch transactions from API:", err);
+      return [];
     }
-    setIsLoaded(true);
-  }, []);
+  };
+
+  // Load transactions on mount: API first, localStorage as fallback
+  useEffect(() => {
+    const loadTransactions = async () => {
+      const email = getUserEmail();
+      
+      if (email) {
+        // Fetch from MongoDB API
+        const apiTransactions = await fetchFromAPI(email);
+        if (apiTransactions.length > 0) {
+          setTransactions(apiTransactions);
+          // Also update localStorage cache
+          localStorage.setItem("opalstore_transactions", JSON.stringify(apiTransactions));
+        } else {
+          // Fallback to localStorage if API returns empty
+          const saved = localStorage.getItem("opalstore_transactions");
+          if (saved) {
+            try {
+              setTransactions(JSON.parse(saved));
+            } catch {
+              localStorage.removeItem("opalstore_transactions");
+            }
+          }
+        }
+      } else {
+        // No email — use localStorage only
+        const saved = localStorage.getItem("opalstore_transactions");
+        if (saved) {
+          try {
+            setTransactions(JSON.parse(saved));
+          } catch {
+            localStorage.removeItem("opalstore_transactions");
+          }
+        }
+      }
+      setIsLoaded(true);
+    };
+
+    loadTransactions();
+  }, [session]);
 
   // Save to localStorage whenever transactions change
   useEffect(() => {
@@ -54,15 +128,28 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     setTransactions((prev) => [trx, ...prev]);
   };
 
-  const updateTransactionStatus = (orderId: string, status: Transaction["status"]) => {
+  const updateTransactionStatus = async (orderId: string, status: Transaction["status"]) => {
+    // Update local state immediately
     setTransactions((prev) =>
       prev.map((trx) =>
         trx.orderId === orderId ? { ...trx, status } : trx
       )
     );
+    
+    // Also update in MongoDB
+    try {
+      await fetch("/api/transactions/" + encodeURIComponent(orderId), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+    } catch (err) {
+      console.error("Failed to update transaction status in API:", err);
+    }
   };
 
-  const cancelTransaction = (orderId: string) => {
+  const cancelTransaction = async (orderId: string) => {
+    // Update local state immediately
     setTransactions((prev) =>
       prev.map((trx) =>
         trx.orderId === orderId && trx.status === "pending"
@@ -70,20 +157,43 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
           : trx
       )
     );
+    
+    // Also update in MongoDB
+    try {
+      await fetch("/api/transactions/" + encodeURIComponent(orderId), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelled" }),
+      });
+    } catch (err) {
+      console.error("Failed to cancel transaction in API:", err);
+    }
   };
 
   const getTransaction = (orderId: string) => {
     return transactions.find((trx) => trx.orderId === orderId);
   };
 
+  const refreshTransactions = async () => {
+    const email = getUserEmail();
+    if (email) {
+      const apiTransactions = await fetchFromAPI(email);
+      if (apiTransactions.length > 0) {
+        setTransactions(apiTransactions);
+      }
+    }
+  };
+
   return (
     <TransactionContext.Provider
       value={{
         transactions,
+        isLoading: !isLoaded,
         addTransaction,
         updateTransactionStatus,
         cancelTransaction,
         getTransaction,
+        refreshTransactions,
       }}
     >
       {children}

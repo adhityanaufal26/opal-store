@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
+import { isAdmin } from "@/lib/data";
+
+async function requireAdmin() {
+  const session = await getServerSession(authOptions);
+  const email = session?.user?.email || null;
+  if (!email || !isAdmin(email)) return null;
+  return session;
+}
 
 export async function GET(
   request: NextRequest,
@@ -23,6 +33,11 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await requireAdmin();
+  if (!session) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const { id } = await params;
@@ -41,6 +56,11 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await requireAdmin();
+  if (!session) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const { id } = await params;

@@ -253,7 +253,7 @@ export default function ProductDetailPage() {
           Kembali
         </Link>
 
-        <div style={{ borderRadius: "20px", overflow: "hidden", marginBottom: "32px", height: "300px", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))" }}>
+        <div style={{ borderRadius: "20px", overflow: "hidden", marginBottom: "32px", aspectRatio: "1/1", height: "auto", maxHeight: "500px", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))" }}>
           <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
 

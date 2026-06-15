@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link href={`/dashboard/${product.slug}`}>
       <div className="card group overflow-hidden h-full" style={{ padding: 0 }}>
         {/* Image */}
-        <div className="relative overflow-hidden" style={{ height: "180px", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))" }}>
+        <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", height: "auto", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))" }}>
           <img src={imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           {totalStock > 0 ? (
             <div className="absolute top-3 right-3">
