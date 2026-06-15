@@ -35,8 +35,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const totalStock = getTotalStock(product);
   const imageUrl = product.image || product.preview_image;
   const isOutOfStock = totalStock === 0;
-
-  // Don't show monthly price if all variants have 0 stock
   const showMonthlyPrice = minMonthly && !isOutOfStock;
 
   return (
@@ -55,34 +53,11 @@ export default function ProductCard({ product }: ProductCardProps) {
               </span>
             </div>
           ) : (
-            <>
-              {/* Diagonal HABIS ribbon overlay */}
-              <div
-                className="absolute inset-0 z-20 pointer-events-none"
-                style={{ overflow: "hidden" }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "32px",
-                    right: "-35px",
-                    width: "140px",
-                    textAlign: "center",
-                    padding: "5px 0",
-                    backgroundColor: "#ef4444",
-                    color: "#ffffff",
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    letterSpacing: "1px",
-                    textTransform: "uppercase",
-                    transform: "rotate(45deg)",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                  }}
-                >
-                  HABIS
-                </div>
-              </div>
-            </>
+            <div className="absolute top-3 right-3">
+              <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
+                Habis
+              </span>
+            </div>
           )}
         </div>
 
