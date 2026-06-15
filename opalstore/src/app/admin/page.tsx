@@ -274,7 +274,7 @@ export default function AdminPage() {
                   <h3 style={{ color: "white", fontSize: "18px", fontWeight: "600", marginBottom: "4px" }}>{product.name}</h3>
                   <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", marginBottom: "8px" }}>{product.description?.substring(0, 80)}...</p>
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                    <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(217,119,6,0.1)", color: "#d4a855", fontSize: "12px" }}>{product.variants?.length || 0} variant</span>
+                    <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(217,119,6,0.1)", color: "#14b8a6", fontSize: "12px" }}>{product.variants?.length || 0} variant</span>
                     <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(139,92,246,0.1)", color: "#a78bfa", fontSize: "12px" }}>{formatPrice(Math.min(...(product.variants?.map(v => v.price) || [0])))}</span>
                   </div>
                 </div>
@@ -332,7 +332,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
-                      <button onClick={() => fileInputRef.current?.click()} disabled={uploading} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.1)", color: "#d4a855", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "8px" }}>
+                      <button onClick={() => fileInputRef.current?.click()} disabled={uploading} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.1)", color: "#14b8a6", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "8px" }}>
                         {uploading ? "Uploading..." : "Upload Foto"}
                       </button>
                       <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>JPG, PNG, WebP (max 5MB)</p>
@@ -356,7 +356,7 @@ export default function AdminPage() {
                 <div style={{ marginBottom: "20px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                     <label style={{ color: "rgba(255,255,255,0.6)", fontSize: "13px" }}>Variant Produk *</label>
-                    <button type="button" onClick={addVariant} style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.1)", color: "#d4a855", fontSize: "12px", cursor: "pointer" }}>+ Tambah Variant</button>
+                    <button type="button" onClick={addVariant} style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.1)", color: "#14b8a6", fontSize: "12px", cursor: "pointer" }}>+ Tambah Variant</button>
                   </div>
                   {variants.map((variant, index) => (
                     <div key={index} style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "16px", marginBottom: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
@@ -376,7 +376,7 @@ export default function AdminPage() {
                 {/* Active Toggle */}
                 <div style={{ marginBottom: "24px" }}>
                   <label style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }} onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}>
-                    <div style={{ width: "44px", height: "24px", borderRadius: "12px", background: formData.isActive ? "#d4a855" : "rgba(255,255,255,0.1)", position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
+                    <div style={{ width: "44px", height: "24px", borderRadius: "12px", background: formData.isActive ? "#14b8a6" : "rgba(255,255,255,0.1)", position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
                       <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "white", position: "absolute", top: "2px", left: formData.isActive ? "22px" : "2px", transition: "left 0.2s" }} />
                     </div>
                     <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>{formData.isActive ? "Produk Aktif" : "Produk Nonaktif"}</span>

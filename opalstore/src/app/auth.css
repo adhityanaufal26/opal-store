@@ -63,7 +63,7 @@
   justify-content: center;
   background: rgba(217, 119, 6, 0.1);
   border-radius: 10px;
-  color: #e0b870;
+  color: #2dd4bf;
   flex-shrink: 0;
 }
 
@@ -196,7 +196,7 @@
 }
 
 .auth-input:focus {
-  border-color: #d4a855;
+  border-color: #14b8a6;
   box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
 }
 
@@ -251,8 +251,8 @@
 }
 
 .auth-checkbox:checked ~ .auth-checkbox-custom {
-  background: #d4a855;
-  border-color: #d4a855;
+  background: #14b8a6;
+  border-color: #14b8a6;
   color: #ffffff;
 }
 
@@ -263,13 +263,13 @@
 
 .auth-forgot-link {
   font-size: 0.8125rem;
-  color: #d4a855;
+  color: #14b8a6;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .auth-forgot-link:hover {
-  color: #e0b870;
+  color: #2dd4bf;
 }
 
 .auth-submit {
@@ -279,7 +279,7 @@
   justify-content: center;
   gap: 8px;
   padding: 14px 24px;
-  background: #d4a855;
+  background: #14b8a6;
   border: none;
   border-radius: 12px;
   color: #ffffff;
@@ -290,7 +290,7 @@
 }
 
 .auth-submit:hover {
-  background: #b8913a;
+  background: #0d9488;
 }
 
 .auth-submit:disabled {
@@ -323,7 +323,7 @@
 }
 
 .auth-register-link {
-  color: #d4a855;
+  color: #14b8a6;
   text-decoration: none;
   font-weight: 600;
   margin-left: 4px;
@@ -331,5 +331,5 @@
 }
 
 .auth-register-link:hover {
-  color: #e0b870;
+  color: #2dd4bf;
 }

@@ -45,7 +45,7 @@ function CheckoutContent() {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Produk tidak ditemukan</h1>
-          <Link href="/dashboard" style={{ color: '#e0b870', textDecoration: 'none' }}>Kembali ke Dashboard</Link>
+          <Link href="/dashboard" style={{ color: '#2dd4bf', textDecoration: 'none' }}>Kembali ke Dashboard</Link>
         </div>
       </div>
     );
@@ -93,7 +93,7 @@ function CheckoutContent() {
                 <p style={{ color: '#71717a', fontSize: '13px' }}>{displayName}</p>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ color: '#e0b870', fontSize: '18px', fontWeight: 'bold' }}>{formatPrice(displayPrice)}</p>
+                <p style={{ color: '#2dd4bf', fontSize: '18px', fontWeight: 'bold' }}>{formatPrice(displayPrice)}</p>
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ function CheckoutContent() {
                     width: '20px', 
                     height: '20px', 
                     borderRadius: '50%', 
-                    border: formData.paymentMethod === method.id ? '6px solid #e0b870' : '2px solid rgba(255,255,255,0.2)',
+                    border: formData.paymentMethod === method.id ? '6px solid #2dd4bf' : '2px solid rgba(255,255,255,0.2)',
                     transition: 'all 0.2s',
                   }} />
                 </button>
