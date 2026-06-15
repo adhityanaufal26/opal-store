@@ -61,108 +61,100 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
 
-      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-2xl border border-white/10 overflow-hidden" style={{ background: '#161b22' }} onClick={(e) => e.stopPropagation()}>
-          <div className="relative h-24" style={{ background: 'linear-gradient(135deg, #e84393, #6c5ce7, #0984e3)' }}>
-            <button onClick={onClose} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 flex items-center justify-center hover:bg-black/50 transition-colors">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+        <div style={{ width: '100%', maxWidth: '400px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden', background: '#141414' }} onClick={(e) => e.stopPropagation()}>
+
+          {/* Header */}
+          <div style={{ position: 'relative', height: '64px', background: '#2563eb' }}>
+            <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '10px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#fff"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
 
-          <div className="flex justify-center -mt-12">
+          {/* Avatar */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-36px' }}>
             {avatarUrl ? (
-              <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full border-4 border-[#161b22] object-cover" />
+              <img src={avatarUrl} alt={displayName} style={{ width: '72px', height: '72px', borderRadius: '50%', border: '3px solid #141414', objectFit: 'cover', background: '#1a1a1a' }} />
             ) : (
-              <div className="w-24 h-24 rounded-full border-4 border-[#161b22] flex items-center justify-center text-3xl font-bold text-white" style={{ background: 'linear-gradient(135deg, #e84393, #6c5ce7)' }}>
+              <div style={{ width: '72px', height: '72px', borderRadius: '50%', border: '3px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '700', color: '#fff', background: '#2563eb' }}>
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
 
-          <div className="text-center px-6 pt-3 pb-4">
-            <h3 className="text-xl font-bold text-white">{displayName}</h3>
-            <p className="text-white/50 text-sm mt-1">{displayEmail}</p>
+          {/* Name & Email */}
+          <div style={{ textAlign: 'center', padding: '10px 20px 14px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>{displayName}</h3>
+            <p style={{ color: '#71717a', fontSize: '13px', marginTop: '2px' }}>{displayEmail}</p>
           </div>
 
-          <div className="flex border-b border-white/10">
-            <button onClick={() => setActiveTab('profile')} className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === 'profile' ? 'text-white border-b-2 border-purple-500' : 'text-white/40 hover:text-white/70'}`}>
+          {/* Tabs */}
+          <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <button onClick={() => setActiveTab('profile')} style={{ flex: 1, padding: '10px', fontSize: '13px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', color: activeTab === 'profile' ? '#fff' : '#71717a', borderBottom: activeTab === 'profile' ? '2px solid #3b82f6' : '2px solid transparent' }}>
               Profil
             </button>
-            <button onClick={() => setActiveTab('password')} className={`flex-1 py-3 text-sm font-medium transition-colors ${activeTab === 'password' ? 'text-white border-b-2 border-purple-500' : 'text-white/40 hover:text-white/70'}`}>
-              Perbarui Kata Sandi
+            <button onClick={() => setActiveTab('password')} style={{ flex: 1, padding: '10px', fontSize: '13px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', color: activeTab === 'password' ? '#fff' : '#71717a', borderBottom: activeTab === 'password' ? '2px solid #3b82f6' : '2px solid transparent' }}>
+              Kata Sandi
             </button>
           </div>
 
-          <div className="p-6">
+          {/* Content */}
+          <div style={{ padding: '16px' }}>
             {activeTab === 'profile' && (
-              <div className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                    <svg className="w-5 h-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <div>
-                      <p className="text-xs text-white/40">Nama</p>
-                      <p className="text-sm text-white">{displayName}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                    <svg className="w-5 h-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    <div>
-                      <p className="text-xs text-white/40">Email</p>
-                      <p className="text-sm text-white">{displayEmail}</p>
-                    </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)' }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#71717a"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                  <div>
+                    <p style={{ fontSize: '11px', color: '#71717a' }}>Nama</p>
+                    <p style={{ fontSize: '13px', color: '#fff' }}>{displayName}</p>
                   </div>
                 </div>
 
-                {/* Transaction History Button */}
-                <button 
-                  onClick={() => handleNavigate('/transactions')} 
-                  className="w-full py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                  </svg>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)' }}>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#71717a"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                  <div>
+                    <p style={{ fontSize: '11px', color: '#71717a' }}>Email</p>
+                    <p style={{ fontSize: '13px', color: '#fff' }}>{displayEmail}</p>
+                  </div>
+                </div>
+
+                <button onClick={() => handleNavigate('/transactions')} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '500', color: '#a1a1aa', background: 'rgba(255,255,255,0.03)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                   Riwayat Transaksi
                 </button>
 
-                <button onClick={handleLogout} className="w-full py-3 rounded-xl text-sm font-medium text-red-400 bg-red-400/10 hover:bg-red-400/20 transition-colors">
+                <button onClick={handleLogout} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#ef4444', background: 'rgba(239,68,68,0.06)', border: 'none', cursor: 'pointer' }}>
                   Keluar
                 </button>
               </div>
             )}
 
             {activeTab === 'password' && (
-              <form onSubmit={handlePasswordUpdate} className="space-y-4">
+              <form onSubmit={handlePasswordUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {passwordMsg && (
-                  <div className={`p-3 rounded-xl text-sm ${passwordMsg.includes('berhasil') ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+                  <div style={{ padding: '10px 12px', borderRadius: '10px', fontSize: '13px', background: passwordMsg.includes('berhasil') ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)', color: passwordMsg.includes('berhasil') ? '#22c55e' : '#ef4444', border: passwordMsg.includes('berhasil') ? '1px solid rgba(34,197,94,0.15)' : '1px solid rgba(239,68,68,0.15)' }}>
                     {passwordMsg}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs text-white/40 mb-1.5">Password Saat Ini</label>
-                  <input type="password" value={passwords.current} onChange={(e) => setPasswords({ ...passwords, current: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" placeholder="Masukkan password saat ini" required />
+                  <label style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>Password Saat Ini</label>
+                  <input type="password" value={passwords.current} onChange={(e) => setPasswords({ ...passwords, current: e.target.value })} placeholder="Masukkan password saat ini" required style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: '13px', outline: 'none' }} />
                 </div>
 
                 <div>
-                  <label className="block text-xs text-white/40 mb-1.5">Password Baru</label>
-                  <input type="password" value={passwords.newPass} onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" placeholder="Masukkan password baru" required />
+                  <label style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>Password Baru</label>
+                  <input type="password" value={passwords.newPass} onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })} placeholder="Masukkan password baru" required style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: '13px', outline: 'none' }} />
                 </div>
 
                 <div>
-                  <label className="block text-xs text-white/40 mb-1.5">Konfirmasi Password Baru</label>
-                  <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500 transition-colors" placeholder="Ulangi password baru" required />
+                  <label style={{ display: 'block', fontSize: '11px', color: '#71717a', marginBottom: '4px' }}>Konfirmasi Password</label>
+                  <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} placeholder="Ulangi password baru" required style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: '13px', outline: 'none' }} />
                 </div>
 
-                <button type="submit" disabled={isLoading} className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #e84393, #6c5ce7)' }}>
+                <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#fff', background: '#2563eb', border: 'none', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.5 : 1 }}>
                   {isLoading ? 'Menyimpan...' : 'Perbarui Kata Sandi'}
                 </button>
               </form>
