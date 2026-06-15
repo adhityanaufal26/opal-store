@@ -260,12 +260,15 @@ export default function ProductDetailPage() {
           Kembali
         </Link>
 
-        <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "16px", maxHeight: "180px", padding: "16px", background: "#141414" }}>
-          <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        <div style={{ display: "flex", gap: "14px", marginBottom: "16px", padding: "14px", background: "#141414", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ width: "45%", maxWidth: "160px", aspectRatio: "1/1", borderRadius: "8px", background: "#1a1a1a", overflow: "hidden", flexShrink: 0 }}>
+            <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: "6px" }} />
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <h1 style={{ fontSize: "18px", fontWeight: "800", color: "#fff", marginBottom: "6px", letterSpacing: "-0.01em" }}>{product.name}</h1>
+            <p style={{ color: "#a1a1aa", fontSize: "12px", lineHeight: "1.5" }}>{product.description}</p>
+          </div>
         </div>
-
-        <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#fff", marginBottom: "8px", letterSpacing: "-0.01em" }}>{product.name}</h1>
-        <p style={{ color: "#a1a1aa", fontSize: "14px", marginBottom: "12px", lineHeight: "1.7" }}>{product.description}</p>
 
         <form onSubmit={handleSubmit}>
           <div style={{ background: "#141414", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", padding: "16px", marginBottom: "16px", opacity: isFormDisabled ? 0.5 : 1, pointerEvents: isFormDisabled ? "none" : "auto" }}>
