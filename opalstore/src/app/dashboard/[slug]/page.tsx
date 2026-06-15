@@ -260,14 +260,14 @@ export default function ProductDetailPage() {
           Kembali
         </Link>
 
-        <div style={{ display: "flex", gap: "14px", marginBottom: "16px", padding: "14px", background: "#141414", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <div style={{ width: "45%", maxWidth: "160px", aspectRatio: "1/1", borderRadius: "8px", background: "#1a1a1a", overflow: "hidden", flexShrink: 0 }}>
-            <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain", padding: "6px" }} />
+        <div style={{ marginBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "#141414", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#1a1a1a", overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img src={product.image} alt={product.name} style={{ width: "36px", height: "36px", objectFit: "contain" }} />
+            </div>
+            <h1 style={{ fontSize: "17px", fontWeight: "800", color: "#fff", letterSpacing: "-0.01em", lineHeight: "1.2" }}>{product.name}</h1>
           </div>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <h1 style={{ fontSize: "18px", fontWeight: "800", color: "#fff", marginBottom: "6px", letterSpacing: "-0.01em" }}>{product.name}</h1>
-            <p style={{ color: "#a1a1aa", fontSize: "12px", lineHeight: "1.5" }}>{product.description}</p>
-          </div>
+          <p style={{ color: "#71717a", fontSize: "12px", lineHeight: "1.6", marginTop: "10px", paddingLeft: "2px" }}>{product.description}</p>
         </div>
 
         <form onSubmit={handleSubmit}>
