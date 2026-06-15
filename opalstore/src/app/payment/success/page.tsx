@@ -47,7 +47,7 @@ function PaymentSuccessContent() {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: "60px", height: "60px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "#0ea5e9", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }}></div>
+          <div style={{ width: "60px", height: "60px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "#d97706", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }}></div>
           <p style={{ color: "rgba(255,255,255,0.5)" }}>Memproses pesanan...</p>
         </div>
       </div>
@@ -97,7 +97,7 @@ function PaymentSuccessContent() {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0" }}>
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Total Bayar</span>
-              <span style={{ color: "#0ea5e9", fontSize: "18px", fontWeight: "bold" }}>{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(orderData?.totalAmount || 0)}</span>
+              <span style={{ color: "#d97706", fontSize: "18px", fontWeight: "bold" }}>{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(orderData?.totalAmount || 0)}</span>
             </div>
           </div>
         </div>
@@ -108,9 +108,9 @@ function PaymentSuccessContent() {
           {orderData?.outputType === "link" && (
             <div>
               <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "16px" }}>Klik link di bawah untuk mengakses produk Anda:</p>
-              <div style={{ background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.3)", borderRadius: "12px", padding: "16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
-                <a href={orderData.outputValue} target="_blank" rel="noopener noreferrer" style={{ color: "#0ea5e9", fontSize: "14px", textDecoration: "none", wordBreak: "break-all", flex: 1 }}>{orderData.outputValue}</a>
-                <button onClick={() => copyToClipboard(orderData.outputValue)} style={{ padding: "8px 16px", borderRadius: "8px", background: "rgba(14,165,233,0.2)", border: "1px solid rgba(14,165,233,0.3)", color: "#0ea5e9", fontSize: "12px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>Salin</button>
+              <div style={{ background: "rgba(217,119,6,0.1)", border: "1px solid rgba(217,119,6,0.3)", borderRadius: "12px", padding: "16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+                <a href={orderData.outputValue} target="_blank" rel="noopener noreferrer" style={{ color: "#d97706", fontSize: "14px", textDecoration: "none", wordBreak: "break-all", flex: 1 }}>{orderData.outputValue}</a>
+                <button onClick={() => copyToClipboard(orderData.outputValue)} style={{ padding: "8px 16px", borderRadius: "8px", background: "rgba(217,119,6,0.2)", border: "1px solid rgba(217,119,6,0.3)", color: "#d97706", fontSize: "12px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>Salin</button>
               </div>
             </div>
           )}

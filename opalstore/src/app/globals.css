@@ -5,10 +5,10 @@
   --color-card: #141414;
   --color-card-hover: #1a1a1a;
   --color-border: rgba(255, 255, 255, 0.06);
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #3b82f6;
-  --color-accent: #2563eb;
+  --color-primary: #d97706;
+  --color-primary-dark: #b45309;
+  --color-primary-light: #f59e0b;
+  --color-accent: #d97706;
   --color-success: #22c55e;
   --color-warning: #eab308;
   --color-danger: #ef4444;
@@ -111,9 +111,9 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: rgba(37, 99, 235, 0.5) !important;
+  border-color: rgba(217, 119, 6, 0.5) !important;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
 }
 
 input::placeholder,
@@ -123,7 +123,7 @@ textarea::placeholder {
 
 input[type="radio"],
 input[type="checkbox"] {
-  accent-color: #2563eb;
+  accent-color: #d97706;
 }
 
 select option {

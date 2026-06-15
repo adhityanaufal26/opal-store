@@ -56,7 +56,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 style={{ fontWeight: "700", fontSize: "12px", textAlign: "center", marginBottom: "3px", color: isOutOfStock ? "#71717a" : "#fff", lineHeight: "1.3" }}>
             {product.name}
           </h3>
-          <p style={{ textAlign: "center", fontSize: "11px", color: isOutOfStock ? "transparent" : "#3b82f6", fontWeight: "600" }}>
+          <p style={{ textAlign: "center", fontSize: "11px", color: isOutOfStock ? "transparent" : "#f59e0b", fontWeight: "600" }}>
             {minMonthly && !isOutOfStock ? `Mulai ${formatPrice(minMonthly)}/bln` : "\u00A0"}
           </p>
         </div>

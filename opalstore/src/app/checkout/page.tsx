@@ -45,7 +45,7 @@ function CheckoutContent() {
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Produk tidak ditemukan</h1>
-          <Link href="/dashboard" style={{ color: '#3b82f6', textDecoration: 'none' }}>Kembali ke Dashboard</Link>
+          <Link href="/dashboard" style={{ color: '#f59e0b', textDecoration: 'none' }}>Kembali ke Dashboard</Link>
         </div>
       </div>
     );
@@ -93,7 +93,7 @@ function CheckoutContent() {
                 <p style={{ color: '#71717a', fontSize: '13px' }}>{displayName}</p>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ color: '#3b82f6', fontSize: '18px', fontWeight: 'bold' }}>{formatPrice(displayPrice)}</p>
+                <p style={{ color: '#f59e0b', fontSize: '18px', fontWeight: 'bold' }}>{formatPrice(displayPrice)}</p>
               </div>
             </div>
           </div>
@@ -117,8 +117,8 @@ function CheckoutContent() {
                     alignItems: 'center',
                     padding: '14px 16px',
                     borderRadius: '10px',
-                    border: formData.paymentMethod === method.id ? '1px solid rgba(14,165,233,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                    background: formData.paymentMethod === method.id ? 'rgba(14,165,233,0.1)' : 'rgba(255,255,255,0.03)',
+                    border: formData.paymentMethod === method.id ? '1px solid rgba(217,119,6,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    background: formData.paymentMethod === method.id ? 'rgba(217,119,6,0.1)' : 'rgba(255,255,255,0.03)',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                     width: '100%',
@@ -133,7 +133,7 @@ function CheckoutContent() {
                     width: '20px', 
                     height: '20px', 
                     borderRadius: '50%', 
-                    border: formData.paymentMethod === method.id ? '6px solid #3b82f6' : '2px solid rgba(255,255,255,0.2)',
+                    border: formData.paymentMethod === method.id ? '6px solid #f59e0b' : '2px solid rgba(255,255,255,0.2)',
                     transition: 'all 0.2s',
                   }} />
                 </button>

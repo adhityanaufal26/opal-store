@@ -67,18 +67,18 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
         <div style={{ width: '100%', maxWidth: '400px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden', background: '#141414' }} onClick={(e) => e.stopPropagation()}>
 
           {/* Header */}
-          <div style={{ position: 'relative', height: '64px', background: '#2563eb' }}>
+          <div style={{ position: 'relative', height: '48px', background: '#d97706' }}>
             <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '10px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#fff"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
 
           {/* Avatar */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-36px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-28px' }}>
             {avatarUrl ? (
-              <img src={avatarUrl} alt={displayName} style={{ width: '72px', height: '72px', borderRadius: '50%', border: '3px solid #141414', objectFit: 'cover', background: '#1a1a1a' }} />
+              <img src={avatarUrl} alt={displayName} style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', objectFit: 'cover', background: '#1a1a1a' }} />
             ) : (
-              <div style={{ width: '72px', height: '72px', borderRadius: '50%', border: '3px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '700', color: '#fff', background: '#2563eb' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: '700', color: '#fff', background: '#d97706' }}>
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
@@ -92,10 +92,10 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
 
           {/* Tabs */}
           <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <button onClick={() => setActiveTab('profile')} style={{ flex: 1, padding: '10px', fontSize: '13px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', color: activeTab === 'profile' ? '#fff' : '#71717a', borderBottom: activeTab === 'profile' ? '2px solid #3b82f6' : '2px solid transparent' }}>
+            <button onClick={() => setActiveTab('profile')} style={{ flex: 1, padding: '10px', fontSize: '13px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', color: activeTab === 'profile' ? '#fff' : '#71717a', borderBottom: activeTab === 'profile' ? '2px solid #f59e0b' : '2px solid transparent' }}>
               Profil
             </button>
-            <button onClick={() => setActiveTab('password')} style={{ flex: 1, padding: '10px', fontSize: '13px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', color: activeTab === 'password' ? '#fff' : '#71717a', borderBottom: activeTab === 'password' ? '2px solid #3b82f6' : '2px solid transparent' }}>
+            <button onClick={() => setActiveTab('password')} style={{ flex: 1, padding: '10px', fontSize: '13px', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', color: activeTab === 'password' ? '#fff' : '#71717a', borderBottom: activeTab === 'password' ? '2px solid #f59e0b' : '2px solid transparent' }}>
               Kata Sandi
             </button>
           </div>
@@ -154,7 +154,7 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
                   <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} placeholder="Ulangi password baru" required style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontSize: '13px', outline: 'none' }} />
                 </div>
 
-                <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#fff', background: '#2563eb', border: 'none', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.5 : 1 }}>
+                <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#fff', background: '#d97706', border: 'none', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.5 : 1 }}>
                   {isLoading ? 'Menyimpan...' : 'Perbarui Kata Sandi'}
                 </button>
               </form>

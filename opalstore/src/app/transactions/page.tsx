@@ -167,15 +167,15 @@ export default function TransactionHistoryPage() {
               onClick={() => setFilter(tab.id as any)}
               style={{
                 padding: '8px 14px', borderRadius: '10px',
-                border: filter === tab.id ? '1px solid rgba(37,99,235,0.4)' : '1px solid rgba(255,255,255,0.06)',
-                background: filter === tab.id ? 'rgba(37,99,235,0.1)' : 'rgba(255,255,255,0.03)',
-                color: filter === tab.id ? '#3b82f6' : '#a1a1aa',
+                border: filter === tab.id ? '1px solid rgba(217,119,6,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                background: filter === tab.id ? 'rgba(217,119,6,0.1)' : 'rgba(255,255,255,0.03)',
+                color: filter === tab.id ? '#f59e0b' : '#a1a1aa',
                 fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
               }}
             >
               {tab.label}
               {tab.count > 0 && (
-                <span style={{ padding: '2px 6px', borderRadius: '6px', background: filter === tab.id ? 'rgba(37,99,235,0.2)' : 'rgba(255,255,255,0.06)', fontSize: '11px' }}>
+                <span style={{ padding: '2px 6px', borderRadius: '6px', background: filter === tab.id ? 'rgba(217,119,6,0.2)' : 'rgba(255,255,255,0.06)', fontSize: '11px' }}>
                   {tab.count}
                 </span>
               )}
@@ -208,7 +208,7 @@ export default function TransactionHistoryPage() {
                         <button onClick={() => setCancelConfirm(trx.orderId)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
                           Batalkan
                         </button>
-                        <button onClick={() => handlePay(trx)} disabled={payingOrderId === trx.orderId} style={{ padding: '7px 14px', borderRadius: '8px', background: '#2563eb', color: '#fff', fontSize: '12px', fontWeight: '600', border: 'none', cursor: payingOrderId === trx.orderId ? 'not-allowed' : 'pointer', opacity: payingOrderId === trx.orderId ? 0.5 : 1 }}>
+                        <button onClick={() => handlePay(trx)} disabled={payingOrderId === trx.orderId} style={{ padding: '7px 14px', borderRadius: '8px', background: '#d97706', color: '#fff', fontSize: '12px', fontWeight: '600', border: 'none', cursor: payingOrderId === trx.orderId ? 'not-allowed' : 'pointer', opacity: payingOrderId === trx.orderId ? 0.5 : 1 }}>
                           {payingOrderId === trx.orderId ? '...' : 'Bayar'}
                         </button>
                       </>
@@ -226,7 +226,7 @@ export default function TransactionHistoryPage() {
             <p style={{ color: '#52525b', fontSize: '13px', marginBottom: '20px' }}>
               {filter === 'all' ? 'Mulai belanja untuk melihat riwayat transaksi' : 'Coba filter lain'}
             </p>
-            <Link href="/dashboard" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '10px', background: '#2563eb', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }}>
+            <Link href="/dashboard" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '10px', background: '#d97706', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }}>
               Mulai Belanja
             </Link>
           </div>
