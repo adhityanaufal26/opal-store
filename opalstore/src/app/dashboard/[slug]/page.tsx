@@ -48,7 +48,8 @@ export default function ProductDetailPage() {
         if (found) {
           setProduct(found);
           if (found.variants && found.variants.length > 0) {
-            setSelectedVariant(found.variants[0].name);
+            const firstInStock = found.variants.find((v: any) => v.stock > 0);
+            setSelectedVariant(firstInStock ? firstInStock.name : found.variants[0].name);
           }
         }
       }
@@ -85,7 +86,7 @@ export default function ProductDetailPage() {
   }
 
   if (!product) {
-    return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><p style={{ color: "rgba(255,255,255,0.5)" }}>Produk tidak ditemukan</p></div>;
+    return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}><p style={{ color: "#71717a" }}>Produk tidak ditemukan</p></div>;
   }
 
   const formatPrice = (price: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(price);
@@ -249,50 +250,52 @@ export default function ProductDetailPage() {
     }
   };
 
+  const isFormDisabled = displayStock <= 0;
+
   return (
     <div style={{ minHeight: "100vh", padding: "40px 16px" }}>
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-        <Link href="/dashboard" style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "24px" }}>
+        <Link href="/dashboard" style={{ color: "#71717a", fontSize: "13px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "24px" }}>
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           Kembali
         </Link>
 
-        <div style={{ borderRadius: "20px", overflow: "hidden", marginBottom: "32px", aspectRatio: "1/1", height: "auto", maxHeight: "500px", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))" }}>
+        <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "32px", aspectRatio: "1/1", maxHeight: "500px", background: "#141414" }}>
           <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
 
-        <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "white", marginBottom: "8px" }}>{product.name}</h1>
-        <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "15px", marginBottom: "24px", lineHeight: "1.7" }}>{product.description}</p>
+        <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#fff", marginBottom: "8px", letterSpacing: "-0.01em" }}>{product.name}</h1>
+        <p style={{ color: "#a1a1aa", fontSize: "14px", marginBottom: "24px", lineHeight: "1.7" }}>{product.description}</p>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ background: "#161b22", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.08)", padding: "24px", marginBottom: "24px" }}>
-            
+          <div style={{ background: "#141414", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", padding: "24px", marginBottom: "24px", opacity: isFormDisabled ? 0.5 : 1, pointerEvents: isFormDisabled ? "none" : "auto" }}>
+
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
               {displayStock > 0 ? (
-                <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#34d399", display: "inline-block" }}></span><span style={{ color: "#34d399", fontSize: "14px" }}>Stok tersedia: {displayStock}</span></>
+                <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e", display: "inline-block" }}></span><span style={{ color: "#22c55e", fontSize: "13px", fontWeight: "500" }}>Stok tersedia: {displayStock}</span></>
               ) : (
-                <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#f87171", display: "inline-block" }}></span><span style={{ color: "#f87171", fontSize: "14px" }}>Stok habis</span></>
+                <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444", display: "inline-block" }}></span><span style={{ color: "#ef4444", fontSize: "13px", fontWeight: "500" }}>Stok habis</span></>
               )}
             </div>
 
             {product.variants && product.variants.length > 0 && (
               <div style={{ marginBottom: "24px" }}>
-                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "12px", fontWeight: "600" }}>Pilih Paket:</p>
+                <p style={{ color: "#71717a", fontSize: "13px", marginBottom: "12px", fontWeight: "600" }}>Pilih Paket:</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {product.variants.map((variant: any) => {
                     const variantMatch = variant.name.match(/(\d+)\s*Bulan/i);
                     const variantMonthly = variantMatch ? Math.round(variant.price / parseInt(variantMatch[1])) : null;
                     const variantOutOfStock = variant.stock <= 0;
                     return (
-                      <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: "12px", border: selectedVariant === variant.name ? "1px solid rgba(14,165,233,0.5)" : "1px solid rgba(255,255,255,0.1)", background: selectedVariant === variant.name ? "rgba(14,165,233,0.1)" : "rgba(255,255,255,0.03)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.4 : 1 }}>
+                      <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: "10px", border: selectedVariant === variant.name ? "1px solid rgba(37,99,235,0.4)" : "1px solid rgba(255,255,255,0.06)", background: selectedVariant === variant.name ? "rgba(37,99,235,0.08)" : "rgba(255,255,255,0.02)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.35 : 1 }}>
                         <div style={{ textAlign: "left" }}>
-                          <p style={{ color: variantOutOfStock ? "rgba(255,255,255,0.4)" : "white", fontSize: "14px", fontWeight: "600" }}>{variant.name}{variantOutOfStock && " (Habis)"}</p>
+                          <p style={{ color: variantOutOfStock ? "#71717a" : "#fff", fontSize: "14px", fontWeight: "600" }}>{variant.name}{variantOutOfStock && " (Habis)"}</p>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <p style={{ color: variantOutOfStock ? "#f87171" : "rgba(255,255,255,0.4)", fontSize: "12px" }}>Stok: {variant.stock}</p>
-                            {variantMonthly && <span style={{ color: "#0ea5e9", fontSize: "11px", fontWeight: "600", padding: "2px 6px", background: "rgba(14,165,233,0.1)", borderRadius: "4px" }}>{formatPrice(variantMonthly)}/bln</span>}
+                            <p style={{ color: variantOutOfStock ? "#ef4444" : "#71717a", fontSize: "12px" }}>Stok: {variant.stock}</p>
+                            {variantMonthly && <span style={{ color: "#3b82f6", fontSize: "11px", fontWeight: "600", padding: "2px 6px", background: "rgba(37,99,235,0.08)", borderRadius: "4px" }}>{formatPrice(variantMonthly)}/bln</span>}
                           </div>
                         </div>
-                        <span style={{ color: variantOutOfStock ? "rgba(255,255,255,0.3)" : selectedVariant === variant.name ? "#0ea5e9" : "rgba(255,255,255,0.7)", fontWeight: "bold", fontSize: "15px", textDecoration: variantOutOfStock ? "line-through" : "none" }}>{formatPrice(variant.price)}</span>
+                        <span style={{ color: variantOutOfStock ? "#71717a" : selectedVariant === variant.name ? "#3b82f6" : "#a1a1aa", fontWeight: "700", fontSize: "15px", textDecoration: variantOutOfStock ? "line-through" : "none" }}>{formatPrice(variant.price)}</span>
                       </button>
                     );
                   })}
@@ -301,89 +304,92 @@ export default function ProductDetailPage() {
             )}
 
             {monthlyPrice && (
-              <div style={{ marginBottom: "24px", padding: "16px", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))", borderRadius: "12px", border: "1px solid rgba(14,165,233,0.2)" }}>
+              <div style={{ marginBottom: "24px", padding: "16px", background: "rgba(37,99,235,0.06)", borderRadius: "10px", border: "1px solid rgba(37,99,235,0.15)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#0ea5e9"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                   <div>
-                    <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>Harga per bulan</p>
-                    <p style={{ color: "#0ea5e9", fontSize: "20px", fontWeight: "bold" }}>{formatPrice(monthlyPrice)}<span style={{ fontSize: "14px", fontWeight: "500" }}>/bulan</span></p>
+                    <p style={{ color: "#71717a", fontSize: "12px" }}>Harga per bulan</p>
+                    <p style={{ color: "#3b82f6", fontSize: "20px", fontWeight: "700" }}>{formatPrice(monthlyPrice)}<span style={{ fontSize: "14px", fontWeight: "500" }}>/bulan</span></p>
                   </div>
                 </div>
               </div>
             )}
 
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", margin: "24px 0" }}></div>
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "24px 0" }}></div>
 
             <div style={{ marginBottom: "24px" }}>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "12px", fontWeight: "600" }}>Jumlah:</p>
+              <p style={{ color: "#71717a", fontSize: "13px", marginBottom: "12px", fontWeight: "600" }}>Jumlah:</p>
               <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                <div style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,0.06)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <button type="button" onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1 || displayStock <= 0} style={{ padding: "12px 16px", background: "none", border: "none", color: (quantity <= 1 || displayStock <= 0) ? "rgba(255,255,255,0.2)" : "white", fontSize: "18px", cursor: (quantity <= 1 || displayStock <= 0) ? "not-allowed" : "pointer" }}>-</button>
-                  <input type="number" min="1" max={displayStock || 99} value={quantity} disabled={displayStock <= 0} onChange={(e) => { const val = parseInt(e.target.value); if (!isNaN(val) && val >= 1 && (!displayStock || val <= displayStock)) setQuantity(val); }} style={{ width: "60px", textAlign: "center", background: "none", border: "none", borderLeft: "1px solid rgba(255,255,255,0.1)", borderRight: "1px solid rgba(255,255,255,0.1)", color: displayStock <= 0 ? "rgba(255,255,255,0.3)" : "white", fontSize: "16px", fontWeight: "bold", outline: "none", padding: "12px 0", cursor: displayStock <= 0 ? "not-allowed" : "auto" }} />
-                  <button type="button" onClick={() => handleQuantityChange(quantity + 1)} disabled={displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)} style={{ padding: "12px 16px", background: "none", border: "none", color: (displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)) ? "rgba(255,255,255,0.2)" : "white", fontSize: "18px", cursor: (displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)) ? "not-allowed" : "pointer" }}>+</button>
+                <div style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,0.04)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <button type="button" onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1} style={{ padding: "12px 16px", background: "none", border: "none", color: quantity <= 1 ? "rgba(255,255,255,0.15)" : "#fff", fontSize: "18px", cursor: quantity <= 1 ? "not-allowed" : "pointer" }}>-</button>
+                  <input type="number" min="1" max={displayStock || 99} value={quantity} onChange={(e) => { const val = parseInt(e.target.value); if (!isNaN(val) && val >= 1 && (!displayStock || val <= displayStock)) setQuantity(val); }} style={{ width: "60px", textAlign: "center", background: "none", border: "none", borderLeft: "1px solid rgba(255,255,255,0.06)", borderRight: "1px solid rgba(255,255,255,0.06)", color: "#fff", fontSize: "16px", fontWeight: "700", outline: "none", padding: "12px 0" }} />
+                  <button type="button" onClick={() => handleQuantityChange(quantity + 1)} disabled={displayStock ? quantity >= displayStock : false} style={{ padding: "12px 16px", background: "none", border: "none", color: displayStock && quantity >= displayStock ? "rgba(255,255,255,0.15)" : "#fff", fontSize: "18px", cursor: displayStock && quantity >= displayStock ? "not-allowed" : "pointer" }}>+</button>
                 </div>
-                <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px" }}>{displayStock ? "Maks. " + displayStock : ""}</span>
+                <span style={{ color: "#71717a", fontSize: "13px" }}>{displayStock ? "Maks. " + displayStock : ""}</span>
               </div>
             </div>
 
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", margin: "24px 0" }}></div>
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "24px 0" }}></div>
 
             <div style={{ marginBottom: "24px" }}>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "16px", fontWeight: "600" }}>Data Pembeli:</p>
+              <p style={{ color: "#71717a", fontSize: "13px", marginBottom: "16px", fontWeight: "600" }}>Data Pembeli:</p>
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Nomor WhatsApp *</label>
-                <input type="tel" required placeholder="628123456789" value={formData.whatsapp} onChange={(e) => handleWhatsappChange(e.target.value)} onBlur={() => setErrors({ ...errors, whatsapp: validateWhatsapp(formData.whatsapp) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: errors.whatsapp ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none" }} />
+                <label style={{ display: "block", color: "#a1a1aa", fontSize: "13px", marginBottom: "6px" }}>Nomor WhatsApp *</label>
+                <input type="tel" required placeholder="628123456789" value={formData.whatsapp} onChange={(e) => handleWhatsappChange(e.target.value)} onBlur={() => setErrors({ ...errors, whatsapp: validateWhatsapp(formData.whatsapp) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.04)", border: errors.whatsapp ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", color: "#fff", fontSize: "14px", outline: "none" }} />
                 {errors.whatsapp && <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{errors.whatsapp}</p>}
               </div>
               <div>
-                <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Email *</label>
-                <input type="email" required placeholder="nama@email.com" value={formData.email} onChange={(e) => { setFormData({ ...formData, email: e.target.value }); if (errors.email) setErrors({ ...errors, email: "" }); }} onBlur={() => setErrors({ ...errors, email: validateEmail(formData.email) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: errors.email ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none" }} />
+                <label style={{ display: "block", color: "#a1a1aa", fontSize: "13px", marginBottom: "6px" }}>Email *</label>
+                <input type="email" required placeholder="nama@email.com" value={formData.email} onChange={(e) => { setFormData({ ...formData, email: e.target.value }); if (errors.email) setErrors({ ...errors, email: "" }); }} onBlur={() => setErrors({ ...errors, email: validateEmail(formData.email) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.04)", border: errors.email ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", color: "#fff", fontSize: "14px", outline: "none" }} />
                 {errors.email && <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{errors.email}</p>}
               </div>
             </div>
 
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", margin: "24px 0" }}></div>
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "24px 0" }}></div>
 
-            <div style={{ marginBottom: "24px", padding: "16px", background: "rgba(99,102,241,0.08)", borderRadius: "12px", border: "1px solid rgba(99,102,241,0.2)" }}>
+            <div style={{ marginBottom: "24px", padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#818cf8"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", fontWeight: "600" }}>Metode Pembayaran</p>
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#71717a"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                <p style={{ color: "#a1a1aa", fontSize: "14px", fontWeight: "600" }}>Metode Pembayaran</p>
               </div>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>QRIS, GoPay, OVO, Dana, ShopeePay, VA, Kartu Kredit</p>
+              <p style={{ color: "#71717a", fontSize: "13px" }}>QRIS, GoPay, OVO, Dana, ShopeePay, VA</p>
             </div>
 
             <div style={{ marginBottom: "20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Harga satuan</span>
-                <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>{formatPrice(displayPrice)}</span>
+                <span style={{ color: "#71717a", fontSize: "14px" }}>Harga satuan</span>
+                <span style={{ color: "#a1a1aa", fontSize: "14px" }}>{formatPrice(displayPrice)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Jumlah</span>
-                <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>{quantity}x</span>
+                <span style={{ color: "#71717a", fontSize: "14px" }}>Jumlah</span>
+                <span style={{ color: "#a1a1aa", fontSize: "14px" }}>{quantity}x</span>
               </div>
-              <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", marginBottom: "12px" }}></div>
+              <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "12px" }}></div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ color: "white", fontSize: "16px", fontWeight: "600" }}>Total Pembayaran</span>
-                <span style={{ color: "white", fontSize: "28px", fontWeight: "bold" }}>{formatPrice(totalPrice)}</span>
+                <span style={{ color: "#fff", fontSize: "15px", fontWeight: "600" }}>Total Pembayaran</span>
+                <span style={{ color: "#fff", fontSize: "24px", fontWeight: "800" }}>{formatPrice(totalPrice)}</span>
               </div>
             </div>
 
-            <button type="submit" disabled={isSubmitting || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || displayStock <= 0) ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: (isSubmitting || displayStock <= 0) ? "not-allowed" : "pointer", opacity: (isSubmitting || displayStock <= 0) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            <button type="submit" disabled={isSubmitting || isFormDisabled} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || isFormDisabled) ? "rgba(255,255,255,0.06)" : "#2563eb", color: (isSubmitting || isFormDisabled) ? "#71717a" : "#fff", fontWeight: "700", fontSize: "15px", border: "none", cursor: (isSubmitting || isFormDisabled) ? "not-allowed" : "pointer", opacity: (isSubmitting || isFormDisabled) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
               {isSubmitting ? (
-                <><div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>Memproses...</>
+                <><div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>Memproses...</>
+              ) : isFormDisabled ? (
+                "Stok Habis"
               ) : (
-                <><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>Bayar Sekarang</>
+                <><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>Bayar Sekarang</>
               )}
             </button>
 
             <div style={{ textAlign: "center", marginTop: "12px" }}>
-              <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>Powered by <span style={{ color: "rgba(255,255,255,0.5)" }}>Midtrans</span> • Pembayaran aman & terenkripsi</p>
+              <p style={{ color: "#71717a", fontSize: "11px" }}>Powered by <span style={{ color: "#a1a1aa" }}>Midtrans</span> &middot; Pembayaran aman &amp; terenkripsi</p>
             </div>
           </div>
-          {displayStock <= 0 && (
-            <div style={{ position: "relative", marginTop: "-16px", marginBottom: "16px", padding: "20px", background: "rgba(248,113,113,0.15)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "16px", textAlign: "center" }}>
-              <p style={{ color: "#f87171", fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>🚫 Stok Habis</p>
-              <p style={{ color: "rgba(248,113,113,0.7)", fontSize: "13px" }}>Produk ini sedang tidak tersedia. Silakan pilih varian lain atau cek kembali nanti.</p>
+
+          {isFormDisabled && (
+            <div style={{ marginTop: "-12px", marginBottom: "16px", padding: "20px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: "12px", textAlign: "center" }}>
+              <p style={{ color: "#ef4444", fontSize: "16px", fontWeight: "700", marginBottom: "4px" }}>Stok Habis</p>
+              <p style={{ color: "#71717a", fontSize: "13px" }}>Produk ini sedang tidak tersedia. Silakan pilih varian lain atau cek kembali nanti.</p>
             </div>
           )}
         </form>

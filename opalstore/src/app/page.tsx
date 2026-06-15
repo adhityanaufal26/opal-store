@@ -44,42 +44,29 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* ============ HERO ============ */}
-      <section
-        className="hero relative overflow-hidden"
-        style={{ minHeight: "85vh", display: "flex", alignItems: "center" }}
-      >
-        <div className="hero-lines">
-          <div className="hero-line hero-line-1" />
-          <div className="hero-line hero-line-2" />
-          <div className="hero-line hero-line-3" />
-        </div>
-
-        <div className="absolute top-20 left-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-
-        <div className="max-w-4xl mx-auto text-center relative z-10 px-4">
+      {/* HERO */}
+      <section style={{ minHeight: "85vh", display: "flex", alignItems: "center" }}>
+        <div className="max-w-4xl mx-auto text-center px-4">
           <div className="mb-6">
-            <span className="inline-block px-4 py-1.5 text-xs font-medium rounded-full border border-primary/30 bg-primary/10 text-primary-light tracking-wide">
+            <span style={{ display: "inline-block", padding: "6px 16px", fontSize: "13px", fontWeight: "500", borderRadius: "999px", border: "1px solid rgba(37,99,235,0.3)", background: "rgba(37,99,235,0.08)", color: "#3b82f6", letterSpacing: "0.02em" }}>
               Toko Digital Indonesia
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+          <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: "800", lineHeight: "1.1", marginBottom: "24px", letterSpacing: "-0.02em" }}>
             Akses AI Premium
             <br />
-            <span className="gradient-text">Harga Terjangkau</span>
+            <span style={{ color: "#3b82f6" }}>Harga Terjangkau</span>
           </h1>
 
-          <p className="text-base md:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed mb-10">
-            Dapatkan akses langganan Gemini Pro dan produk digital lainnya
-            dengan harga yang ramah di kantong.
+          <p style={{ fontSize: "16px", color: "#a1a1aa", maxWidth: "560px", margin: "0 auto 40px", lineHeight: "1.7" }}>
+            Dapatkan akses langganan Gemini Pro dan produk digital lainnya dengan harga yang ramah di kantong.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
               href="/dashboard"
-              className="px-8 py-4 gradient-bg-green text-white font-semibold rounded-2xl hover:opacity-90 transition-all text-base inline-flex items-center justify-center gap-2"
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#2563eb", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
             >
               Lihat Produk
             </Link>
@@ -87,152 +74,84 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ PRODUCTS SHOWCASE ============ */}
+      {/* PRODUCTS SHOWCASE */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-              Produk Kami
-            </h2>
-            <p className="text-text-secondary text-sm md:text-base max-w-xl mx-auto">
-              Langganan AI premium dengan harga terjangkau
-            </p>
+          <div style={{ textAlign: "center", marginBottom: "56px" }}>
+            <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Produk Kami</h2>
+            <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Langganan AI premium dengan harga terjangkau</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "20px" }}>
             {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id || product._id} product={product} />
             ))}
           </div>
 
           {featuredProducts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-text-secondary text-sm">
-                Produk sedang dimuat...
-              </p>
+            <div style={{ textAlign: "center", padding: "48px 0" }}>
+              <p style={{ color: "#71717a", fontSize: "15px" }}>Produk sedang dimuat...</p>
             </div>
           )}
 
-          <div className="text-center mt-12">
+          <div style={{ textAlign: "center", marginTop: "48px" }}>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-medium transition-all text-sm"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.15)",
-              }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "12px 24px", borderRadius: "12px", fontWeight: "500", fontSize: "14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#a1a1aa", transition: "all 0.2s" }}
             >
               Lihat Semua Produk
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ============ HOW IT WORKS ============ */}
+      {/* HOW IT WORKS */}
       <section className="section py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-              Cara Belanja
-            </h2>
-            <p className="text-text-secondary text-sm md:text-base">
-              Proses mudah dalam 4 langkah
-            </p>
+          <div style={{ textAlign: "center", marginBottom: "56px" }}>
+            <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Cara Belanja</h2>
+            <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Proses mudah dalam 4 langkah</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "32px" }}>
             {[
-              {
-                num: "1",
-                title: "Pilih Produk",
-                desc: "Browse katalog dan pilih produk yang Anda butuhkan",
-                color: "icon-purple",
-              },
-              {
-                num: "2",
-                title: "Pilih Paket",
-                desc: "Pilih durasi langganan yang sesuai kebutuhan Anda",
-                color: "icon-green",
-              },
-              {
-                num: "3",
-                title: "Bayar",
-                desc: "Lakukan pembayaran via QRIS, e-wallet, atau transfer bank",
-                color: "icon-cyan",
-              },
-              {
-                num: "4",
-                title: "Terima Akses",
-                desc: "Akses produk dikirim via WhatsApp setelah pembayaran terkonfirmasi",
-                color: "icon-pink",
-              },
+              { num: "1", title: "Pilih Produk", desc: "Browse katalog dan pilih produk yang Anda butuhkan" },
+              { num: "2", title: "Pilih Paket", desc: "Pilih durasi langganan yang sesuai kebutuhan Anda" },
+              { num: "3", title: "Bayar", desc: "Lakukan pembayaran via QRIS, e-wallet, atau transfer bank" },
+              { num: "4", title: "Terima Akses", desc: "Akses produk dikirim via WhatsApp setelah pembayaran terkonfirmasi" },
             ].map((step, i) => (
-              <div key={i} className="text-center">
-                <div
-                  className={`w-14 h-14 ${step.color} flex items-center justify-center text-xl font-bold mx-auto mb-4`}
-                >
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(37,99,235,0.1)", color: "#3b82f6", borderRadius: "12px", fontSize: "18px", fontWeight: "700", margin: "0 auto 16px" }}>
                   {step.num}
                 </div>
-                <h3 className="font-bold text-base mb-2">{step.title}</h3>
-                <p className="text-text-secondary text-sm">{step.desc}</p>
+                <h3 style={{ fontWeight: "700", fontSize: "15px", marginBottom: "8px" }}>{step.title}</h3>
+                <p style={{ color: "#a1a1aa", fontSize: "13px", lineHeight: "1.6" }}>{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============ FAQ ============ */}
+      {/* FAQ */}
       <section className="py-20 px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-              Pertanyaan Umum
-            </h2>
+          <div style={{ textAlign: "center", marginBottom: "56px" }}>
+            <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Pertanyaan Umum</h2>
           </div>
 
-          <div className="space-y-4">
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {faqs.map((faq, index) => (
-              <div key={index} className="card overflow-hidden">
+              <div key={index} className="card" style={{ overflow: "hidden" }}>
                 <button
-                  onClick={() =>
-                    setOpenFaq(openFaq === index ? null : index)
-                  }
-                  className="w-full p-5 text-left flex items-center justify-between hover:bg-white/5 transition-colors"
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  style={{ width: "100%", padding: "20px", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "between", background: "none", border: "none", color: "#fff", cursor: "pointer", transition: "background 0.2s" }}
                 >
-                  <span className="font-semibold pr-4 text-sm md:text-base">
-                    {faq.q}
-                  </span>
-                  <svg
-                    className={`w-5 h-5 flex-shrink-0 transition-transform text-text-muted ${
-                      openFaq === index ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  <span style={{ fontWeight: "600", fontSize: "14px", flex: 1, paddingRight: "16px" }}>{faq.q}</span>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#71717a" style={{ flexShrink: 0, transform: openFaq === index ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
                 {openFaq === index && (
-                  <div className="px-5 pb-5 text-text-secondary text-sm">
+                  <div style={{ padding: "0 20px 20px", color: "#a1a1aa", fontSize: "13px", lineHeight: "1.7" }}>
                     {faq.a}
                   </div>
                 )}
@@ -242,19 +161,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ CTA ============ */}
+      {/* CTA */}
       <section className="section py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
-            Mulai Sekarang
-          </h2>
-          <p className="text-text-secondary text-sm md:text-base mb-10 max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto" style={{ textAlign: "center" }}>
+          <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Mulai Sekarang</h2>
+          <p style={{ color: "#a1a1aa", fontSize: "15px", marginBottom: "40px" }}>
             Dapatkan akses Gemini Pro dengan harga mulai dari Rp 40.000
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
               href="/dashboard"
-              className="px-8 py-4 gradient-bg text-white font-semibold rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-primary/20 text-sm md:text-base"
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#2563eb", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
             >
               Belanja Sekarang
             </Link>

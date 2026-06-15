@@ -7,7 +7,7 @@ import { Product } from "@/lib/types";
 
 function SearchIcon() {
   return (
-    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)" }}>
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#71717a" }}>
       <circle cx={11} cy={11} r={8}/>
       <path d="m21 21-4.35-4.35"/>
     </svg>
@@ -56,11 +56,11 @@ function DashboardContent() {
   return (
     <div style={{ minHeight: "100vh", padding: "40px 16px" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        
+
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <h1 style={{ fontSize: "32px", fontWeight: "bold", color: "white", marginBottom: "8px" }}>Produk Digital</h1>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "16px" }}>Pilih produk yang Anda butuhkan</p>
+          <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#fff", marginBottom: "8px", letterSpacing: "-0.01em" }}>Produk Digital</h1>
+          <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Pilih produk yang Anda butuhkan</p>
         </div>
 
         {/* Search + Filter Bar */}
@@ -72,26 +72,26 @@ function DashboardContent() {
               placeholder="Cari produk..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ width: "100%", padding: "12px 16px 12px 42px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none" }}
+              style={{ width: "100%", padding: "12px 16px 12px 42px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", color: "#fff", fontSize: "14px", outline: "none" }}
             />
           </div>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <button
               onClick={() => setSelectedCategory("all")}
-              style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === "all" ? "1px solid rgba(14,165,233,0.5)" : "1px solid rgba(255,255,255,0.1)", background: selectedCategory === "all" ? "rgba(14,165,233,0.15)" : "rgba(255,255,255,0.05)", color: selectedCategory === "all" ? "#0ea5e9" : "rgba(255,255,255,0.6)", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+              style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === "all" ? "1px solid rgba(37,99,235,0.4)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === "all" ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.03)", color: selectedCategory === "all" ? "#3b82f6" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
             >Semua</button>
             {categories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.name)}
-                style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === cat.name ? "1px solid rgba(14,165,233,0.5)" : "1px solid rgba(255,255,255,0.1)", background: selectedCategory === cat.name ? "rgba(14,165,233,0.15)" : "rgba(255,255,255,0.05)", color: selectedCategory === cat.name ? "#0ea5e9" : "rgba(255,255,255,0.6)", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === cat.name ? "1px solid rgba(37,99,235,0.4)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat.name ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat.name ? "#3b82f6" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
               >{cat.name}</button>
             ))}
           </div>
         </div>
 
         {/* Products Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "20px" }}>
           {filtered.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
@@ -99,7 +99,7 @@ function DashboardContent() {
 
         {filtered.length === 0 && (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "18px" }}>Tidak ada produk ditemukan</p>
+            <p style={{ color: "#71717a", fontSize: "15px" }}>Tidak ada produk ditemukan</p>
           </div>
         )}
       </div>

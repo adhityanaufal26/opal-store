@@ -38,23 +38,20 @@ export default function ProductCard({ product }: ProductCardProps) {
   const showMonthlyPrice = minMonthly && !isOutOfStock;
 
   return (
-    <Link href={`/dashboard/${product.slug}`}>
-      <div
-        className="card group overflow-hidden h-full"
-        style={{ padding: 0, opacity: isOutOfStock ? 0.6 : 1, transition: "opacity 0.2s ease" }}
-      >
+    <Link href={`/dashboard/${product.slug}`} style={{ textDecoration: "none" }}>
+      <div className="card" style={{ padding: 0, opacity: isOutOfStock ? 0.5 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}>
         {/* Image */}
-        <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", height: "auto", background: "linear-gradient(135deg, rgba(14,165,233,0.08), rgba(139,92,246,0.08))" }}>
-          <img src={imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div style={{ position: "relative", aspectRatio: "1/1", background: "#1a1a1a", overflow: "hidden" }}>
+          <img src={imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           {totalStock > 0 ? (
-            <div className="absolute top-3 right-3">
-              <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <div style={{ position: "absolute", top: "12px", right: "12px" }}>
+              <span style={{ padding: "4px 10px", fontSize: "11px", fontWeight: "600", borderRadius: "8px", background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)" }}>
                 Stok: {totalStock}
               </span>
             </div>
           ) : (
-            <div className="absolute top-3 right-3">
-              <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
+            <div style={{ position: "absolute", top: "12px", right: "12px" }}>
+              <span style={{ padding: "4px 10px", fontSize: "11px", fontWeight: "600", borderRadius: "8px", background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)" }}>
                 Habis
               </span>
             </div>
@@ -62,15 +59,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Name & Price */}
-        <div className="p-4">
-          <h3
-            className="font-bold text-base group-hover:text-primary-light transition-colors text-center mb-2"
-            style={{ color: isOutOfStock ? "#9ca3af" : undefined }}
-          >
+        <div style={{ padding: "16px" }}>
+          <h3 style={{ fontWeight: "700", fontSize: "14px", textAlign: "center", marginBottom: "6px", color: isOutOfStock ? "#71717a" : "#fff" }}>
             {product.name}
           </h3>
           {showMonthlyPrice && (
-            <p style={{ textAlign: "center", fontSize: "13px", color: "#0ea5e9", fontWeight: "600" }}>
+            <p style={{ textAlign: "center", fontSize: "12px", color: "#3b82f6", fontWeight: "600" }}>
               Mulai {formatPrice(minMonthly)}/bulan
             </p>
           )}

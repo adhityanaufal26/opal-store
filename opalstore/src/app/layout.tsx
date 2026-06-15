@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
-import { Outfit } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/lib/auth-context';
 import { Providers } from './providers';
 
-const outfit = Outfit({
-  variable: '--font-outfit',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: 'OpalStore - Digital Products & AI Subscription Store',
-  description:
-    'Your trusted source for AI digital products, templates, prompts, workflows, and subscription plans. By Opal Agent.',
+  title: 'OpalStore - Toko Digital & Langganan AI',
+  description: 'Toko digital terpercaya untuk akses AI premium, langganan Gemini Pro, dan produk digital lainnya.',
 };
 
 export default function RootLayout({
@@ -23,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${outfit.variable} h-full antialiased`}>
+    <html lang="id" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         <Providers>
           <AuthProvider>
