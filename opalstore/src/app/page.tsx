@@ -48,7 +48,7 @@ export default function HomePage() {
       <section style={{ minHeight: "85vh", display: "flex", alignItems: "center" }}>
         <div className="max-w-4xl mx-auto text-center px-4">
           <div className="mb-6">
-            <span style={{ display: "inline-block", padding: "6px 16px", fontSize: "13px", fontWeight: "500", borderRadius: "999px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.08)", color: "#f59e0b", letterSpacing: "0.02em" }}>
+            <span style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#a1a1aa", marginBottom: "8px" }}>
               Toko Digital Indonesia
             </span>
           </div>
