@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+
 import { useAuth } from '@/lib/auth-context';
 
 interface UserProfileModalProps {
@@ -13,7 +13,6 @@ interface UserProfileModalProps {
 export default function UserProfileModal({ isOpen, onClose }: UserProfileModalProps) {
   const { data: session } = useSession();
   const { user, logout } = useAuth();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [passwords, setPasswords] = useState({ current: '', newPass: '', confirm: '' });
   const [passwordMsg, setPasswordMsg] = useState('');
@@ -52,10 +51,6 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
     onClose();
   };
 
-  const handleNavigate = (path: string) => {
-    router.push(path);
-    onClose();
-  };
 
   if (!isOpen) return null;
 
@@ -76,7 +71,7 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
           {/* Avatar */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-28px' }}>
             {avatarUrl ? (
-              <img src={avatarUrl} alt={displayName} style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', objectFit: 'cover', background: '#1a1a1a' }} />
+              <img src={avatarUrl} alt={displayName} style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', objectFit: 'contain', background: '#1a1a1a' }} />
             ) : (
               <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: '700', color: '#fff', background: '#d97706' }}>
                 {displayName.charAt(0).toUpperCase()}
@@ -120,10 +115,6 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
                   </div>
                 </div>
 
-                <button onClick={() => handleNavigate('/transactions')} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '500', color: '#a1a1aa', background: 'rgba(255,255,255,0.03)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                  Riwayat Transaksi
-                </button>
 
                 <button onClick={handleLogout} style={{ width: '100%', padding: '10px', borderRadius: '10px', fontSize: '13px', fontWeight: '600', color: '#ef4444', background: 'rgba(239,68,68,0.06)', border: 'none', cursor: 'pointer' }}>
                   Keluar
