@@ -7,25 +7,40 @@ import { useAuth } from '@/lib/auth-context';
 import { useSession } from 'next-auth/react';
 import { useTransactions, Transaction } from '@/lib/transaction-context';
 
+declare global {
+  interface Window {
+    snap: any;
+  }
+}
+
 export default function TransactionHistoryPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const { data: session } = useSession();
-  const { transactions, cancelTransaction } = useTransactions();
+  const { transactions, cancelTransaction, updateTransactionStatus, refreshTransactions } = useTransactions();
   const [filter, setFilter] = useState<'all' | 'pending' | 'success' | 'failed' | 'cancelled'>('all');
   const [cancelConfirm, setCancelConfirm] = useState<string | null>(null);
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
 
-  // Auth guard
   useEffect(() => {
     if (!isLoading && !user && !session) {
       router.push('/login');
     }
   }, [user, session, isLoading, router]);
 
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+    script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '');
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); };
+  }, []);
+
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: 'rgba(255,255,255,0.5)' }}>Loading...</p>
+        <p style={{ color: '#71717a' }}>Loading...</p>
       </div>
     );
   }
@@ -38,9 +53,9 @@ export default function TransactionHistoryPage() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('id-ID', { 
-      day: 'numeric', 
-      month: 'long', 
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
@@ -50,35 +65,71 @@ export default function TransactionHistoryPage() {
   const getStatusBadge = (status: string) => {
     const styles: Record<string, { bg: string; color: string; text: string }> = {
       pending: { bg: 'rgba(250,204,21,0.1)', color: '#facc15', text: 'Menunggu Bayar' },
-      success: { bg: 'rgba(52,211,153,0.1)', color: '#34d399', text: 'Berhasil' },
+      success: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e', text: 'Berhasil' },
       failed: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', text: 'Gagal' },
-      cancelled: { bg: 'rgba(107,114,128,0.1)', color: '#6b7280', text: 'Dibatalkan' },
+      cancelled: { bg: 'rgba(113,113,122,0.1)', color: '#71717a', text: 'Dibatalkan' },
     };
     const style = styles[status] || styles.pending;
     return (
-      <span style={{ 
-        padding: '4px 10px', 
-        borderRadius: '8px', 
-        fontSize: '12px', 
-        fontWeight: '600',
-        background: style.bg,
-        color: style.color,
-      }}>
+      <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', background: style.bg, color: style.color }}>
         {style.text}
       </span>
     );
   };
 
+  const handlePay = async (trx: any) => {
+    setPayingOrderId(trx.orderId);
+    try {
+      const res = await fetch('/api/midtrans-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productName: trx.product,
+          variantName: trx.variant,
+          price: Math.round(trx.total / trx.quantity),
+          quantity: trx.quantity,
+          customerEmail: trx.customerEmail,
+          customerWhatsapp: trx.customerWhatsapp,
+          orderId: trx.orderId,
+        }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert('Error: ' + data.error);
+        setPayingOrderId(null);
+        return;
+      }
+      if (window.snap && data.token) {
+        window.snap.pay(data.token, {
+          onSuccess: function() {
+            updateTransactionStatus(trx.orderId, 'success');
+            refreshTransactions();
+            setPayingOrderId(null);
+          },
+          onPending: function() {
+            alert('Pembayaran pending. Silakan selesaikan pembayaran.');
+            setPayingOrderId(null);
+          },
+          onError: function() {
+            alert('Pembayaran gagal.');
+            setPayingOrderId(null);
+          },
+          onClose: function() {
+            setPayingOrderId(null);
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Pay error:', err);
+      alert('Terjadi kesalahan.');
+      setPayingOrderId(null);
+    }
+  };
+
   const getPaymentMethodText = (method: string) => {
     const methods: Record<string, string> = {
-      qris: 'QRIS',
-      bank_transfer: 'Bank Transfer',
-      ewallet: 'E-Wallet',
-      credit_card: 'Kartu Kredit',
-      gopay: 'GoPay',
-      ovo: 'OVO',
-      dana: 'DANA',
-      shopeepay: 'ShopeePay',
+      qris: 'QRIS', bank_transfer: 'Bank Transfer', ewallet: 'E-Wallet',
+      credit_card: 'Kartu Kredit', gopay: 'GoPay', ovo: 'OVO', dana: 'DANA', shopeepay: 'ShopeePay',
     };
     return methods[method] || method;
   };
@@ -88,25 +139,22 @@ export default function TransactionHistoryPage() {
     setCancelConfirm(null);
   };
 
-  const filtered = filter === 'all' 
-    ? transactions 
-    : transactions.filter(trx => trx.status === filter);
+  const filtered = filter === 'all' ? transactions : transactions.filter(trx => trx.status === filter);
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 16px' }}>
+    <div style={{ minHeight: '100vh', padding: '24px 16px' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '32px' }}>
-          <Link href="/dashboard" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <Link href="/dashboard" style={{ color: '#71717a', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             Kembali
           </Link>
-          <h1 style={{ fontSize: '28px', fontWeight: 'bold', color: 'white', marginBottom: '8px' }}>Riwayat Transaksi</h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>Daftar semua transaksi Anda</p>
+          <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#fff', marginBottom: '4px' }}>Riwayat Transaksi</h1>
+          <p style={{ color: '#71717a', fontSize: '13px' }}>Daftar semua transaksi Anda</p>
         </div>
 
         {/* Filter Tabs */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
           {[
             { id: 'all', label: 'Semua', count: transactions.length },
             { id: 'pending', label: 'Pending', count: transactions.filter(t => t.status === 'pending').length },
@@ -118,27 +166,16 @@ export default function TransactionHistoryPage() {
               key={tab.id}
               onClick={() => setFilter(tab.id as any)}
               style={{
-                padding: '8px 16px',
-                borderRadius: '10px',
-                border: filter === tab.id ? '1px solid rgba(14,165,233,0.5)' : '1px solid rgba(255,255,255,0.1)',
-                background: filter === tab.id ? 'rgba(14,165,233,0.1)' : 'rgba(255,255,255,0.05)',
-                color: filter === tab.id ? '#0ea5e9' : 'rgba(255,255,255,0.6)',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
+                padding: '8px 14px', borderRadius: '10px',
+                border: filter === tab.id ? '1px solid rgba(37,99,235,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                background: filter === tab.id ? 'rgba(37,99,235,0.1)' : 'rgba(255,255,255,0.03)',
+                color: filter === tab.id ? '#3b82f6' : '#a1a1aa',
+                fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
               }}
             >
               {tab.label}
               {tab.count > 0 && (
-                <span style={{ 
-                  padding: '2px 6px', 
-                  borderRadius: '6px', 
-                  background: filter === tab.id ? 'rgba(14,165,233,0.2)' : 'rgba(255,255,255,0.1)',
-                  fontSize: '11px',
-                }}>
+                <span style={{ padding: '2px 6px', borderRadius: '6px', background: filter === tab.id ? 'rgba(37,99,235,0.2)' : 'rgba(255,255,255,0.06)', fontSize: '11px' }}>
                   {tab.count}
                 </span>
               )}
@@ -148,78 +185,33 @@ export default function TransactionHistoryPage() {
 
         {/* Transactions List */}
         {filtered.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {filtered.map((trx) => (
-              <div 
-                key={trx.id} 
-                style={{ 
-                  background: '#161b22', 
-                  borderRadius: '16px', 
-                  border: trx.status === 'pending' ? '1px solid rgba(250,204,21,0.2)' : '1px solid rgba(255,255,255,0.08)', 
-                  padding: '20px',
-                }}
-              >
-                {/* Header Row */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', fontFamily: 'monospace' }}>
-                    {trx.orderId}
-                  </span>
+              <div key={trx.id} style={{ background: '#141414', borderRadius: '10px', border: trx.status === 'pending' ? '1px solid rgba(250,204,21,0.15)' : '1px solid rgba(255,255,255,0.06)', padding: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ color: '#71717a', fontSize: '11px', fontFamily: 'monospace' }}>{trx.orderId}</span>
                   {getStatusBadge(trx.status)}
                 </div>
-
-                {/* Product Info */}
-                <div style={{ marginBottom: '12px' }}>
-                  <h3 style={{ color: 'white', fontSize: '16px', fontWeight: '600', marginBottom: '4px' }}>
-                    {trx.product}
-                  </h3>
-                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>
-                    {trx.variant} × {trx.quantity}
-                  </p>
+                <div style={{ marginBottom: '10px' }}>
+                  <h3 style={{ color: '#fff', fontSize: '15px', fontWeight: '600', marginBottom: '2px' }}>{trx.product}</h3>
+                  <p style={{ color: '#71717a', fontSize: '12px' }}>{trx.variant} &times; {trx.quantity}</p>
                 </div>
-
-                {/* Footer Row */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                   <div>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{formatDate(trx.date)}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{getPaymentMethodText(trx.paymentMethod)}</p>
+                    <p style={{ color: '#71717a', fontSize: '11px' }}>{formatDate(trx.date)}</p>
+                    <p style={{ color: '#71717a', fontSize: '11px' }}>{getPaymentMethodText(trx.paymentMethod)}</p>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ color: 'white', fontSize: '18px', fontWeight: 'bold' }}>
-                      {formatPrice(trx.total)}
-                    </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ color: '#fff', fontSize: '16px', fontWeight: '700' }}>{formatPrice(trx.total)}</span>
                     {trx.status === 'pending' && (
-                      <button
-                        onClick={() => setCancelConfirm(trx.orderId)}
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: '8px',
-                          border: '1px solid rgba(239,68,68,0.3)',
-                          background: 'rgba(239,68,68,0.1)',
-                          color: '#ef4444',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Batalkan
-                      </button>
-                    )}
-                    {trx.status === 'pending' && (
-                      <Link
-                        href={`https://app.sandbox.midtrans.com/snap/v2/vtweb/${trx.orderId}`}
-                        target="_blank"
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: '8px',
-                          background: 'linear-gradient(135deg, #e84393, #6c5ce7)',
-                          color: 'white',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        Bayar
-                      </Link>
+                      <>
+                        <button onClick={() => setCancelConfirm(trx.orderId)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+                          Batalkan
+                        </button>
+                        <button onClick={() => handlePay(trx)} disabled={payingOrderId === trx.orderId} style={{ padding: '7px 14px', borderRadius: '8px', background: '#2563eb', color: '#fff', fontSize: '12px', fontWeight: '600', border: 'none', cursor: payingOrderId === trx.orderId ? 'not-allowed' : 'pointer', opacity: payingOrderId === trx.orderId ? 0.5 : 1 }}>
+                          {payingOrderId === trx.orderId ? '...' : 'Bayar'}
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -227,47 +219,14 @@ export default function TransactionHistoryPage() {
             ))}
           </div>
         ) : (
-          /* Empty State */
-          <div style={{ 
-            background: '#161b22', 
-            borderRadius: '20px', 
-            border: '1px solid rgba(255,255,255,0.08)', 
-            padding: '60px 24px',
-            textAlign: 'center',
-          }}>
-            <div style={{ 
-              width: '80px', 
-              height: '80px', 
-              borderRadius: '50%', 
-              background: 'rgba(255,255,255,0.05)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              margin: '0 auto 20px',
-            }}>
-              <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.2)">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <h3 style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
+          <div style={{ background: '#141414', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', padding: '48px 24px', textAlign: 'center' }}>
+            <h3 style={{ color: '#71717a', fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>
               {filter === 'all' ? 'Belum ada transaksi' : `Tidak ada transaksi ${filter}`}
             </h3>
-            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '14px', marginBottom: '24px' }}>
-              {filter === 'all' ? 'Mulai belanja untuk melihat riwayat transaksi di sini' : 'Coba filter lain'}
+            <p style={{ color: '#52525b', fontSize: '13px', marginBottom: '20px' }}>
+              {filter === 'all' ? 'Mulai belanja untuk melihat riwayat transaksi' : 'Coba filter lain'}
             </p>
-            <Link 
-              href="/dashboard" 
-              style={{ 
-                display: 'inline-block',
-                padding: '12px 24px', 
-                borderRadius: '12px', 
-                background: 'linear-gradient(135deg, #e84393, #6c5ce7)', 
-                color: 'white', 
-                fontSize: '14px', 
-                fontWeight: '600', 
-                textDecoration: 'none',
-              }}
-            >
+            <Link href="/dashboard" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '10px', background: '#2563eb', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }}>
               Mulai Belanja
             </Link>
           </div>
@@ -279,46 +238,14 @@ export default function TransactionHistoryPage() {
         <>
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 100 }} onClick={() => setCancelConfirm(null)} />
           <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '16px' }}>
-            <div style={{ background: '#161b22', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', maxWidth: '400px', textAlign: 'center' }}>
-              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(250,204,21,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="#facc15">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              <h3 style={{ color: 'white', fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>Batalkan Transaksi?</h3>
-              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '24px' }}>
-                Transaksi yang dibatalkan tidak dapat dilanjutkan.
-              </p>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={() => setCancelConfirm(null)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    background: 'rgba(255,255,255,0.05)',
-                    color: 'white',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                  }}
-                >
+            <div style={{ background: '#141414', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', padding: '28px', maxWidth: '380px', width: '100%', textAlign: 'center' }}>
+              <h3 style={{ color: '#fff', fontSize: '17px', fontWeight: '700', marginBottom: '8px' }}>Batalkan Transaksi?</h3>
+              <p style={{ color: '#71717a', fontSize: '13px', marginBottom: '24px' }}>Transaksi yang dibatalkan tidak dapat dilanjutkan.</p>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button onClick={() => setCancelConfirm(null)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)', color: '#fff', fontSize: '13px', cursor: 'pointer' }}>
                   Kembali
                 </button>
-                <button
-                  onClick={() => handleCancel(cancelConfirm)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: '12px',
-                    background: '#ef4444',
-                    color: 'white',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    border: 'none',
-                    cursor: 'pointer',
-                  }}
-                >
+                <button onClick={() => handleCancel(cancelConfirm)} style={{ flex: 1, padding: '10px', borderRadius: '10px', background: '#ef4444', color: '#fff', fontSize: '13px', fontWeight: '600', border: 'none', cursor: 'pointer' }}>
                   Ya, Batalkan
                 </button>
               </div>

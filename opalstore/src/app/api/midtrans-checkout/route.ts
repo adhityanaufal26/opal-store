@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     const totalAmount = price * quantity;
-    const orderId = "OPAL-" + Date.now() + "-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    const orderId = body.orderId || "OPAL-" + Date.now() + "-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
     console.log("orderId:", orderId);
     console.log("totalAmount:", totalAmount);
