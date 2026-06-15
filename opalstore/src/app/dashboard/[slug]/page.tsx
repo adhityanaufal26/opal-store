@@ -253,22 +253,22 @@ export default function ProductDetailPage() {
   const isFormDisabled = displayStock <= 0;
 
   return (
-    <div style={{ minHeight: "100vh", padding: "40px 16px" }}>
+    <div style={{ minHeight: "100vh", padding: "24px 16px" }}>
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-        <Link href="/dashboard" style={{ color: "#71717a", fontSize: "13px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "24px" }}>
+        <Link href="/dashboard" style={{ color: "#71717a", fontSize: "13px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "12px" }}>
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           Kembali
         </Link>
 
-        <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "32px", aspectRatio: "16/10", maxHeight: "260px", background: "#141414" }}>
-          <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "16px", maxHeight: "180px", padding: "16px", background: "#141414" }}>
+          <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
         </div>
 
         <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#fff", marginBottom: "8px", letterSpacing: "-0.01em" }}>{product.name}</h1>
-        <p style={{ color: "#a1a1aa", fontSize: "14px", marginBottom: "24px", lineHeight: "1.7" }}>{product.description}</p>
+        <p style={{ color: "#a1a1aa", fontSize: "14px", marginBottom: "12px", lineHeight: "1.7" }}>{product.description}</p>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ background: "#141414", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", padding: "24px", marginBottom: "24px", opacity: isFormDisabled ? 0.5 : 1, pointerEvents: isFormDisabled ? "none" : "auto" }}>
+          <div style={{ background: "#141414", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", padding: "16px", marginBottom: "16px", opacity: isFormDisabled ? 0.5 : 1, pointerEvents: isFormDisabled ? "none" : "auto" }}>
 
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
               {displayStock > 0 ? (
@@ -279,7 +279,7 @@ export default function ProductDetailPage() {
             </div>
 
             {product.variants && product.variants.length > 0 && (
-              <div style={{ marginBottom: "24px" }}>
+              <div style={{ marginBottom: "14px" }}>
                 <p style={{ color: "#71717a", fontSize: "13px", marginBottom: "12px", fontWeight: "600" }}>Pilih Paket:</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {product.variants.map((variant: any) => {
@@ -287,7 +287,7 @@ export default function ProductDetailPage() {
                     const variantMonthly = variantMatch ? Math.round(variant.price / parseInt(variantMatch[1])) : null;
                     const variantOutOfStock = variant.stock <= 0;
                     return (
-                      <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: "10px", border: selectedVariant === variant.name ? "1px solid rgba(37,99,235,0.4)" : "1px solid rgba(255,255,255,0.06)", background: selectedVariant === variant.name ? "rgba(37,99,235,0.08)" : "rgba(255,255,255,0.02)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.35 : 1 }}>
+                      <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderRadius: "10px", border: selectedVariant === variant.name ? "1px solid rgba(37,99,235,0.4)" : "1px solid rgba(255,255,255,0.06)", background: selectedVariant === variant.name ? "rgba(37,99,235,0.08)" : "rgba(255,255,255,0.02)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.35 : 1 }}>
                         <div style={{ textAlign: "left" }}>
                           <p style={{ color: variantOutOfStock ? "#71717a" : "#fff", fontSize: "14px", fontWeight: "600" }}>{variant.name}{variantOutOfStock && " (Habis)"}</p>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -304,7 +304,7 @@ export default function ProductDetailPage() {
             )}
 
             {monthlyPrice && (
-              <div style={{ marginBottom: "24px", padding: "16px", background: "rgba(37,99,235,0.06)", borderRadius: "10px", border: "1px solid rgba(37,99,235,0.15)" }}>
+              <div style={{ marginBottom: "14px", padding: "16px", background: "rgba(37,99,235,0.06)", borderRadius: "10px", border: "1px solid rgba(37,99,235,0.15)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                   <div>
@@ -315,9 +315,9 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "24px 0" }}></div>
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "14px 0" }}></div>
 
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "14px" }}>
               <p style={{ color: "#71717a", fontSize: "13px", marginBottom: "12px", fontWeight: "600" }}>Jumlah:</p>
               <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                 <div style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,0.04)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)" }}>
@@ -329,9 +329,9 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "24px 0" }}></div>
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "14px 0" }}></div>
 
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "14px" }}>
               <p style={{ color: "#71717a", fontSize: "13px", marginBottom: "16px", fontWeight: "600" }}>Data Pembeli:</p>
               <div style={{ marginBottom: "16px" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "13px", marginBottom: "6px" }}>Nomor WhatsApp *</label>
@@ -345,9 +345,9 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "24px 0" }}></div>
+            <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "14px 0" }}></div>
 
-            <div style={{ marginBottom: "24px", padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ marginBottom: "14px", padding: "16px", background: "rgba(255,255,255,0.02)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                 <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#71717a"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                 <p style={{ color: "#a1a1aa", fontSize: "14px", fontWeight: "600" }}>Metode Pembayaran</p>
