@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("Midtrans checkout error:", error);
+    console.error("Midtrans checkout error:", JSON.stringify(error?.response?.data || error?.message || error, null, 2));
     return NextResponse.json(
       { error: error.message || "Failed to create transaction" },
       { status: 500 }

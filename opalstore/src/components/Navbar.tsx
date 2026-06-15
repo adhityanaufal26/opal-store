@@ -42,7 +42,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <div style={{ display: "none", alignItems: "center", gap: "32px" }} className="md:flex">
+            <div className="hidden md:flex" style={{ alignItems: "center", gap: "32px" }}>
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href} style={{ fontSize: "14px", fontWeight: "500", color: isActive(link.href) ? "#fff" : "#71717a", textDecoration: "none", transition: "color 0.2s" }}>
                   {link.label}
@@ -51,7 +51,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Actions */}
-            <div style={{ display: "none", alignItems: "center", gap: "12px" }} className="md:flex">
+            <div className="hidden md:flex" style={{ alignItems: "center", gap: "12px" }}>
               {user || session ? (
                 <>
                   <Link
