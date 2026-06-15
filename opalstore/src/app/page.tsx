@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/lib/data";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
 
-  const featuredProducts = products
-    .filter((p) => p.badges?.includes("best_seller"))
-    .slice(0, 6);
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setFeaturedProducts(data.data.slice(0, 6));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
 
   const faqs = [
     {
