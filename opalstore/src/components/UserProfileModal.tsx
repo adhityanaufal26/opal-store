@@ -62,25 +62,25 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
         <div style={{ width: '100%', maxWidth: '400px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden', background: '#141414' }} onClick={(e) => e.stopPropagation()}>
 
           {/* Header */}
-          <div style={{ position: 'relative', height: '48px', background: '#d97706' }}>
-            <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '10px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
+          <div style={{ position: 'relative', height: '80px', background: '#d97706' }}>
+            <button onClick={onClose} style={{ position: 'absolute', top: '14px', right: '14px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#fff"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
 
           {/* Avatar */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-28px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-40px' }}>
             {avatarUrl ? (
-              <img src={avatarUrl} alt={displayName} style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', objectFit: 'contain', background: '#1a1a1a' }} />
+              <img src={avatarUrl} alt={displayName} style={{ width: '84px', height: '84px', borderRadius: '50%', border: '4px solid #141414', objectFit: 'contain', background: '#1a1a1a' }} />
             ) : (
-              <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '3px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: '700', color: '#fff', background: '#d97706' }}>
+              <div style={{ width: '84px', height: '84px', borderRadius: '50%', border: '4px solid #141414', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', fontWeight: '700', color: '#fff', background: '#d97706' }}>
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
 
           {/* Name & Email */}
-          <div style={{ textAlign: 'center', padding: '10px 20px 14px' }}>
+          <div style={{ textAlign: 'center', padding: '14px 20px 18px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>{displayName}</h3>
             <p style={{ color: '#71717a', fontSize: '13px', marginTop: '2px' }}>{displayEmail}</p>
           </div>
