@@ -263,7 +263,7 @@ export default function AdminPage() {
           {products.map((product) => {
             const id = product._id || product.id;
             return (
-              <div key={id} style={{ background: "#161b22", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.08)", padding: "20px", display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
+              <div key={id} style={{ background: "#141414", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.08)", padding: "20px", display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
                 {/* Image */}
                 <div style={{ width: "80px", height: "80px", borderRadius: "12px", overflow: "hidden", flexShrink: 0, background: "rgba(255,255,255,0.05)" }}>
                   <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -275,7 +275,7 @@ export default function AdminPage() {
                   <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", marginBottom: "8px" }}>{product.description?.substring(0, 80)}...</p>
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                     <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(217,119,6,0.1)", color: "#d97706", fontSize: "12px" }}>{product.variants?.length || 0} variant</span>
-                    <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(139,92,246,0.1)", color: "#a78bfa", fontSize: "12px" }}>{formatPrice(Math.min(...(product.variants?.map(v => v.price) || [0])))}</span>
+                    <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(217,119,6,0.1)", color: "#f59e0b", fontSize: "12px" }}>{formatPrice(Math.min(...(product.variants?.map(v => v.price) || [0])))}</span>
                   </div>
                 </div>
 
@@ -296,7 +296,7 @@ export default function AdminPage() {
           })}
 
           {products.length === 0 && (
-            <div style={{ background: "#161b22", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.08)", padding: "60px", textAlign: "center" }}>
+            <div style={{ background: "#141414", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.08)", padding: "60px", textAlign: "center" }}>
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "16px" }}>Belum ada produk. Klik "Tambah Produk" untuk menambahkan.</p>
             </div>
           )}
@@ -308,9 +308,9 @@ export default function AdminPage() {
         <>
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 100 }} onClick={() => setShowModal(false)} />
           <div style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 110, padding: "16px" }}>
-            <div style={{ background: "#161b22", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflow: "auto" }}>
+            <div style={{ background: "#141414", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflow: "auto" }}>
               {/* Modal Header */}
-              <div style={{ padding: "24px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#161b22", zIndex: 10 }}>
+              <div style={{ padding: "24px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#141414", zIndex: 10 }}>
                 <h2 style={{ fontSize: "20px", fontWeight: "bold", color: "white" }}>{editingProduct ? "Edit Produk" : "Tambah Produk"}</h2>
                 <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
                   <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -398,7 +398,7 @@ export default function AdminPage() {
         <>
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 100 }} onClick={() => setDeleteConfirm(null)} />
           <div style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 110, padding: "16px" }}>
-            <div style={{ background: "#161b22", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", padding: "32px", maxWidth: "400px", textAlign: "center" }}>
+            <div style={{ background: "#141414", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", padding: "32px", maxWidth: "400px", textAlign: "center" }}>
               <div style={{ width: "60px", height: "60px", borderRadius: "50%", background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
                 <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="#ef4444"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </div>

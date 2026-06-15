@@ -67,7 +67,7 @@ export default function TransactionHistoryPage() {
       pending: { bg: 'rgba(250,204,21,0.1)', color: '#facc15', text: 'Menunggu Bayar' },
       success: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e', text: 'Berhasil' },
       failed: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', text: 'Gagal' },
-      cancelled: { bg: 'rgba(113,113,122,0.1)', color: '#71717a', text: 'Dibatalkan' },
+      cancelled: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', text: 'Dibatalkan' },
     };
     const style = styles[status] || styles.pending;
     return (
