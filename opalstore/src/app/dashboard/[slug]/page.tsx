@@ -260,7 +260,7 @@ export default function ProductDetailPage() {
           Kembali
         </Link>
 
-        <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "32px", aspectRatio: "4/3", maxHeight: "320px", background: "#141414" }}>
+        <div style={{ borderRadius: "14px", overflow: "hidden", marginBottom: "32px", aspectRatio: "16/10", maxHeight: "260px", background: "#141414" }}>
           <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
 

@@ -91,7 +91,7 @@ function DashboardContent() {
         </div>
 
         {/* Products Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "20px" }}>
+        <div className="product-grid">
           {filtered.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}

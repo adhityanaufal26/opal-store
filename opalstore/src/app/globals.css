@@ -51,7 +51,7 @@ body {
 .card {
   background: #141414;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
+  border-radius: 10px;
   transition: all 0.2s ease;
 }
 
@@ -59,6 +59,27 @@ body {
   background: #1a1a1a;
   border-color: rgba(255, 255, 255, 0.1);
   transform: translateY(-1px);
+}
+
+/* Product grid - 2 cols mobile, 3 tablet, 4 desktop */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
 }
 
 .navbar {

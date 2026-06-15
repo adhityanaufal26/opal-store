@@ -82,7 +82,7 @@ export default function HomePage() {
             <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Langganan AI premium dengan harga terjangkau</p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "20px" }}>
+          <div className="product-grid">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id || product._id} product={product} />
             ))}

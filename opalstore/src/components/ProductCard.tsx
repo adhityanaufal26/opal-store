@@ -40,32 +40,26 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/dashboard/${product.slug}`} style={{ textDecoration: "none" }}>
       <div className="card" style={{ padding: 0, opacity: isOutOfStock ? 0.5 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}>
-        {/* Image */}
-        <div style={{ position: "relative", aspectRatio: "4/3", maxHeight: "200px", background: "#1a1a1a", overflow: "hidden" }}>
+        <div style={{ position: "relative", aspectRatio: "1/1", background: "#1a1a1a", overflow: "hidden" }}>
           <img src={imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           {totalStock > 0 ? (
-            <div style={{ position: "absolute", top: "12px", right: "12px" }}>
-              <span style={{ padding: "4px 10px", fontSize: "11px", fontWeight: "600", borderRadius: "8px", background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)" }}>
-                Stok: {totalStock}
-              </span>
-            </div>
+            <span style={{ position: "absolute", top: "6px", right: "6px", padding: "2px 7px", fontSize: "10px", fontWeight: "600", borderRadius: "6px", background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)" }}>
+              Stok: {totalStock}
+            </span>
           ) : (
-            <div style={{ position: "absolute", top: "12px", right: "12px" }}>
-              <span style={{ padding: "4px 10px", fontSize: "11px", fontWeight: "600", borderRadius: "8px", background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)" }}>
-                Habis
-              </span>
-            </div>
+            <span style={{ position: "absolute", top: "6px", right: "6px", padding: "2px 7px", fontSize: "10px", fontWeight: "600", borderRadius: "6px", background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)" }}>
+              Habis
+            </span>
           )}
         </div>
 
-        {/* Name & Price */}
-        <div style={{ padding: "16px" }}>
-          <h3 style={{ fontWeight: "700", fontSize: "14px", textAlign: "center", marginBottom: "6px", color: isOutOfStock ? "#71717a" : "#fff" }}>
+        <div style={{ padding: "10px 8px" }}>
+          <h3 style={{ fontWeight: "700", fontSize: "12px", textAlign: "center", marginBottom: "3px", color: isOutOfStock ? "#71717a" : "#fff", lineHeight: "1.3" }}>
             {product.name}
           </h3>
           {showMonthlyPrice && (
-            <p style={{ textAlign: "center", fontSize: "12px", color: "#3b82f6", fontWeight: "600" }}>
-              Mulai {formatPrice(minMonthly)}/bulan
+            <p style={{ textAlign: "center", fontSize: "11px", color: "#3b82f6", fontWeight: "600" }}>
+              Mulai {formatPrice(minMonthly)}/bln
             </p>
           )}
         </div>
