@@ -141,7 +141,11 @@ export default function ProductDetailPage() {
     const emailError = validateEmail(formData.email);
     setErrors({ whatsapp: whatsappError, email: emailError });
     if (whatsappError || emailError) return;
-    if (displayStock && quantity > displayStock) {
+    if (displayStock <= 0) {
+      alert("Produk ini sedang habis!");
+      return;
+    }
+    if (quantity > displayStock) {
       alert("Stok tidak cukup! Maksimal " + displayStock + " pcs.");
       return;
     }
@@ -278,16 +282,17 @@ export default function ProductDetailPage() {
                   {product.variants.map((variant: any) => {
                     const variantMatch = variant.name.match(/(\d+)\s*Bulan/i);
                     const variantMonthly = variantMatch ? Math.round(variant.price / parseInt(variantMatch[1])) : null;
+                    const variantOutOfStock = variant.stock <= 0;
                     return (
-                      <button type="button" key={variant.name} onClick={() => setSelectedVariant(variant.name)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: "12px", border: selectedVariant === variant.name ? "1px solid rgba(14,165,233,0.5)" : "1px solid rgba(255,255,255,0.1)", background: selectedVariant === variant.name ? "rgba(14,165,233,0.1)" : "rgba(255,255,255,0.03)", cursor: "pointer" }}>
+                      <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", borderRadius: "12px", border: selectedVariant === variant.name ? "1px solid rgba(14,165,233,0.5)" : "1px solid rgba(255,255,255,0.1)", background: selectedVariant === variant.name ? "rgba(14,165,233,0.1)" : "rgba(255,255,255,0.03)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.4 : 1 }}>
                         <div style={{ textAlign: "left" }}>
-                          <p style={{ color: "white", fontSize: "14px", fontWeight: "600" }}>{variant.name}</p>
+                          <p style={{ color: variantOutOfStock ? "rgba(255,255,255,0.4)" : "white", fontSize: "14px", fontWeight: "600" }}>{variant.name}{variantOutOfStock && " (Habis)"}</p>
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>Stok: {variant.stock}</p>
+                            <p style={{ color: variantOutOfStock ? "#f87171" : "rgba(255,255,255,0.4)", fontSize: "12px" }}>Stok: {variant.stock}</p>
                             {variantMonthly && <span style={{ color: "#0ea5e9", fontSize: "11px", fontWeight: "600", padding: "2px 6px", background: "rgba(14,165,233,0.1)", borderRadius: "4px" }}>{formatPrice(variantMonthly)}/bln</span>}
                           </div>
                         </div>
-                        <span style={{ color: selectedVariant === variant.name ? "#0ea5e9" : "rgba(255,255,255,0.7)", fontWeight: "bold", fontSize: "15px" }}>{formatPrice(variant.price)}</span>
+                        <span style={{ color: variantOutOfStock ? "rgba(255,255,255,0.3)" : selectedVariant === variant.name ? "#0ea5e9" : "rgba(255,255,255,0.7)", fontWeight: "bold", fontSize: "15px", textDecoration: variantOutOfStock ? "line-through" : "none" }}>{formatPrice(variant.price)}</span>
                       </button>
                     );
                   })}
@@ -313,9 +318,9 @@ export default function ProductDetailPage() {
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "12px", fontWeight: "600" }}>Jumlah:</p>
               <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                 <div style={{ display: "flex", alignItems: "center", background: "rgba(255,255,255,0.06)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <button type="button" onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1} style={{ padding: "12px 16px", background: "none", border: "none", color: quantity <= 1 ? "rgba(255,255,255,0.2)" : "white", fontSize: "18px", cursor: quantity <= 1 ? "not-allowed" : "pointer" }}>-</button>
-                  <input type="number" min="1" max={displayStock || 99} value={quantity} onChange={(e) => { const val = parseInt(e.target.value); if (!isNaN(val) && val >= 1 && (!displayStock || val <= displayStock)) setQuantity(val); }} style={{ width: "60px", textAlign: "center", background: "none", border: "none", borderLeft: "1px solid rgba(255,255,255,0.1)", borderRight: "1px solid rgba(255,255,255,0.1)", color: "white", fontSize: "16px", fontWeight: "bold", outline: "none", padding: "12px 0" }} />
-                  <button type="button" onClick={() => handleQuantityChange(quantity + 1)} disabled={displayStock ? quantity >= displayStock : false} style={{ padding: "12px 16px", background: "none", border: "none", color: displayStock && quantity >= displayStock ? "rgba(255,255,255,0.2)" : "white", fontSize: "18px", cursor: displayStock && quantity >= displayStock ? "not-allowed" : "pointer" }}>+</button>
+                  <button type="button" onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1 || displayStock <= 0} style={{ padding: "12px 16px", background: "none", border: "none", color: (quantity <= 1 || displayStock <= 0) ? "rgba(255,255,255,0.2)" : "white", fontSize: "18px", cursor: (quantity <= 1 || displayStock <= 0) ? "not-allowed" : "pointer" }}>-</button>
+                  <input type="number" min="1" max={displayStock || 99} value={quantity} disabled={displayStock <= 0} onChange={(e) => { const val = parseInt(e.target.value); if (!isNaN(val) && val >= 1 && (!displayStock || val <= displayStock)) setQuantity(val); }} style={{ width: "60px", textAlign: "center", background: "none", border: "none", borderLeft: "1px solid rgba(255,255,255,0.1)", borderRight: "1px solid rgba(255,255,255,0.1)", color: displayStock <= 0 ? "rgba(255,255,255,0.3)" : "white", fontSize: "16px", fontWeight: "bold", outline: "none", padding: "12px 0", cursor: displayStock <= 0 ? "not-allowed" : "auto" }} />
+                  <button type="button" onClick={() => handleQuantityChange(quantity + 1)} disabled={displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)} style={{ padding: "12px 16px", background: "none", border: "none", color: (displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)) ? "rgba(255,255,255,0.2)" : "white", fontSize: "18px", cursor: (displayStock <= 0 || (displayStock > 0 && quantity >= displayStock)) ? "not-allowed" : "pointer" }}>+</button>
                 </div>
                 <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px" }}>{displayStock ? "Maks. " + displayStock : ""}</span>
               </div>
@@ -363,7 +368,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <button type="submit" disabled={isSubmitting || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: isSubmitting ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: isSubmitting ? "not-allowed" : "pointer", opacity: isSubmitting ? 0.7 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            <button type="submit" disabled={isSubmitting || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || displayStock <= 0) ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: (isSubmitting || displayStock <= 0) ? "not-allowed" : "pointer", opacity: (isSubmitting || displayStock <= 0) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
               {isSubmitting ? (
                 <><div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>Memproses...</>
               ) : (
@@ -375,6 +380,12 @@ export default function ProductDetailPage() {
               <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>Powered by <span style={{ color: "rgba(255,255,255,0.5)" }}>Midtrans</span> • Pembayaran aman & terenkripsi</p>
             </div>
           </div>
+          {displayStock <= 0 && (
+            <div style={{ position: "relative", marginTop: "-16px", marginBottom: "16px", padding: "20px", background: "rgba(248,113,113,0.15)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "16px", textAlign: "center" }}>
+              <p style={{ color: "#f87171", fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>🚫 Stok Habis</p>
+              <p style={{ color: "rgba(248,113,113,0.7)", fontSize: "13px" }}>Produk ini sedang tidak tersedia. Silakan pilih varian lain atau cek kembali nanti.</p>
+            </div>
+          )}
         </form>
       </div>
     </div>
