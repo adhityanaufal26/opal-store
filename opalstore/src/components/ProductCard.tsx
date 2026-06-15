@@ -56,12 +56,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           ) : (
             <>
-              {/* Out-of-stock badge in top-right */}
-              <div className="absolute top-3 right-3 z-10">
-                <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
-                  Habis
-                </span>
-              </div>
               {/* Diagonal HABIS ribbon overlay */}
               <div
                 className="absolute inset-0 z-20 pointer-events-none"
