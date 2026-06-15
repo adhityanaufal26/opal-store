@@ -263,7 +263,7 @@ export default function ProductDetailPage() {
         <div style={{ marginBottom: "16px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "#141414", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <img src={product.image} alt={product.name} style={{ width: "74px", height: "74px", objectFit: "contain", background: "transparent" }} />
+              <img src={product.image} alt={product.name} style={{ width: "74px", height: "74px", objectFit: "contain", background: "transparent", borderRadius: "18px" }} />
             </div>
             <h1 style={{ fontSize: "17px", fontWeight: "800", color: "#fff", letterSpacing: "-0.01em", lineHeight: "1.2" }}>{product.name}</h1>
           </div>
