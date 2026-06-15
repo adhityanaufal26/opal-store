@@ -35,7 +35,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const totalStock = getTotalStock(product);
   const imageUrl = product.image || product.preview_image;
   const isOutOfStock = totalStock === 0;
-  const showMonthlyPrice = minMonthly && !isOutOfStock;
 
   return (
     <Link href={`/dashboard/${product.slug}`} style={{ textDecoration: "none" }}>
@@ -53,15 +52,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        <div style={{ padding: "10px 8px" }}>
+        <div style={{ padding: "10px 8px", minHeight: "44px" }}>
           <h3 style={{ fontWeight: "700", fontSize: "12px", textAlign: "center", marginBottom: "3px", color: isOutOfStock ? "#71717a" : "#fff", lineHeight: "1.3" }}>
             {product.name}
           </h3>
-          {showMonthlyPrice && (
-            <p style={{ textAlign: "center", fontSize: "11px", color: "#3b82f6", fontWeight: "600" }}>
-              Mulai {formatPrice(minMonthly)}/bln
-            </p>
-          )}
+          <p style={{ textAlign: "center", fontSize: "11px", color: isOutOfStock ? "transparent" : "#3b82f6", fontWeight: "600" }}>
+            {minMonthly && !isOutOfStock ? `Mulai ${formatPrice(minMonthly)}/bln` : "\u00A0"}
+          </p>
         </div>
       </div>
     </Link>
