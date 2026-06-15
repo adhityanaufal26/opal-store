@@ -23,7 +23,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               <a
-                href="https://wa.me/6281234567890"
+                href="https://wa.me/6285669130605?text=Halo%20OpalStore"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"

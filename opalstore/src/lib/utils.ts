@@ -95,7 +95,7 @@ export function getSubscriptionStatusColor(status: string): string {
   return colors[status] || 'text-text-secondary';
 }
 
-export const WHATSAPP_NUMBER = '6281234567890';
+export const WHATSAPP_NUMBER = '6285669130605';
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 export const WHATSAPP_ORDER_LINK = (productName: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Halo, saya ingin bertanya tentang produk: ${productName}`)}`;
