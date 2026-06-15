@@ -23,7 +23,7 @@ export default function PaymentCancelPage() {
             style={{ 
               padding: '14px', 
               borderRadius: '12px', 
-              background: 'linear-gradient(135deg, #e84393, #6c5ce7)', 
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
               color: 'white', 
               textDecoration: 'none', 
               fontWeight: '600',

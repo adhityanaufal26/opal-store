@@ -78,13 +78,13 @@ function DashboardContent() {
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <button
               onClick={() => setSelectedCategory("all")}
-              style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === "all" ? "1px solid rgba(217,119,6,0.4)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === "all" ? "rgba(217,119,6,0.12)" : "rgba(255,255,255,0.03)", color: selectedCategory === "all" ? "#2dd4bf" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+              style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === "all" ? "1px solid rgba(217,119,6,0.4)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === "all" ? "rgba(217,119,6,0.12)" : "rgba(255,255,255,0.03)", color: selectedCategory === "all" ? "#f59e0b" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
             >Semua</button>
             {categories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.name)}
-                style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === cat.name ? "1px solid rgba(217,119,6,0.4)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat.name ? "rgba(217,119,6,0.12)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat.name ? "#2dd4bf" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === cat.name ? "1px solid rgba(217,119,6,0.4)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat.name ? "rgba(217,119,6,0.12)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat.name ? "#f59e0b" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
               >{cat.name}</button>
             ))}
           </div>

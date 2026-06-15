@@ -47,7 +47,7 @@ function PaymentSuccessContent() {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: "60px", height: "60px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "#14b8a6", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }}></div>
+          <div style={{ width: "60px", height: "60px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "#d97706", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }}></div>
           <p style={{ color: "rgba(255,255,255,0.5)" }}>Memproses pesanan...</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ function PaymentSuccessContent() {
           </div>
           <h2 style={{ color: "white", fontSize: "24px", fontWeight: "bold", marginBottom: "8px" }}>Error</h2>
           <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "24px" }}>{error}</p>
-          <Link href="/dashboard" style={{ padding: "12px 24px", borderRadius: "12px", background: "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", textDecoration: "none", fontWeight: "600" }}>Kembali ke Dashboard</Link>
+          <Link href="/dashboard" style={{ padding: "12px 24px", borderRadius: "12px", background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white", textDecoration: "none", fontWeight: "600" }}>Kembali ke Dashboard</Link>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ function PaymentSuccessContent() {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0" }}>
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Total Bayar</span>
-              <span style={{ color: "#14b8a6", fontSize: "18px", fontWeight: "bold" }}>{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(orderData?.totalAmount || 0)}</span>
+              <span style={{ color: "#d97706", fontSize: "18px", fontWeight: "bold" }}>{new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(orderData?.totalAmount || 0)}</span>
             </div>
           </div>
         </div>
@@ -109,8 +109,8 @@ function PaymentSuccessContent() {
             <div>
               <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "16px" }}>Klik link di bawah untuk mengakses produk Anda:</p>
               <div style={{ background: "rgba(217,119,6,0.1)", border: "1px solid rgba(217,119,6,0.3)", borderRadius: "12px", padding: "16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
-                <a href={orderData.outputValue} target="_blank" rel="noopener noreferrer" style={{ color: "#14b8a6", fontSize: "14px", textDecoration: "none", wordBreak: "break-all", flex: 1 }}>{orderData.outputValue}</a>
-                <button onClick={() => copyToClipboard(orderData.outputValue)} style={{ padding: "8px 16px", borderRadius: "8px", background: "rgba(217,119,6,0.2)", border: "1px solid rgba(217,119,6,0.3)", color: "#14b8a6", fontSize: "12px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>Salin</button>
+                <a href={orderData.outputValue} target="_blank" rel="noopener noreferrer" style={{ color: "#d97706", fontSize: "14px", textDecoration: "none", wordBreak: "break-all", flex: 1 }}>{orderData.outputValue}</a>
+                <button onClick={() => copyToClipboard(orderData.outputValue)} style={{ padding: "8px 16px", borderRadius: "8px", background: "rgba(217,119,6,0.2)", border: "1px solid rgba(217,119,6,0.3)", color: "#d97706", fontSize: "12px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>Salin</button>
               </div>
             </div>
           )}
@@ -118,7 +118,7 @@ function PaymentSuccessContent() {
           {orderData?.outputType === "file" && (
             <div>
               <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "16px" }}>Download file produk Anda:</p>
-              <a href={orderData.outputValue} download style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "16px", borderRadius: "12px", background: "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", textDecoration: "none", fontWeight: "600", fontSize: "16px" }}>
+              <a href={orderData.outputValue} download style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", padding: "16px", borderRadius: "12px", background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white", textDecoration: "none", fontWeight: "600", fontSize: "16px" }}>
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 Download File
               </a>
@@ -156,7 +156,7 @@ function PaymentSuccessContent() {
 
         <div style={{ display: "flex", gap: "12px" }}>
           <Link href="/dashboard" style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Belanja Lagi</Link>
-          <Link href="/transactions" style={{ flex: 1, padding: "14px", borderRadius: "12px", background: "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Riwayat Transaksi</Link>
+          <Link href="/transactions" style={{ flex: 1, padding: "14px", borderRadius: "12px", background: "linear-gradient(135deg, #f59e0b, #d97706)", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Riwayat Transaksi</Link>
         </div>
       </div>
     </div>

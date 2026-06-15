@@ -48,7 +48,7 @@ export default function HomePage() {
       <section style={{ minHeight: "85vh", display: "flex", alignItems: "center" }}>
         <div className="max-w-4xl mx-auto text-center px-4">
           <div className="mb-6">
-            <span style={{ display: "inline-block", padding: "6px 16px", fontSize: "13px", fontWeight: "500", borderRadius: "999px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.08)", color: "#2dd4bf", letterSpacing: "0.02em" }}>
+            <span style={{ display: "inline-block", padding: "6px 16px", fontSize: "13px", fontWeight: "500", borderRadius: "999px", border: "1px solid rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.08)", color: "#f59e0b", letterSpacing: "0.02em" }}>
               Toko Digital Indonesia
             </span>
           </div>
@@ -56,7 +56,7 @@ export default function HomePage() {
           <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: "800", lineHeight: "1.1", marginBottom: "24px", letterSpacing: "-0.02em" }}>
             Akses AI Premium
             <br />
-            <span style={{ color: "#2dd4bf" }}>Harga Terjangkau</span>
+            <span style={{ color: "#f59e0b" }}>Harga Terjangkau</span>
           </h1>
 
           <p style={{ fontSize: "16px", color: "#a1a1aa", maxWidth: "560px", margin: "0 auto 40px", lineHeight: "1.7" }}>
@@ -66,7 +66,7 @@ export default function HomePage() {
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
               href="/dashboard"
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#14b8a6", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#d97706", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
             >
               Lihat Produk
             </Link>
@@ -122,7 +122,7 @@ export default function HomePage() {
               { num: "4", title: "Terima Akses", desc: "Akses produk dikirim via WhatsApp setelah pembayaran terkonfirmasi" },
             ].map((step, i) => (
               <div key={i} style={{ textAlign: "center" }}>
-                <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(217,119,6,0.1)", color: "#2dd4bf", borderRadius: "12px", fontSize: "18px", fontWeight: "700", margin: "0 auto 16px" }}>
+                <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(217,119,6,0.1)", color: "#f59e0b", borderRadius: "12px", fontSize: "18px", fontWeight: "700", margin: "0 auto 16px" }}>
                   {step.num}
                 </div>
                 <h3 style={{ fontWeight: "700", fontSize: "15px", marginBottom: "8px" }}>{step.title}</h3>
@@ -171,7 +171,7 @@ export default function HomePage() {
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
               href="/dashboard"
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#14b8a6", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#d97706", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
             >
               Belanja Sekarang
             </Link>
