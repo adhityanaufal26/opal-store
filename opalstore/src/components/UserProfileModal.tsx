@@ -69,7 +69,7 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
           </div>
 
           {/* Avatar */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-40px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-40px', position: 'relative', zIndex: 10 }}>
             {avatarUrl ? (
               <img src={avatarUrl} alt={displayName} style={{ width: '84px', height: '84px', borderRadius: '50%', border: '4px solid #141414', objectFit: 'contain', background: '#1a1a1a' }} />
             ) : (
@@ -80,7 +80,7 @@ export default function UserProfileModal({ isOpen, onClose }: UserProfileModalPr
           </div>
 
           {/* Name & Email */}
-          <div style={{ textAlign: 'center', padding: '14px 20px 18px' }}>
+          <div style={{ textAlign: 'center', padding: '14px 20px 18px', position: 'relative', zIndex: 10 }}>
             <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>{displayName}</h3>
             <p style={{ color: '#71717a', fontSize: '13px', marginTop: '2px' }}>{displayEmail}</p>
           </div>
