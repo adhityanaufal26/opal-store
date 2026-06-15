@@ -41,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Link href={`/dashboard/${product.slug}`} style={{ textDecoration: "none" }}>
       <div className="card" style={{ padding: 0, opacity: isOutOfStock ? 0.5 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}>
         {/* Image */}
-        <div style={{ position: "relative", aspectRatio: "1/1", background: "#1a1a1a", overflow: "hidden" }}>
+        <div style={{ position: "relative", aspectRatio: "4/3", maxHeight: "200px", background: "#1a1a1a", overflow: "hidden" }}>
           <img src={imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           {totalStock > 0 ? (
             <div style={{ position: "absolute", top: "12px", right: "12px" }}>
