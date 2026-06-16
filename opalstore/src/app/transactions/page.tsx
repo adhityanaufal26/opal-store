@@ -5,22 +5,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
 import { useSession } from 'next-auth/react';
-import { useTransactions, Transaction } from '@/lib/transaction-context';
-
-declare global {
-  interface Window {
-    snap: any;
-  }
-}
+import { useTransactions } from '@/lib/transaction-context';
 
 export default function TransactionHistoryPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const { data: session } = useSession();
-  const { transactions, cancelTransaction, updateTransactionStatus, refreshTransactions } = useTransactions();
+  const { transactions, cancelTransaction, refreshTransactions } = useTransactions();
   const [filter, setFilter] = useState<'all' | 'pending' | 'success' | 'failed' | 'cancelled'>('all');
   const [cancelConfirm, setCancelConfirm] = useState<string | null>(null);
-  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoading && !user && !session) {
@@ -28,13 +21,23 @@ export default function TransactionHistoryPage() {
     }
   }, [user, session, isLoading, router]);
 
+  // Auto-cancel pending transactions older than 1 hour
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-    script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || '');
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
+    const ONE_HOUR = 60 * 60 * 1000;
+    const now = Date.now();
+    transactions.forEach(trx => {
+      if (trx.status === 'pending') {
+        const age = now - new Date(trx.date).getTime();
+        if (age > ONE_HOUR) {
+          cancelTransaction(trx.orderId);
+        }
+      }
+    });
+  }, [transactions, cancelTransaction]);
+
+  // Refresh on mount
+  useEffect(() => {
+    refreshTransactions();
   }, []);
 
   if (isLoading) {
@@ -62,6 +65,15 @@ export default function TransactionHistoryPage() {
     });
   };
 
+  const getTimeLeft = (dateStr: string) => {
+    const ONE_HOUR = 60 * 60 * 1000;
+    const elapsed = Date.now() - new Date(dateStr).getTime();
+    const remaining = ONE_HOUR - elapsed;
+    if (remaining <= 0) return 'Segera dibatalkan';
+    const mins = Math.floor(remaining / 60000);
+    return `${mins} menit lagi`;
+  };
+
   const getStatusBadge = (status: string) => {
     const styles: Record<string, { bg: string; color: string; text: string }> = {
       pending: { bg: 'rgba(250,204,21,0.1)', color: '#facc15', text: 'Menunggu Bayar' },
@@ -75,55 +87,6 @@ export default function TransactionHistoryPage() {
         {style.text}
       </span>
     );
-  };
-
-  const handlePay = async (trx: any) => {
-    setPayingOrderId(trx.orderId);
-    try {
-      const res = await fetch('/api/midtrans-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productName: trx.product,
-          variantName: trx.variant,
-          price: Math.round(trx.total / trx.quantity),
-          quantity: trx.quantity,
-          customerEmail: trx.customerEmail,
-          customerWhatsapp: trx.customerWhatsapp,
-          orderId: trx.orderId,
-        }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        alert('Error: ' + data.error);
-        setPayingOrderId(null);
-        return;
-      }
-      if (window.snap && data.token) {
-        window.snap.pay(data.token, {
-          onSuccess: function() {
-            updateTransactionStatus(trx.orderId, 'success');
-            refreshTransactions();
-            setPayingOrderId(null);
-          },
-          onPending: function() {
-            alert('Pembayaran pending. Silakan selesaikan pembayaran.');
-            setPayingOrderId(null);
-          },
-          onError: function() {
-            alert('Pembayaran gagal.');
-            setPayingOrderId(null);
-          },
-          onClose: function() {
-            setPayingOrderId(null);
-          }
-        });
-      }
-    } catch (err) {
-      console.error('Pay error:', err);
-      alert('Terjadi kesalahan.');
-      setPayingOrderId(null);
-    }
   };
 
   const getPaymentMethodText = (method: string) => {
@@ -200,18 +163,16 @@ export default function TransactionHistoryPage() {
                   <div>
                     <p style={{ color: '#71717a', fontSize: '11px' }}>{formatDate(trx.date)}</p>
                     <p style={{ color: '#71717a', fontSize: '11px' }}>{getPaymentMethodText(trx.paymentMethod)}</p>
+                    {trx.status === 'pending' && (
+                      <p style={{ color: '#facc15', fontSize: '11px', marginTop: '4px' }}>Auto-cancel: {getTimeLeft(trx.date)}</p>
+                    )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#fff', fontSize: '16px', fontWeight: '700' }}>{formatPrice(trx.total)}</span>
                     {trx.status === 'pending' && (
-                      <>
-                        <button onClick={() => setCancelConfirm(trx.orderId)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
-                          Batalkan
-                        </button>
-                        <button onClick={() => handlePay(trx)} disabled={payingOrderId === trx.orderId} style={{ padding: '7px 14px', borderRadius: '8px', background: '#d97706', color: '#fff', fontSize: '12px', fontWeight: '600', border: 'none', cursor: payingOrderId === trx.orderId ? 'not-allowed' : 'pointer', opacity: payingOrderId === trx.orderId ? 0.5 : 1 }}>
-                          {payingOrderId === trx.orderId ? '...' : 'Bayar'}
-                        </button>
-                      </>
+                      <button onClick={() => setCancelConfirm(trx.orderId)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+                        Batalkan
+                      </button>
                     )}
                   </div>
                 </div>
@@ -240,7 +201,7 @@ export default function TransactionHistoryPage() {
           <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '16px' }}>
             <div style={{ background: '#141414', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', padding: '28px', maxWidth: '380px', width: '100%', textAlign: 'center' }}>
               <h3 style={{ color: '#fff', fontSize: '17px', fontWeight: '700', marginBottom: '8px' }}>Batalkan Transaksi?</h3>
-              <p style={{ color: '#71717a', fontSize: '13px', marginBottom: '24px' }}>Transaksi yang dibatalkan tidak dapat dilanjutkan.</p>
+              <p style={{ color: '#71717a', fontSize: '13px', marginBottom: '24px' }}>Transaksi yang dibatalkan tidak dapat dilanjutkan. Buat transaksi baru untuk melanjutkan.</p>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button onClick={() => setCancelConfirm(null)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)', color: '#fff', fontSize: '13px', cursor: 'pointer' }}>
                   Kembali

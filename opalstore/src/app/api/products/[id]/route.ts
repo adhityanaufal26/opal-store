@@ -12,6 +12,24 @@ async function requireAdmin() {
   return session;
 }
 
+function sanitizeProduct(p: any) {
+  return {
+    _id: p._id,
+    name: p.name,
+    slug: p.slug,
+    description: p.description,
+    category: p.category,
+    image: p.image,
+    isActive: p.isActive,
+    variants: p.variants?.map((v: any) => ({
+      name: v.name,
+      price: v.price,
+      stock: v.stock || 0,
+      inStock: (v.stock || 0) > 0,
+    })),
+  };
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -23,7 +41,18 @@ export async function GET(
     if (!product) {
       return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
     }
-    return NextResponse.json({ success: true, data: product });
+
+    // Check if admin request
+    const { searchParams } = new URL(request.url);
+    if (searchParams.get("admin") === "true") {
+      const session = await requireAdmin();
+      if (session) {
+        return NextResponse.json({ success: true, data: product });
+      }
+    }
+
+    // Public: strip internal fields
+    return NextResponse.json({ success: true, data: sanitizeProduct(product) });
   } catch (error) {
     return NextResponse.json({ success: false, error: "Failed to fetch product" }, { status: 500 });
   }

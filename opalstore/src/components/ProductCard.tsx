@@ -2,14 +2,14 @@ import Link from "next/link";
 import { Product } from "@/lib/types";
 
 interface ProductCardProps {
-  product: Product & { variants?: { name: string; price: number; stock: number }[]; image?: string };
+  product: Product & { variants?: { name: string; price: number; stock?: number; inStock?: boolean }[]; image?: string };
 }
 
 function getTotalStock(product: ProductCardProps["product"]): number {
   if (product.variants && product.variants.length > 0) {
     return product.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
   }
-  return product.stock || 0;
+  return 0;
 }
 
 function getMinMonthlyPrice(product: ProductCardProps["product"]): number | null {

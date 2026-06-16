@@ -20,7 +20,8 @@ export interface ProductVariant {
   id: string;
   name: string;
   price: number;
-  stock: number;
+  stock?: number;
+  inStock?: boolean;
 }
 
 export interface Product {

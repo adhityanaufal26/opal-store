@@ -11,8 +11,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // If not logged in and trying to access checkout, redirect to login
-  if (!token && pathname === '/checkout') {
+  // If not logged in and trying to access checkout or dashboard, redirect to login
+  if (!token && (pathname === '/checkout' || pathname.startsWith('/dashboard'))) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
@@ -20,5 +20,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/login', '/register', '/checkout'],
+  matcher: ['/login', '/register', '/checkout', '/dashboard/:path*'],
 };

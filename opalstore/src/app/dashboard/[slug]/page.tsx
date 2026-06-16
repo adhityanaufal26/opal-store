@@ -18,7 +18,7 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const { data: session } = useSession();
-  const { addTransaction, updateTransactionStatus } = useTransactions();
+  const { addTransaction, updateTransactionStatus, refreshTransactions } = useTransactions();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<string>("");
@@ -35,6 +35,13 @@ export default function ProductDetailPage() {
     email: "",
   });
 
+  const [toast, setToast] = useState<{ message: string; type: 'error' | 'success' | 'info' } | null>(null);
+
+  const showToast = (message: string, type: 'error' | 'success' | 'info' = 'error') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   useEffect(() => {
     fetchProduct();
   }, [params]);
@@ -48,7 +55,7 @@ export default function ProductDetailPage() {
         if (found) {
           setProduct(found);
           if (found.variants && found.variants.length > 0) {
-            const firstInStock = found.variants.find((v: any) => v.stock > 0);
+            const firstInStock = found.variants.find((v: any) => v.inStock !== false);
             setSelectedVariant(firstInStock ? firstInStock.name : found.variants[0].name);
           }
         }
@@ -93,7 +100,8 @@ export default function ProductDetailPage() {
 
   const currentVariant = product.variants?.find((v: any) => v.name === selectedVariant);
   const displayPrice = currentVariant ? currentVariant.price : product.price;
-  const displayStock = currentVariant ? currentVariant.stock : 0;
+  const displayStock = currentVariant?.stock || 0;
+  const displayVariantInStock = currentVariant ? currentVariant.inStock !== false : true;
   const displayName = currentVariant ? currentVariant.name : product.name;
   const totalPrice = displayPrice * quantity;
 
@@ -138,16 +146,20 @@ export default function ProductDetailPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user && !session) {
+      router.push("/login?callbackUrl=" + encodeURIComponent(window.location.pathname));
+      return;
+    }
     const whatsappError = validateWhatsapp(formData.whatsapp);
     const emailError = validateEmail(formData.email);
     setErrors({ whatsapp: whatsappError, email: emailError });
     if (whatsappError || emailError) return;
-    if (displayStock <= 0) {
-      alert("Produk ini sedang habis!");
+    if (!displayVariantInStock) {
+      showToast("Produk ini sedang habis!", "error");
       return;
     }
-    if (quantity > displayStock) {
-      alert("Stok tidak cukup! Maksimal " + displayStock + " pcs.");
+    if (displayStock && quantity > displayStock) {
+      showToast("Stok tidak cukup! Maksimal " + displayStock + " pcs.", "error");
       return;
     }
 
@@ -171,7 +183,7 @@ export default function ProductDetailPage() {
 
       const data = await response.json();
       if (data.error) {
-        alert("Error: " + data.error);
+        showToast(data.error, "error");
         setIsSubmitting(false);
         return;
       }
@@ -185,7 +197,7 @@ export default function ProductDetailPage() {
         body: JSON.stringify({
           orderId: data.orderId,
           userId: userId,
-          productId: product._id,
+          productId: product.id,
           productName: product.name,
           variantName: displayName,
           quantity: quantity,
@@ -216,27 +228,30 @@ export default function ProductDetailPage() {
         window.snap.pay(data.token, {
           onSuccess: function(result: any) {
             console.log("Payment success:", result);
-            updateTransactionStatus(data.orderId, "success");
-            fetch("/api/reduce-stock", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ orderId: data.orderId }),
-            }).catch(err => console.error("Stock reduction error:", err));
-            router.push("/payment/success?order_id=" + data.orderId);
+            // 1. Save proof in localStorage (sync - always completes)
+            localStorage.setItem("opal_pay_" + data.orderId, "success");
+            // 2. Update DB via sendBeacon (fire-and-forget, survives page unload)
+            var payload = JSON.stringify({ status: "success", midtransStatus: "settlement" });
+            var blob = new Blob([payload], { type: "application/json" });
+            navigator.sendBeacon("/api/transactions/" + encodeURIComponent(data.orderId), blob);
+            // 3. Redirect parent page (fallback if callbacks.finish doesn't work)
+            window.location.href = "/payment/success?order_id=" + data.orderId;
           },
           onPending: function(result: any) {
             console.log("Payment pending:", result);
-            alert("Pembayaran pending. Silakan selesaikan pembayaran.");
+            showToast("Pembayaran pending. Silakan selesaikan pembayaran.", "info");
             setIsSubmitting(false);
           },
           onError: function(result: any) {
             console.log("Payment error:", result);
             updateTransactionStatus(data.orderId, "failed");
-            alert("Pembayaran gagal. Silakan coba lagi.");
+            showToast("Pembayaran gagal. Silakan coba lagi.", "error");
             setIsSubmitting(false);
           },
           onClose: function() {
             console.log("Payment popup closed");
+            refreshTransactions();
+            router.push("/transactions");
             setIsSubmitting(false);
           }
         });
@@ -245,12 +260,12 @@ export default function ProductDetailPage() {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      alert("Terjadi kesalahan. Silakan coba lagi.");
+      showToast("Terjadi kesalahan. Silakan coba lagi.", "error");
       setIsSubmitting(false);
     }
   };
 
-  const isFormDisabled = displayStock <= 0;
+  const isFormDisabled = !displayVariantInStock;
 
   return (
     <div style={{ minHeight: "100vh", padding: "24px 16px" }}>
@@ -274,8 +289,8 @@ export default function ProductDetailPage() {
           <div style={{ background: "#141414", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.06)", padding: "16px", marginBottom: "16px", opacity: isFormDisabled ? 0.5 : 1, pointerEvents: isFormDisabled ? "none" : "auto" }}>
 
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
-              {displayStock > 0 ? (
-                <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e", display: "inline-block" }}></span><span style={{ color: "#22c55e", fontSize: "13px", fontWeight: "500" }}>Stok tersedia: {displayStock}</span></>
+              {displayVariantInStock ? (
+                <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e", display: "inline-block" }}></span><span style={{ color: "#22c55e", fontSize: "13px", fontWeight: "500" }}>Stok: {displayStock}</span></>
               ) : (
                 <><span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444", display: "inline-block" }}></span><span style={{ color: "#ef4444", fontSize: "13px", fontWeight: "500" }}>Stok habis</span></>
               )}
@@ -288,7 +303,7 @@ export default function ProductDetailPage() {
                   {product.variants.map((variant: any) => {
                     const variantMatch = variant.name.match(/(\d+)\s*Bulan/i);
                     const variantMonthly = variantMatch ? Math.round(variant.price / parseInt(variantMatch[1])) : null;
-                    const variantOutOfStock = variant.stock <= 0;
+                    const variantOutOfStock = variant.inStock === false;
                     return (
                       <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderRadius: "10px", border: selectedVariant === variant.name ? "1px solid rgba(217,119,6,0.4)" : "1px solid rgba(255,255,255,0.06)", background: selectedVariant === variant.name ? "rgba(217,119,6,0.08)" : "rgba(255,255,255,0.02)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.35 : 1 }}>
                         <div style={{ textAlign: "left" }}>
@@ -339,12 +354,22 @@ export default function ProductDetailPage() {
               <div style={{ marginBottom: "16px" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "13px", marginBottom: "6px" }}>Nomor WhatsApp *</label>
                 <input type="tel" required placeholder="628123456789" value={formData.whatsapp} onChange={(e) => handleWhatsappChange(e.target.value)} onBlur={() => setErrors({ ...errors, whatsapp: validateWhatsapp(formData.whatsapp) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.04)", border: errors.whatsapp ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", color: "#fff", fontSize: "14px", outline: "none" }} />
-                {errors.whatsapp && <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{errors.whatsapp}</p>}
+                {errors.whatsapp && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px", padding: "10px 14px", background: "rgba(239,68,68,0.08)", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.15)" }}>
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#ef4444"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span style={{ color: "#fca5a5", fontSize: "12px", fontWeight: "500" }}>{errors.whatsapp}</span>
+                </div>
+              )}
               </div>
               <div>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "13px", marginBottom: "6px" }}>Email *</label>
                 <input type="email" required placeholder="nama@email.com" value={formData.email} onChange={(e) => { setFormData({ ...formData, email: e.target.value }); if (errors.email) setErrors({ ...errors, email: "" }); }} onBlur={() => setErrors({ ...errors, email: validateEmail(formData.email) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.04)", border: errors.email ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", color: "#fff", fontSize: "14px", outline: "none" }} />
-                {errors.email && <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{errors.email}</p>}
+                {errors.email && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px", padding: "10px 14px", background: "rgba(239,68,68,0.08)", borderRadius: "10px", border: "1px solid rgba(239,68,68,0.15)" }}>
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#ef4444"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span style={{ color: "#fca5a5", fontSize: "12px", fontWeight: "500" }}>{errors.email}</span>
+                </div>
+              )}
               </div>
             </div>
 
@@ -397,6 +422,43 @@ export default function ProductDetailPage() {
           )}
         </form>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div style={{
+          position: "fixed",
+          top: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1000,
+          padding: "14px 20px",
+          borderRadius: "12px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          minWidth: "280px",
+          maxWidth: "90vw",
+          background: toast.type === 'error' ? "rgba(239,68,68,0.15)" : toast.type === 'success' ? "rgba(34,197,94,0.15)" : "rgba(59,130,246,0.15)",
+          border: `1px solid ${toast.type === 'error' ? "rgba(239,68,68,0.3)" : toast.type === 'success' ? "rgba(34,197,94,0.3)" : "rgba(59,130,246,0.3)"}`,
+          backdropFilter: "blur(12px)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+        }}>
+          {toast.type === 'error' && (
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#ef4444"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          )}
+          {toast.type === 'success' && (
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#22c55e"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          )}
+          {toast.type === 'info' && (
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#3b82f6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          )}
+          <span style={{
+            color: toast.type === 'error' ? "#fca5a5" : toast.type === 'success' ? "#86efac" : "#93c5fd",
+            fontSize: "13px",
+            fontWeight: "500",
+          }}>{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -93,7 +93,7 @@ function DashboardContent() {
         {/* Products Grid */}
         <div className="product-grid">
           {filtered.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
 

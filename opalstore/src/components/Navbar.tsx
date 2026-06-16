@@ -53,6 +53,14 @@ export default function Navbar() {
               {user || session ? (
                 <>
                   <Link
+                    href="/dashboard"
+                    style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", borderRadius: "10px", color: isActive("/dashboard") ? "#f59e0b" : "#71717a", textDecoration: "none", transition: "color 0.2s" }}
+                  >
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    <span style={{ fontSize: "14px", fontWeight: "500" }}>Dashboard</span>
+                  </Link>
+
+                  <Link
                     href="/transactions"
                     style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", borderRadius: "10px", color: isActive("/transactions") ? "#f59e0b" : "#71717a", textDecoration: "none", transition: "color 0.2s", position: "relative" }}
                   >
@@ -124,6 +132,11 @@ export default function Navbar() {
               <div style={{ paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
                 {user || session ? (
                   <>
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "10px", fontSize: "14px", color: "#a1a1aa", textDecoration: "none" }}>
+                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                      Dashboard
+                    </Link>
+
                     <Link href="/transactions" onClick={() => setMobileMenuOpen(false)} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 16px", borderRadius: "10px", fontSize: "14px", color: "#a1a1aa", textDecoration: "none", position: "relative" }}>
                       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                       Riwayat Transaksi

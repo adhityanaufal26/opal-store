@@ -77,45 +77,36 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Load transactions on mount: API first, localStorage as fallback
+  // Load transactions on mount: API only, no localStorage cross-account leak
   useEffect(() => {
     const loadTransactions = async () => {
       const email = getUserEmail();
-      
+      const cachedEmail = localStorage.getItem("opalstore_trx_email");
+
+      // Account changed — clear stale localStorage immediately
+      if (cachedEmail && email && cachedEmail !== email) {
+        localStorage.removeItem("opalstore_transactions");
+        setTransactions([]);
+      }
+
       if (email) {
-        // Fetch from MongoDB API
+        // Always fetch from MongoDB API — single source of truth
+        localStorage.setItem("opalstore_trx_email", email);
         const apiTransactions = await fetchFromAPI(email);
-        if (apiTransactions.length > 0) {
-          setTransactions(apiTransactions);
-          // Also update localStorage cache
-          localStorage.setItem("opalstore_transactions", JSON.stringify(apiTransactions));
-        } else {
-          // Fallback to localStorage if API returns empty
-          const saved = localStorage.getItem("opalstore_transactions");
-          if (saved) {
-            try {
-              setTransactions(JSON.parse(saved));
-            } catch {
-              localStorage.removeItem("opalstore_transactions");
-            }
-          }
-        }
+        setTransactions(apiTransactions);
+        // Cache for offline/faster reload (same account only)
+        localStorage.setItem("opalstore_transactions", JSON.stringify(apiTransactions));
       } else {
-        // No email — use localStorage only
-        const saved = localStorage.getItem("opalstore_transactions");
-        if (saved) {
-          try {
-            setTransactions(JSON.parse(saved));
-          } catch {
-            localStorage.removeItem("opalstore_transactions");
-          }
-        }
+        // No email (logged out) — clear everything
+        localStorage.removeItem("opalstore_transactions");
+        localStorage.removeItem("opalstore_trx_email");
+        setTransactions([]);
       }
       setIsLoaded(true);
     };
 
     loadTransactions();
-  }, [session]);
+  }, [session?.user?.email]);
 
   // Save to localStorage whenever transactions change
   useEffect(() => {
