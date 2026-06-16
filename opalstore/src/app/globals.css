@@ -345,7 +345,6 @@ a {
 
 @media (max-width: 639px) {
   .product-grid .card > div:first-child {
-    aspect-ratio: 4/3 !important;
   }
   .product-grid .card h3 {
     font-size: 11px !important;

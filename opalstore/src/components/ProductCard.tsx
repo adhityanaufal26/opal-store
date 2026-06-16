@@ -39,8 +39,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/dashboard/${product.slug}`} style={{ textDecoration: "none" }}>
       <div className="card" style={{ padding: 0, opacity: isOutOfStock ? 0.5 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}>
-        <div style={{ position: "relative", aspectRatio: "1/1", background: "#121212", overflow: "hidden" }}>
-          <img src={imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "relative", aspectRatio: "1/1", background: "#0C0C0C", overflow: "hidden", padding: "12px" }}>
+          <img src={imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           {totalStock > 0 ? (
             <span style={{ position: "absolute", top: "6px", right: "6px", padding: "2px 7px", fontSize: "10px", fontWeight: "600", borderRadius: "6px", background: "rgba(0,214,143,0.15)", color: "#00D68F", border: "1px solid rgba(0,214,143,0.2)" }}>
               Stok: {totalStock}
