@@ -5,6 +5,7 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import { MongoClient } from "mongodb";
 import { connectDB } from "./mongodb";
 import User from "@/models/User";
+import bcrypt from "bcryptjs";
 
 const MONGODB_URI = process.env.MONGODB_URI || "";
 
@@ -27,12 +28,29 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email) return null;
+        if (!credentials?.email || !credentials?.password) return null;
+
+        await connectDB();
+
+        // Find user with password field (select: false by default)
+        const user = await User.findOne({
+          email: credentials.email.toLowerCase(),
+        }).select("+password");
+
+        if (!user) return null;
+
+        // Google-only users don't have a password
+        if (!user.password) return null;
+
+        // Verify password
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) return null;
+
         return {
-          id: `user-${Date.now()}`,
-          name: credentials.email.split("@")[0],
-          email: credentials.email,
-          role: credentials.email.includes("admin") ? "admin" : "user",
+          id: user._id.toString(),
+          name: user.name,
+          email: user.email,
+          role: user.email.includes("admin") ? "admin" : "user",
         };
       },
     }),

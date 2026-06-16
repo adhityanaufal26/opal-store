@@ -88,9 +88,20 @@ function RegisterContent() {
     try {
       const success = await register(formData.name, formData.email, '', formData.password);
       if (success) {
-        router.push('/dashboard');
+        // Auto-login after register via NextAuth
+        const loginResult = await signIn('credentials', {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+        if (loginResult?.ok) {
+          router.push('/dashboard');
+          router.refresh();
+        } else {
+          router.push('/login');
+        }
       } else {
-        setError('Registrasi gagal');
+        setError('Registrasi gagal. Email mungkin sudah terdaftar.');
       }
     } catch (err) {
       setError('Registrasi gagal. Silakan coba lagi.');
