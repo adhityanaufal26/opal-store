@@ -1,19 +1,21 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/lib/auth-context';
 import { Providers } from './providers';
 
-const inter = Inter({
-  variable: '--font-inter',
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-space-grotesk',
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
-  title: 'OpalStore - Toko Digital & Langganan AI',
-  description: 'Toko digital terpercaya untuk akses AI premium, langganan Gemini Pro, dan produk digital lainnya.',
+  title: 'OpalStore - Digital Products & AI Subscription Store',
+  description:
+    'Your trusted source for AI digital products, templates, prompts, workflows, and subscription plans. By Opal Agent.',
 };
 
 export default function RootLayout({
@@ -22,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${spaceGrotesk.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         <Providers>
           <AuthProvider>

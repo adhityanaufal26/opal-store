@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0a0a;
-  --color-card: #141414;
-  --color-card-hover: #1a1a1a;
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-primary: #d97706;
-  --color-primary-dark: #b45309;
-  --color-primary-light: #f59e0b;
-  --color-accent: #d97706;
-  --color-success: #22c55e;
-  --color-warning: #eab308;
-  --color-danger: #ef4444;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1aa;
-  --color-text-muted: #71717a;
-  --color-surface: #141414;
-  --color-surface-light: #1a1a1a;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  --color-background: #0F0F0F;
+  --color-card: #1A1A1A;
+  --color-card-hover: #222222;
+  --color-border: #333333;
+  --color-border-bold: #444444;
+  --color-primary: #FFE500;
+  --color-primary-dark: #CCB800;
+  --color-primary-light: #FFF176;
+  --color-accent: #FF2D6B;
+  --color-accent-light: #FF6B9D;
+  --color-success: #00FF87;
+  --color-warning: #FFB800;
+  --color-danger: #FF3333;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #B0B0B0;
+  --color-text-muted: #777777;
+  --color-surface: #1A1A1A;
+  --color-surface-light: #222222;
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -32,96 +33,198 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ═══ ANTI-PERFECT: grain texture overlay ═══ */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 200px;
-}
-
+/* Scrollbar — Neo Brutalism */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-background);
-  border-left: 2px dashed rgba(255, 255, 255, 0.05);
+  background: #0F0F0F;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0;
+  background: #333;
+  border: 2px solid #0F0F0F;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: #FFE500;
 }
 
-/* ═══ ANTI-PERFECT: cards with intentional roughness ═══ */
+/* Card — Neo Brutalism: bold border, solid shadow */
 .card {
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 2px 14px 2px 14px;
-  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
-  position: relative;
-}
-
-.card::after {
-  content: '';
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid var(--color-primary);
-  border-right: 2px solid var(--color-primary);
-  opacity: 0.4;
+  background: #1A1A1A;
+  border: 3px solid #333333;
+  border-radius: 4px;
+  transition: all 0.15s ease;
 }
 
 .card:hover {
-  background: #1a1a1a;
-  border-color: rgba(217, 119, 6, 0.2);
-  transform: rotate(-0.3deg) translateY(-2px);
+  background: #222222;
+  border-color: #FFE500;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px #FFE500;
 }
 
-/* Product grid */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+/* Glass card — raw brutalist */
+.glass-card {
+  background: #1A1A1A;
+  border: 3px solid #333333;
+  border-radius: 4px;
 }
 
-@media (min-width: 640px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
+/* Feature icon backgrounds — solid flat colors */
+.icon-purple {
+  background: #FF2D6B;
+  color: #0F0F0F;
+  border-radius: 4px;
+  border: 2px solid #0F0F0F;
 }
 
-@media (min-width: 1024px) {
-  .product-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
+.icon-pink {
+  background: #FF6B9D;
+  color: #0F0F0F;
+  border-radius: 4px;
+  border: 2px solid #0F0F0F;
 }
 
-/* ═══ ANTI-PERFECT: navbar with visible structure ═══ */
-.navbar {
-  background: rgba(10, 10, 10, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 2px dashed rgba(255, 255, 255, 0.06);
+.icon-green {
+  background: #00FF87;
+  color: #0F0F0F;
+  border-radius: 4px;
+  border: 2px solid #0F0F0F;
 }
 
+.icon-cyan {
+  background: #FFE500;
+  color: #0F0F0F;
+  border-radius: 4px;
+  border: 2px solid #0F0F0F;
+}
+
+.icon-amber {
+  background: #FFB800;
+  color: #0F0F0F;
+  border-radius: 4px;
+  border: 2px solid #0F0F0F;
+}
+
+.icon-blue {
+  background: #FF2D6B;
+  color: #0F0F0F;
+  border-radius: 4px;
+  border: 2px solid #0F0F0F;
+}
+
+/* Gradient utilities — Neo Brutalism: solid bold */
+.gradient-text {
+  background: #FFE500;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg {
+  background: #FFE500;
+  color: #0F0F0F;
+  border: 3px solid #0F0F0F;
+  box-shadow: 4px 4px 0px #0F0F0F;
+}
+
+.gradient-bg-pink {
+  background: #FF2D6B;
+  color: #FFFFFF;
+  border: 3px solid #0F0F0F;
+  box-shadow: 4px 4px 0px #0F0F0F;
+}
+
+.gradient-bg-green {
+  background: #00FF87;
+  color: #0F0F0F;
+  border: 3px solid #0F0F0F;
+  box-shadow: 4px 4px 0px #0F0F0F;
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 3px;
+  background: #FFE500;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+.glow {
+  box-shadow: 4px 4px 0px #FFE500;
+}
+
+.glow-hover:hover {
+  box-shadow: 6px 6px 0px #FFE500;
+  transform: translate(-2px, -2px);
+}
+
+/* Hero animated lines — brutalist grid */
+.hero-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-line {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, #333333, transparent);
+}
+
+.hero-line-1 { left: 20%; }
+.hero-line-2 { left: 50%; }
+.hero-line-3 { left: 80%; }
+
+/* Section dividers */
 .section {
-  background: #0a0a0a;
+  background: #0F0F0F;
 }
 
-/* ═══ ANTI-PERFECT: form inputs with raw feel ═══ */
+/* Code block — raw monospace */
+.code-block {
+  background: #111111;
+  border: 3px solid #333333;
+  border-radius: 0px;
+  font-family: 'JetBrains Mono', 'Space Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #FFE500;
+}
+
+/* Navbar — bold brutalist */
+.navbar {
+  background: #0F0F0F;
+  border-bottom: 3px solid #333333;
+}
+
+/* ============================================
+   GLOBAL OVERRIDES — Neo Brutalism
+   Bold borders, solid shadows, flat colors
+   ============================================ */
+
+/* All cards — raw square */
+.bg-card {
+  background: #1A1A1A;
+  border: 3px solid #333333;
+  border-radius: 4px;
+}
+
+/* Form inputs — brutalist flat */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -130,90 +233,83 @@ input[type="search"],
 input[type="number"],
 textarea,
 select {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 2px 8px 2px 8px;
-  color: var(--color-text-primary);
-  padding: 12px 14px;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s;
+  background: #111111 !important;
+  border: 3px solid #333333 !important;
+  border-radius: 2px !important;
+  color: #FFFFFF;
+  transition: all 0.1s ease;
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 3px 3px 0 rgba(217, 119, 6, 0.15);
+  border-color: #FFE500 !important;
+  outline: none;
+  box-shadow: 3px 3px 0px #FFE500;
 }
 
-/* ═══ ANTI-PERFECT: buttons with brutalist edge ═══ */
-button {
-  border-radius: 2px 10px 2px 10px;
+input::placeholder,
+textarea::placeholder {
+  color: #555555;
 }
 
-/* ═══ ANTI-PERFECT: hero text with intentional imperfection ═══ */
-h1 {
-  letter-spacing: -0.03em;
+/* All buttons — brutalist style */
+button[type="submit"],
+.gradient-bg {
+  border-radius: 2px;
 }
 
-/* ═══ ANTI-PERFECT: links with raw underline ═══ */
-a {
-  text-decoration-style: wavy;
-  text-underline-offset: 3px;
+/* Link buttons inside cards */
+.bg-surface {
+  background: #1A1A1A;
+  border: 3px solid #333333;
+  border-radius: 4px;
 }
 
-/* ═══ ANTI-PERFECT: selection color ═══ */
+/* Radio/checkbox labels */
+input[type="radio"],
+input[type="checkbox"] {
+  accent-color: #FFE500;
+}
+
+/* Select dropdown styling */
+select option {
+  background: #111111;
+  color: #FFFFFF;
+}
+
+/* Tab buttons in admin */
+button[class*="rounded-lg"] {
+  border-radius: 2px;
+}
+
+/* Status badges — solid */
+.bg-success\/20,
+.bg-warning\/20,
+.bg-danger\/20,
+.bg-accent\/20 {
+  border-radius: 2px;
+  border: 2px solid currentColor;
+}
+
+/* Smooth page transitions */
+.min-h-screen {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Selection color */
 ::selection {
-  background: rgba(217, 119, 6, 0.3);
-  color: #fff;
+  background: #FFE500;
+  color: #0F0F0F;
 }
 
-/* ═══ ANTI-PERFECT: visible grid lines ═══ */
-.product-grid > *:nth-child(odd) {
-  transform: rotate(-0.2deg);
-}
-
-.product-grid > *:nth-child(even) {
-  transform: rotate(0.2deg);
-}
-
-/* ═══ ANTI-PERFECT: monospace accents on prices ═══ */
-[style*="font-weight: 800"],
-[style*="font-weight: 700"] {
-  font-variant-numeric: tabular-nums;
-}
-
-/* ═══ ANTI-PERFECT: toast with rough edges ═══ */
-@keyframes glitch-in {
-  0% { transform: translate(-50%, -10px) skewX(-2deg); opacity: 0; }
-  50% { transform: translate(-50%, 0) skewX(1deg); }
-  100% { transform: translate(-50%, 0) skewX(0); opacity: 1; }
-}
-
-/* ═══ ANTI-PERFECT: footer with visible structure ═══ */
-footer {
-  border-top: 2px dashed rgba(255, 255, 255, 0.06);
-}
-
-/* ═══ ANTI-PERFECT: monospace for order IDs ═══ */
-[style*="monospace"] {
-  font-family: var(--font-mono) !important;
-  font-size: 12px;
-  letter-spacing: 0.05em;
-}
-
-/* ═══ ANTI-PERFECT: status badges with rough edges ═══ */
-span[style*="border-radius: 8px"],
-span[style*="border-radius: 6px"] {
-  border-radius: 2px 6px 2px 6px !important;
-}
-
-/* ═══ ANTI-PERFECT: spinner with imperfection ═══ */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(92deg); }
-  50% { transform: rotate(178deg); }
-  75% { transform: rotate(271deg); }
-  100% { transform: rotate(360deg); }
+/* Links */
+a {
+  transition: color 0.1s ease;
 }
