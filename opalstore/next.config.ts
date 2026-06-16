@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://js.stripe.com https://app.sandbox.midtrans.com https://*.midtrans.com",
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-            "img-src 'self' data: blob: https: http:",
+            "img-src 'self' data: blob: https:",
             "font-src 'self' https://fonts.gstatic.com",
             "connect-src 'self' https://api.midtrans.com https://app.sandbox.midtrans.com https://api.stripe.com wss: ws:",
             "frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://hooks.stripe.com https://app.sandbox.midtrans.com https://*.midtrans.com",
