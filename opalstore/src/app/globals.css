@@ -1,24 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0F0F0F;
-  --color-card: #1A1A1A;
-  --color-card-hover: #222222;
-  --color-border: #333333;
-  --color-border-bold: #444444;
-  --color-primary: #FFE500;
-  --color-primary-dark: #CCB800;
-  --color-primary-light: #FFF176;
-  --color-accent: #FF2D6B;
-  --color-accent-light: #FF6B9D;
-  --color-success: #00FF87;
-  --color-warning: #FFB800;
-  --color-danger: #FF3333;
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #B0B0B0;
-  --color-text-muted: #777777;
-  --color-surface: #1A1A1A;
-  --color-surface-light: #222222;
+  --color-background: #080808;
+  --color-card: #121212;
+  --color-card-hover: #1A1A1A;
+  --color-border: #2A2A2A;
+  --color-border-bold: #333333;
+  --color-primary: #FF6B2C;
+  --color-primary-dark: #E55A1B;
+  --color-primary-light: #FF8F5C;
+  --color-accent: #FFD93D;
+  --color-accent-light: #FFE577;
+  --color-success: #00D68F;
+  --color-warning: #FFAA00;
+  --color-danger: #FF4D6A;
+  --color-text-primary: #F0F0F0;
+  --color-text-secondary: #999999;
+  --color-text-muted: #555555;
+  --color-surface: #121212;
+  --color-surface-light: #1A1A1A;
+  --color-tertiary: #7C5CFC;
+  --color-tertiary-light: #9B82FF;
   --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -33,116 +35,116 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar — Neo Brutalism */
+/* Scrollbar — Brutalist */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0F0F0F;
+  background: #080808;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border: 2px solid #0F0F0F;
+  background: #2A2A2A;
+  border: 2px solid #080808;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FFE500;
+  background: #FF6B2C;
 }
 
-/* Card — Neo Brutalism: bold border, solid shadow */
+/* Card — Brutalist: bold border, solid shadow */
 .card {
-  background: #1A1A1A;
-  border: 3px solid #333333;
-  border-radius: 4px;
+  background: #121212;
+  border: 2px solid #2A2A2A;
+  border-radius: 6px;
   transition: all 0.15s ease;
 }
 
 .card:hover {
-  background: #222222;
-  border-color: #FFE500;
+  background: #1A1A1A;
+  border-color: #FF6B2C;
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px #FFE500;
+  box-shadow: 4px 4px 0px #FF6B2C;
 }
 
 /* Glass card — raw brutalist */
 .glass-card {
-  background: #1A1A1A;
-  border: 3px solid #333333;
-  border-radius: 4px;
+  background: #121212;
+  border: 2px solid #2A2A2A;
+  border-radius: 6px;
 }
 
-/* Feature icon backgrounds — solid flat colors */
+/* Feature icon backgrounds — cohesive warm palette */
 .icon-purple {
-  background: #FF2D6B;
-  color: #0F0F0F;
-  border-radius: 4px;
-  border: 2px solid #0F0F0F;
+  background: #7C5CFC;
+  color: #FFFFFF;
+  border-radius: 6px;
+  border: 2px solid #080808;
 }
 
 .icon-pink {
-  background: #FF6B9D;
-  color: #0F0F0F;
-  border-radius: 4px;
-  border: 2px solid #0F0F0F;
+  background: #FF4D6A;
+  color: #FFFFFF;
+  border-radius: 6px;
+  border: 2px solid #080808;
 }
 
 .icon-green {
-  background: #00FF87;
-  color: #0F0F0F;
-  border-radius: 4px;
-  border: 2px solid #0F0F0F;
+  background: #00D68F;
+  color: #080808;
+  border-radius: 6px;
+  border: 2px solid #080808;
 }
 
 .icon-cyan {
-  background: #FFE500;
-  color: #0F0F0F;
-  border-radius: 4px;
-  border: 2px solid #0F0F0F;
+  background: #FFD93D;
+  color: #080808;
+  border-radius: 6px;
+  border: 2px solid #080808;
 }
 
 .icon-amber {
-  background: #FFB800;
-  color: #0F0F0F;
-  border-radius: 4px;
-  border: 2px solid #0F0F0F;
+  background: #FFAA00;
+  color: #080808;
+  border-radius: 6px;
+  border: 2px solid #080808;
 }
 
 .icon-blue {
-  background: #FF2D6B;
-  color: #0F0F0F;
-  border-radius: 4px;
-  border: 2px solid #0F0F0F;
+  background: #7C5CFC;
+  color: #FFFFFF;
+  border-radius: 6px;
+  border: 2px solid #080808;
 }
 
-/* Gradient utilities — Neo Brutalism: solid bold */
+/* Gradient utilities — warm brutalist */
 .gradient-text {
-  background: #FFE500;
+  background: linear-gradient(135deg, #FF6B2C, #FFD93D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-bg {
-  background: #FFE500;
-  color: #0F0F0F;
-  border: 3px solid #0F0F0F;
-  box-shadow: 4px 4px 0px #0F0F0F;
+  background: #FF6B2C;
+  color: #FFFFFF;
+  border: 2px solid #080808;
+  box-shadow: 4px 4px 0px #080808;
 }
 
 .gradient-bg-pink {
-  background: #FF2D6B;
+  background: #FF4D6A;
   color: #FFFFFF;
-  border: 3px solid #0F0F0F;
-  box-shadow: 4px 4px 0px #0F0F0F;
+  border: 2px solid #080808;
+  box-shadow: 4px 4px 0px #080808;
 }
 
 .gradient-bg-green {
-  background: #00FF87;
-  color: #0F0F0F;
-  border: 3px solid #0F0F0F;
-  box-shadow: 4px 4px 0px #0F0F0F;
+  background: #00D68F;
+  color: #080808;
+  border: 2px solid #080808;
+  box-shadow: 4px 4px 0px #080808;
 }
 
 .gradient-border {
@@ -154,8 +156,8 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 3px;
-  background: #FFE500;
+  padding: 2px;
+  background: linear-gradient(135deg, #FF6B2C, #7C5CFC);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   -webkit-mask-composite: xor;
@@ -163,15 +165,15 @@ body {
 }
 
 .glow {
-  box-shadow: 4px 4px 0px #FFE500;
+  box-shadow: 4px 4px 0px #FF6B2C;
 }
 
 .glow-hover:hover {
-  box-shadow: 6px 6px 0px #FFE500;
+  box-shadow: 6px 6px 0px #FF6B2C;
   transform: translate(-2px, -2px);
 }
 
-/* Hero animated lines — brutalist grid */
+/* Hero animated lines — subtle grid */
 .hero-lines {
   position: absolute;
   inset: 0;
@@ -181,9 +183,9 @@ body {
 
 .hero-line {
   position: absolute;
-  width: 2px;
+  width: 1px;
   height: 100%;
-  background: linear-gradient(to bottom, transparent, #333333, transparent);
+  background: linear-gradient(to bottom, transparent, #1A1A1A, transparent);
 }
 
 .hero-line-1 { left: 20%; }
@@ -192,36 +194,36 @@ body {
 
 /* Section dividers */
 .section {
-  background: #0F0F0F;
+  background: #080808;
 }
 
-/* Code block — raw monospace */
+/* Code block — clean monospace */
 .code-block {
-  background: #111111;
-  border: 3px solid #333333;
-  border-radius: 0px;
+  background: #0C0C0C;
+  border: 2px solid #2A2A2A;
+  border-radius: 4px;
   font-family: 'JetBrains Mono', 'Space Mono', monospace;
   font-size: 13px;
   line-height: 1.6;
-  color: #FFE500;
+  color: #FF6B2C;
 }
 
-/* Navbar — bold brutalist */
+/* Navbar — solid, clean */
 .navbar {
-  background: #0F0F0F;
-  border-bottom: 3px solid #333333;
+  background: #080808;
+  border-bottom: 2px solid #2A2A2A;
 }
 
 /* ============================================
-   GLOBAL OVERRIDES — Neo Brutalism
-   Bold borders, solid shadows, flat colors
+   GLOBAL OVERRIDES — Refined Brutalism
+   Bold structure, cohesive color, clean hierarchy
    ============================================ */
 
-/* All cards — raw square */
+/* All cards */
 .bg-card {
-  background: #1A1A1A;
-  border: 3px solid #333333;
-  border-radius: 4px;
+  background: #121212;
+  border: 2px solid #2A2A2A;
+  border-radius: 6px;
 }
 
 /* Form inputs — brutalist flat */
@@ -233,10 +235,10 @@ input[type="search"],
 input[type="number"],
 textarea,
 select {
-  background: #111111 !important;
-  border: 3px solid #333333 !important;
-  border-radius: 2px !important;
-  color: #FFFFFF;
+  background: #0C0C0C !important;
+  border: 2px solid #2A2A2A !important;
+  border-radius: 4px !important;
+  color: #F0F0F0;
   transition: all 0.1s ease;
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }
@@ -244,56 +246,56 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: #FFE500 !important;
+  border-color: #FF6B2C !important;
   outline: none;
-  box-shadow: 3px 3px 0px #FFE500;
+  box-shadow: 3px 3px 0px rgba(255, 107, 44, 0.4);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #555555;
+  color: #444444;
 }
 
-/* All buttons — brutalist style */
+/* All buttons */
 button[type="submit"],
 .gradient-bg {
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 /* Link buttons inside cards */
 .bg-surface {
-  background: #1A1A1A;
-  border: 3px solid #333333;
+  background: #121212;
+  border: 2px solid #2A2A2A;
+  border-radius: 6px;
+}
+
+/* Radio/checkbox */
+input[type="radio"],
+input[type="checkbox"] {
+  accent-color: #FF6B2C;
+}
+
+/* Select dropdown */
+select option {
+  background: #0C0C0C;
+  color: #F0F0F0;
+}
+
+/* Tab buttons */
+button[class*="rounded-lg"] {
   border-radius: 4px;
 }
 
-/* Radio/checkbox labels */
-input[type="radio"],
-input[type="checkbox"] {
-  accent-color: #FFE500;
-}
-
-/* Select dropdown styling */
-select option {
-  background: #111111;
-  color: #FFFFFF;
-}
-
-/* Tab buttons in admin */
-button[class*="rounded-lg"] {
-  border-radius: 2px;
-}
-
-/* Status badges — solid */
+/* Status badges — functional colors */
 .bg-success\/20,
 .bg-warning\/20,
 .bg-danger\/20,
 .bg-accent\/20 {
-  border-radius: 2px;
+  border-radius: 4px;
   border: 2px solid currentColor;
 }
 
-/* Smooth page transitions */
+/* Page transitions */
 .min-h-screen {
   animation: fadeIn 0.2s ease;
 }
@@ -305,8 +307,8 @@ button[class*="rounded-lg"] {
 
 /* Selection color */
 ::selection {
-  background: #FFE500;
-  color: #0F0F0F;
+  background: #FF6B2C;
+  color: #FFFFFF;
 }
 
 /* Links */

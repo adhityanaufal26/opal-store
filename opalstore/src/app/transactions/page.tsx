@@ -43,7 +43,7 @@ export default function TransactionHistoryPage() {
   if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: '#71717a' }}>Loading...</p>
+        <p style={{ color: '#555555' }}>Loading...</p>
       </div>
     );
   }
@@ -77,9 +77,9 @@ export default function TransactionHistoryPage() {
   const getStatusBadge = (status: string) => {
     const styles: Record<string, { bg: string; color: string; text: string }> = {
       pending: { bg: 'rgba(250,204,21,0.1)', color: '#facc15', text: 'Menunggu Bayar' },
-      success: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e', text: 'Berhasil' },
-      failed: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', text: 'Gagal' },
-      cancelled: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', text: 'Dibatalkan' },
+      success: { bg: 'rgba(0,214,143,0.1)', color: '#00D68F', text: 'Berhasil' },
+      failed: { bg: 'rgba(255,77,106,0.1)', color: '#FF4D6A', text: 'Gagal' },
+      cancelled: { bg: 'rgba(255,77,106,0.1)', color: '#FF4D6A', text: 'Dibatalkan' },
     };
     const style = styles[status] || styles.pending;
     return (
@@ -108,12 +108,12 @@ export default function TransactionHistoryPage() {
     <div style={{ minHeight: '100vh', padding: '24px 16px' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
         <div style={{ marginBottom: '24px' }}>
-          <Link href="/dashboard" style={{ color: '#71717a', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+          <Link href="/dashboard" style={{ color: '#555555', fontSize: '13px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             Kembali
           </Link>
           <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#fff', marginBottom: '4px' }}>Riwayat Transaksi</h1>
-          <p style={{ color: '#71717a', fontSize: '13px' }}>Daftar semua transaksi Anda</p>
+          <p style={{ color: '#555555', fontSize: '13px' }}>Daftar semua transaksi Anda</p>
         </div>
 
         {/* Filter Tabs */}
@@ -130,15 +130,15 @@ export default function TransactionHistoryPage() {
               onClick={() => setFilter(tab.id as any)}
               style={{
                 padding: '8px 14px', borderRadius: '10px',
-                border: filter === tab.id ? '1px solid rgba(217,119,6,0.4)' : '1px solid rgba(255,255,255,0.06)',
-                background: filter === tab.id ? 'rgba(217,119,6,0.1)' : 'rgba(255,255,255,0.03)',
-                color: filter === tab.id ? '#f59e0b' : '#a1a1aa',
+                border: filter === tab.id ? '1px solid rgba(255,107,44,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                background: filter === tab.id ? 'rgba(255,107,44,0.1)' : 'rgba(255,255,255,0.03)',
+                color: filter === tab.id ? '#FF6B2C' : '#999999',
                 fontSize: '13px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
               }}
             >
               {tab.label}
               {tab.count > 0 && (
-                <span style={{ padding: '2px 6px', borderRadius: '6px', background: filter === tab.id ? 'rgba(217,119,6,0.2)' : 'rgba(255,255,255,0.06)', fontSize: '11px' }}>
+                <span style={{ padding: '2px 6px', borderRadius: '6px', background: filter === tab.id ? 'rgba(255,107,44,0.2)' : 'rgba(255,255,255,0.06)', fontSize: '11px' }}>
                   {tab.count}
                 </span>
               )}
@@ -152,17 +152,17 @@ export default function TransactionHistoryPage() {
             {filtered.map((trx) => (
               <div key={trx.id} style={{ background: '#141414', borderRadius: '10px', border: trx.status === 'pending' ? '1px solid rgba(250,204,21,0.15)' : '1px solid rgba(255,255,255,0.06)', padding: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <span style={{ color: '#71717a', fontSize: '11px', fontFamily: 'monospace' }}>{trx.orderId}</span>
+                  <span style={{ color: '#555555', fontSize: '11px', fontFamily: 'monospace' }}>{trx.orderId}</span>
                   {getStatusBadge(trx.status)}
                 </div>
                 <div style={{ marginBottom: '10px' }}>
                   <h3 style={{ color: '#fff', fontSize: '15px', fontWeight: '600', marginBottom: '2px' }}>{trx.product}</h3>
-                  <p style={{ color: '#71717a', fontSize: '12px' }}>{trx.variant} &times; {trx.quantity}</p>
+                  <p style={{ color: '#555555', fontSize: '12px' }}>{trx.variant} &times; {trx.quantity}</p>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                   <div>
-                    <p style={{ color: '#71717a', fontSize: '11px' }}>{formatDate(trx.date)}</p>
-                    <p style={{ color: '#71717a', fontSize: '11px' }}>{getPaymentMethodText(trx.paymentMethod)}</p>
+                    <p style={{ color: '#555555', fontSize: '11px' }}>{formatDate(trx.date)}</p>
+                    <p style={{ color: '#555555', fontSize: '11px' }}>{getPaymentMethodText(trx.paymentMethod)}</p>
                     {trx.status === 'pending' && (
                       <p style={{ color: '#facc15', fontSize: '11px', marginTop: '4px' }}>Auto-cancel: {getTimeLeft(trx.date)}</p>
                     )}
@@ -170,7 +170,7 @@ export default function TransactionHistoryPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#fff', fontSize: '16px', fontWeight: '700' }}>{formatPrice(trx.total)}</span>
                     {trx.status === 'pending' && (
-                      <button onClick={() => setCancelConfirm(trx.orderId)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.08)', color: '#ef4444', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+                      <button onClick={() => setCancelConfirm(trx.orderId)} style={{ padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(255,77,106,0.2)', background: 'rgba(255,77,106,0.08)', color: '#FF4D6A', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
                         Batalkan
                       </button>
                     )}
@@ -181,13 +181,13 @@ export default function TransactionHistoryPage() {
           </div>
         ) : (
           <div style={{ background: '#141414', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', padding: '48px 24px', textAlign: 'center' }}>
-            <h3 style={{ color: '#71717a', fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>
+            <h3 style={{ color: '#555555', fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>
               {filter === 'all' ? 'Belum ada transaksi' : `Tidak ada transaksi ${filter}`}
             </h3>
             <p style={{ color: '#52525b', fontSize: '13px', marginBottom: '20px' }}>
               {filter === 'all' ? 'Mulai belanja untuk melihat riwayat transaksi' : 'Coba filter lain'}
             </p>
-            <Link href="/dashboard" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '10px', background: '#d97706', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }}>
+            <Link href="/dashboard" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: '10px', background: '#FF6B2C', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none' }}>
               Mulai Belanja
             </Link>
           </div>
@@ -201,12 +201,12 @@ export default function TransactionHistoryPage() {
           <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '16px' }}>
             <div style={{ background: '#141414', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', padding: '28px', maxWidth: '380px', width: '100%', textAlign: 'center' }}>
               <h3 style={{ color: '#fff', fontSize: '17px', fontWeight: '700', marginBottom: '8px' }}>Batalkan Transaksi?</h3>
-              <p style={{ color: '#71717a', fontSize: '13px', marginBottom: '24px' }}>Transaksi yang dibatalkan tidak dapat dilanjutkan. Buat transaksi baru untuk melanjutkan.</p>
+              <p style={{ color: '#555555', fontSize: '13px', marginBottom: '24px' }}>Transaksi yang dibatalkan tidak dapat dilanjutkan. Buat transaksi baru untuk melanjutkan.</p>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button onClick={() => setCancelConfirm(null)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.03)', color: '#fff', fontSize: '13px', cursor: 'pointer' }}>
                   Kembali
                 </button>
-                <button onClick={() => handleCancel(cancelConfirm)} style={{ flex: 1, padding: '10px', borderRadius: '10px', background: '#ef4444', color: '#fff', fontSize: '13px', fontWeight: '600', border: 'none', cursor: 'pointer' }}>
+                <button onClick={() => handleCancel(cancelConfirm)} style={{ flex: 1, padding: '10px', borderRadius: '10px', background: '#FF4D6A', color: '#fff', fontSize: '13px', fontWeight: '600', border: 'none', cursor: 'pointer' }}>
                   Ya, Batalkan
                 </button>
               </div>

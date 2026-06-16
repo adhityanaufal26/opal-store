@@ -48,7 +48,7 @@ export default function HomePage() {
       <section style={{ minHeight: "85vh", display: "flex", alignItems: "center" }}>
         <div className="max-w-4xl mx-auto text-center px-4">
           <div className="mb-6">
-            <span style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#a1a1aa", marginBottom: "8px" }}>
+            <span style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#999999", marginBottom: "8px" }}>
               Toko Digital Indonesia
             </span>
           </div>
@@ -56,17 +56,17 @@ export default function HomePage() {
           <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: "800", lineHeight: "1.1", marginBottom: "24px", letterSpacing: "-0.02em" }}>
             Akses AI Premium
             <br />
-            <span style={{ color: "#f59e0b" }}>Harga Terjangkau</span>
+            <span style={{ color: "#FF6B2C" }}>Harga Terjangkau</span>
           </h1>
 
-          <p style={{ fontSize: "16px", color: "#a1a1aa", maxWidth: "560px", margin: "0 auto 40px", lineHeight: "1.7" }}>
+          <p style={{ fontSize: "16px", color: "#999999", maxWidth: "560px", margin: "0 auto 40px", lineHeight: "1.7" }}>
             Dapatkan akses langganan Gemini Pro dan produk digital lainnya dengan harga yang ramah di kantong.
           </p>
 
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
               href="/dashboard"
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#d97706", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#FF6B2C", color: "#fff", fontWeight: "600", borderRadius: "6px", fontSize: "15px", transition: "all 0.2s" }}
             >
               Lihat Produk
             </Link>
@@ -79,7 +79,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div style={{ textAlign: "center", marginBottom: "56px" }}>
             <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Produk Kami</h2>
-            <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Langganan AI premium dengan harga terjangkau</p>
+            <p style={{ color: "#999999", fontSize: "15px" }}>Langganan AI premium dengan harga terjangkau</p>
           </div>
 
           <div className="product-grid">
@@ -90,14 +90,14 @@ export default function HomePage() {
 
           {featuredProducts.length === 0 && (
             <div style={{ textAlign: "center", padding: "48px 0" }}>
-              <p style={{ color: "#71717a", fontSize: "15px" }}>Produk sedang dimuat...</p>
+              <p style={{ color: "#555555", fontSize: "15px" }}>Produk sedang dimuat...</p>
             </div>
           )}
 
           <div style={{ textAlign: "center", marginTop: "48px" }}>
             <Link
               href="/dashboard"
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "12px 24px", borderRadius: "12px", fontWeight: "500", fontSize: "14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#a1a1aa", transition: "all 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "12px 24px", borderRadius: "6px", fontWeight: "500", fontSize: "14px", background: "rgba(255,255,255,0.04)", border: "2px solid #2A2A2A", color: "#999999", transition: "all 0.2s" }}
             >
               Lihat Semua Produk
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
@@ -111,7 +111,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div style={{ textAlign: "center", marginBottom: "56px" }}>
             <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Cara Belanja</h2>
-            <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Proses mudah dalam 4 langkah</p>
+            <p style={{ color: "#999999", fontSize: "15px" }}>Proses mudah dalam 4 langkah</p>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "32px" }}>
@@ -122,11 +122,11 @@ export default function HomePage() {
               { num: "4", title: "Terima Akses", desc: "Akses produk dikirim via WhatsApp setelah pembayaran terkonfirmasi" },
             ].map((step, i) => (
               <div key={i} style={{ textAlign: "center" }}>
-                <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(217,119,6,0.1)", color: "#f59e0b", borderRadius: "12px", fontSize: "18px", fontWeight: "700", margin: "0 auto 16px" }}>
+                <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", borderRadius: "6px", fontSize: "18px", fontWeight: "700", margin: "0 auto 16px" }}>
                   {step.num}
                 </div>
                 <h3 style={{ fontWeight: "700", fontSize: "15px", marginBottom: "8px" }}>{step.title}</h3>
-                <p style={{ color: "#a1a1aa", fontSize: "13px", lineHeight: "1.6" }}>{step.desc}</p>
+                <p style={{ color: "#999999", fontSize: "13px", lineHeight: "1.6" }}>{step.desc}</p>
               </div>
             ))}
           </div>
@@ -148,10 +148,10 @@ export default function HomePage() {
                   style={{ width: "100%", padding: "20px", textAlign: "left", display: "flex", alignItems: "center", justifyContent: "between", background: "none", border: "none", color: "#fff", cursor: "pointer", transition: "background 0.2s" }}
                 >
                   <span style={{ fontWeight: "600", fontSize: "14px", flex: 1, paddingRight: "16px" }}>{faq.q}</span>
-                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#71717a" style={{ flexShrink: 0, transform: openFaq === index ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#555555" style={{ flexShrink: 0, transform: openFaq === index ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </button>
                 {openFaq === index && (
-                  <div style={{ padding: "0 20px 20px", color: "#a1a1aa", fontSize: "13px", lineHeight: "1.7" }}>
+                  <div style={{ padding: "0 20px 20px", color: "#999999", fontSize: "13px", lineHeight: "1.7" }}>
                     {faq.a}
                   </div>
                 )}
@@ -165,13 +165,13 @@ export default function HomePage() {
       <section className="section py-20 px-4">
         <div className="max-w-4xl mx-auto" style={{ textAlign: "center" }}>
           <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Mulai Sekarang</h2>
-          <p style={{ color: "#a1a1aa", fontSize: "15px", marginBottom: "40px" }}>
+          <p style={{ color: "#999999", fontSize: "15px", marginBottom: "40px" }}>
             Dapatkan akses Gemini Pro dengan harga mulai dari Rp 40.000
           </p>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
               href="/dashboard"
-              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#d97706", color: "#fff", fontWeight: "600", borderRadius: "12px", fontSize: "15px", transition: "all 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "14px 32px", background: "#FF6B2C", color: "#fff", fontWeight: "600", borderRadius: "6px", fontSize: "15px", transition: "all 0.2s" }}
             >
               Belanja Sekarang
             </Link>

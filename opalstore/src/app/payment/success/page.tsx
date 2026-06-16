@@ -69,7 +69,7 @@ function PaymentSuccessContent() {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: "60px", height: "60px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "#d97706", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }}></div>
+          <div style={{ width: "60px", height: "60px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "#FF6B2C", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }}></div>
           <p style={{ color: "rgba(255,255,255,0.5)" }}>Memverifikasi pembayaran...</p>
         </div>
       </div>
@@ -93,8 +93,8 @@ function PaymentSuccessContent() {
               : "Pembayaran telah expired atau gagal."}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <Link href="/transactions" style={{ padding: "14px", borderRadius: "12px", background: "#d97706", color: "white", textDecoration: "none", fontWeight: "600", fontSize: "16px" }}>Riwayat Transaksi</Link>
-            <Link href="/dashboard" style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", color: "white", textDecoration: "none", fontWeight: "600", fontSize: "16px" }}>Kembali Belanja</Link>
+            <Link href="/transactions" style={{ padding: "14px", borderRadius: "6px", background: "#FF6B2C", color: "white", textDecoration: "none", fontWeight: "600", fontSize: "16px" }}>Riwayat Transaksi</Link>
+            <Link href="/dashboard" style={{ padding: "14px", borderRadius: "6px", border: "2px solid #2A2A2A", background: "rgba(255,255,255,0.05)", color: "white", textDecoration: "none", fontWeight: "600", fontSize: "16px" }}>Kembali Belanja</Link>
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@ function PaymentSuccessContent() {
         <div style={{ textAlign: "center", maxWidth: "400px" }}>
           <h2 style={{ color: "white", fontSize: "24px", fontWeight: "bold", marginBottom: "8px" }}>Error</h2>
           <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "24px" }}>{error}</p>
-          <Link href="/dashboard" style={{ padding: "12px 24px", borderRadius: "12px", background: "#d97706", color: "white", textDecoration: "none", fontWeight: "600" }}>Kembali ke Dashboard</Link>
+          <Link href="/dashboard" style={{ padding: "12px 24px", borderRadius: "6px", background: "#FF6B2C", color: "white", textDecoration: "none", fontWeight: "600" }}>Kembali ke Dashboard</Link>
         </div>
       </div>
     );
@@ -119,13 +119,13 @@ function PaymentSuccessContent() {
       <div style={{ maxWidth: "600px", margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <div style={{ width: "100px", height: "100px", borderRadius: "50%", background: "rgba(52,211,153,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-            <svg width="50" height="50" fill="none" viewBox="0 0 24 24" stroke="#34d399"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            <svg width="50" height="50" fill="none" viewBox="0 0 24 24" stroke="#00D68F"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           </div>
           <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "white", marginBottom: "8px" }}>Pembayaran Berhasil!</h1>
           <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "16px" }}>Terima kasih atas pesanan Anda</p>
         </div>
 
-        <div style={{ background: "#141414", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.08)", padding: "24px", marginBottom: "24px" }}>
+        <div style={{ background: "#141414", borderRadius: "6px", border: "2px solid #2A2A2A", padding: "24px", marginBottom: "24px" }}>
           <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "white", marginBottom: "20px" }}>Detail Pesanan</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {[
@@ -141,12 +141,12 @@ function PaymentSuccessContent() {
             ))}
             <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0" }}>
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Total Bayar</span>
-              <span style={{ color: "#d97706", fontSize: "18px", fontWeight: "bold" }}>{formatPrice(orderData?.amount || 0)}</span>
+              <span style={{ color: "#FF6B2C", fontSize: "18px", fontWeight: "bold" }}>{formatPrice(orderData?.amount || 0)}</span>
             </div>
           </div>
         </div>
 
-        <div style={{ background: "rgba(250,204,21,0.1)", border: "1px solid rgba(250,204,21,0.2)", borderRadius: "12px", padding: "16px", marginBottom: "24px", display: "flex", gap: "12px" }}>
+        <div style={{ background: "rgba(250,204,21,0.1)", border: "1px solid rgba(250,204,21,0.2)", borderRadius: "6px", padding: "16px", marginBottom: "24px", display: "flex", gap: "12px" }}>
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#facc15" style={{ flexShrink: 0, marginTop: "2px" }}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           <div>
             <p style={{ color: "#facc15", fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>Simpan bukti pembayaran</p>
@@ -155,8 +155,8 @@ function PaymentSuccessContent() {
         </div>
 
         <div style={{ display: "flex", gap: "12px" }}>
-          <Link href="/dashboard" style={{ flex: 1, padding: "14px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Belanja Lagi</Link>
-          <Link href="/transactions" style={{ flex: 1, padding: "14px", borderRadius: "12px", background: "#d97706", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Riwayat Transaksi</Link>
+          <Link href="/dashboard" style={{ flex: 1, padding: "14px", borderRadius: "6px", border: "2px solid #2A2A2A", background: "rgba(255,255,255,0.05)", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Belanja Lagi</Link>
+          <Link href="/transactions" style={{ flex: 1, padding: "14px", borderRadius: "6px", background: "#FF6B2C", color: "white", textDecoration: "none", fontWeight: "600", textAlign: "center", fontSize: "14px" }}>Riwayat Transaksi</Link>
         </div>
       </div>
     </div>

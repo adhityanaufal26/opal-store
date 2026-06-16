@@ -254,7 +254,7 @@ function LoginContent() {
                   <Turnstile onVerify={setTurnstileToken} onError={handleTurnstileError} />
                 </div>
                 {turnstileToken && (
-                  <p style={{ color: '#34d399', fontSize: '12px', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <p style={{ color: '#00D68F', fontSize: '12px', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>

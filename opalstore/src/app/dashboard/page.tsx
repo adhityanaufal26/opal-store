@@ -7,7 +7,7 @@ import { Product } from "@/lib/types";
 
 function SearchIcon() {
   return (
-    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#71717a" }}>
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#555555" }}>
       <circle cx={11} cy={11} r={8}/>
       <path d="m21 21-4.35-4.35"/>
     </svg>
@@ -60,7 +60,7 @@ function DashboardContent() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <h1 style={{ fontSize: "28px", fontWeight: "800", color: "#fff", marginBottom: "8px", letterSpacing: "-0.01em" }}>Produk Digital</h1>
-          <p style={{ color: "#a1a1aa", fontSize: "15px" }}>Pilih produk yang Anda butuhkan</p>
+          <p style={{ color: "#999999", fontSize: "15px" }}>Pilih produk yang Anda butuhkan</p>
         </div>
 
         {/* Search + Filter Bar */}
@@ -72,19 +72,19 @@ function DashboardContent() {
               placeholder="Cari produk..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ width: "100%", padding: "12px 16px 12px 42px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "10px", color: "#fff", fontSize: "14px", outline: "none" }}
+              style={{ width: "100%", padding: "12px 16px 12px 42px", background: "rgba(255,255,255,0.04)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "#fff", fontSize: "14px", outline: "none" }}
             />
           </div>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
             <button
               onClick={() => setSelectedCategory("all")}
-              style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === "all" ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === "all" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)", color: selectedCategory === "all" ? "#fff" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+              style={{ padding: "10px 20px", borderRadius: "4px", border: selectedCategory === "all" ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === "all" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)", color: selectedCategory === "all" ? "#fff" : "#999999", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
             >Semua</button>
             {categories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.name)}
-                style={{ padding: "10px 20px", borderRadius: "10px", border: selectedCategory === cat.name ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat.name ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat.name ? "#f59e0b" : "#a1a1aa", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                style={{ padding: "10px 20px", borderRadius: "4px", border: selectedCategory === cat.name ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat.name ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat.name ? "#FF6B2C" : "#999999", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
               >{cat.name}</button>
             ))}
           </div>
@@ -99,7 +99,7 @@ function DashboardContent() {
 
         {filtered.length === 0 && (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
-            <p style={{ color: "#71717a", fontSize: "15px" }}>Tidak ada produk ditemukan</p>
+            <p style={{ color: "#555555", fontSize: "15px" }}>Tidak ada produk ditemukan</p>
           </div>
         )}
       </div>
