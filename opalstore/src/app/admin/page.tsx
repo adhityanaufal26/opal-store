@@ -45,7 +45,7 @@ export default function AdminPage() {
     name: "",
     slug: "",
     description: "",
-    category: "Digital Subscription",
+    category: "",
     image: "/images/products/default.jpg",
     isActive: true,
   });
@@ -95,7 +95,7 @@ export default function AdminPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", slug: "", description: "", category: "Digital Subscription", image: "/images/products/default.jpg", isActive: true });
+    setFormData({ name: "", slug: "", description: "", category: "", image: "/images/products/default.jpg", isActive: true });
     setVariants([{ name: "", price: "", stock: "", durationMonths: "" }]);
     setEditingProduct(null);
   };
@@ -365,19 +365,29 @@ export default function AdminPage() {
                 {/* Category */}
                 <div style={{ marginBottom: "16px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Kategori</label>
-                  <input
-                    type="text"
-                    list="category-list"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="Ketik atau pilih kategori..."
-                    style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none" }}
-                  />
-                  <datalist id="category-list">
+                  <select
+                    value={categoryOptions.includes(formData.category) ? formData.category : "__custom__"}
+                    onChange={(e) => {
+                      if (e.target.value !== "__custom__") setFormData({ ...formData, category: e.target.value });
+                      else setFormData({ ...formData, category: "" });
+                    }}
+                    style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", cursor: "pointer", marginBottom: "8px" }}
+                  >
+                    <option value="" style={{ background: "#141414" }} disabled>Pilih kategori...</option>
                     {categoryOptions.map(cat => (
-                      <option key={cat} value={cat} />
+                      <option key={cat} value={cat} style={{ background: "#141414" }}>{cat}</option>
                     ))}
-                  </datalist>
+                    <option value="__custom__" style={{ background: "#141414", color: "#FF6B2C" }}>+ Ketik manual...</option>
+                  </select>
+                  {(!formData.category || !categoryOptions.includes(formData.category)) && (
+                    <input
+                      type="text"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      placeholder="Ketik nama kategori baru..."
+                      style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none" }}
+                    />
+                  )}
                 </div>
 
                 {/* Variants */}
