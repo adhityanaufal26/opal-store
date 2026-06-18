@@ -4,6 +4,7 @@ export interface IProductVariant {
   name: string;
   price: number;
   stock: number;
+  duration?: number;
   durationMonths?: number;
   description?: string;
 }
@@ -26,6 +27,7 @@ const ProductVariantSchema = new Schema<IProductVariant>({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   stock: { type: Number, required: true, default: 0 },
+  duration: { type: Number },
   durationMonths: { type: Number },
   description: { type: String },
 });

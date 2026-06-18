@@ -16,8 +16,8 @@ function getMinMonthlyPrice(product: ProductCardProps["product"]): number | null
   if (!product.variants || product.variants.length === 0) return null;
   let minMonthly = Infinity;
   for (const variant of product.variants) {
-    // Try durationMonths first (stored in DB)
-    let months = (variant as any).durationMonths;
+    // Try duration first (new field), then durationMonths (old field)
+    let months = (variant as any).duration || (variant as any).durationMonths;
     // Fallback: parse from variant name
     if (!months) {
       const match = variant.name.match(/(\d+)\s*Bulan/i);

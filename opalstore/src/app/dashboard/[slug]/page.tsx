@@ -97,6 +97,12 @@ export default function ProductDetailPage() {
 
   const getMonthlyPrice = (): number | null => {
     if (!currentVariant) return null;
+    // Try duration field first (from admin input)
+    const duration = currentVariant.duration || currentVariant.durationMonths;
+    if (duration && duration > 0) {
+      return Math.round(currentVariant.price / duration);
+    }
+    // Fallback: parse from variant name
     const match = currentVariant.name.match(/(\d+)\s*Bulan/i);
     if (match) {
       const months = parseInt(match[1]);

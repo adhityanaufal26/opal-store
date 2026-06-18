@@ -11,6 +11,7 @@ interface Variant {
   name: string;
   price: string;
   stock: string;
+  duration: string;
 }
 
 interface Product {
@@ -22,7 +23,7 @@ interface Product {
   category: string[];
   image: string;
   isActive: boolean;
-  variants: { name: string; price: number; stock: number }[];
+  variants: { name: string; price: number; stock: number; duration?: number }[];
 }
 
 export default function AdminPage() {
@@ -47,7 +48,7 @@ export default function AdminPage() {
     image: "/images/products/default.jpg",
     isActive: true,
   });
-  const [variants, setVariants] = useState<Variant[]>([{ name: "", price: "", stock: "" }]);
+  const [variants, setVariants] = useState<Variant[]>([{ name: "", price: "", stock: "", duration: "" }]);
   const [existingCategories, setExistingCategories] = useState<string[]>([]);
   const [newCategory, setNewCategory] = useState("");
 
@@ -99,7 +100,7 @@ export default function AdminPage() {
 
   const resetForm = () => {
     setFormData({ name: "", slug: "", description: "", category: [] as string[], image: "/images/products/default.jpg", isActive: true });
-    setVariants([{ name: "", price: "", stock: "" }]);
+    setVariants([{ name: "", price: "", stock: "", duration: "" }]);
     setEditingProduct(null);
   };
 
@@ -119,8 +120,8 @@ export default function AdminPage() {
     });
     setVariants(
       product.variants?.length > 0
-        ? product.variants.map(v => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString() }))
-        : [{ name: "", price: "", stock: "" }]
+        ? product.variants.map(v => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString(), duration: (v.duration || 0).toString() }))
+        : [{ name: "", price: "", stock: "", duration: "" }]
     );
     setEditingProduct(product);
     setShowModal(true);
@@ -171,7 +172,7 @@ export default function AdminPage() {
       category: formData.category,
       image: formData.image,
       isActive: formData.isActive,
-      variants: validVariants.map(v => ({ name: v.name, price: parseInt(v.price), stock: parseInt(v.stock) })),
+      variants: validVariants.map(v => ({ name: v.name, price: parseInt(v.price), stock: parseInt(v.stock), duration: parseInt(v.duration) || 0 })),
     };
 
     try {
@@ -235,7 +236,7 @@ export default function AdminPage() {
     }
   };
 
-  const addVariant = () => setVariants([...variants, { name: "", price: "", stock: "" }]);
+  const addVariant = () => setVariants([...variants, { name: "", price: "", stock: "", duration: "" }]);
   const removeVariant = (i: number) => { if (variants.length > 1) setVariants(variants.filter((_, idx) => idx !== i)); };
   const updateVariant = (i: number, field: string, val: string) => {
     const updated = [...variants];
@@ -420,6 +421,14 @@ export default function AdminPage() {
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                         <input type="number" value={variant.price} onChange={(e) => updateVariant(index, "price", e.target.value)} placeholder="Harga (Rp)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none" }} />
                         <input type="number" value={variant.stock} onChange={(e) => updateVariant(index, "stock", e.target.value)} placeholder="Stok" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none" }} />
+                      </div>
+                      <div style={{ marginTop: "8px" }}>
+                        <input type="number" value={variant.duration} onChange={(e) => updateVariant(index, "duration", e.target.value)} placeholder="Durasi (bulan)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none" }} />
+                        {variant.duration && variant.price && (
+                          <p style={{ color: "#FF6B2C", fontSize: "11px", marginTop: "4px" }}>
+                            {formatPrice(Math.round(parseInt(variant.price) / parseInt(variant.duration)))}/bulan
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
