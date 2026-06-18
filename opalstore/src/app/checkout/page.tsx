@@ -106,7 +106,7 @@ function CheckoutContent() {
               {[
                 { id: 'qris', name: 'QRIS', desc: 'Scan QR untuk bayar', logo: '/logos/qris.png' },
                 { id: 'ovo', name: 'OVO', desc: 'Bayar dengan OVO', logo: '/logos/ovo.svg' },
-                { id: 'dana', name: 'DANA', desc: 'Bayar dengan DANA', logo: '/logos/dana.svg' },
+                { id: 'dana', name: 'DANA', desc: 'Bayar dengan DANA', logo: '/logos/dana.jpg' },
                 { id: 'shopeepay', name: 'ShopeePay', desc: 'Bayar dengan ShopeePay', logo: '/logos/shopeepay.svg' },
               ].map(method => (
                 <button
