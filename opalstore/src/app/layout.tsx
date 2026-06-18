@@ -3,6 +3,7 @@ import { Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import WhatsAppButton from '@/components/WhatsAppButton';
 import { AuthProvider } from '@/lib/auth-context';
 import { Providers } from './providers';
 
@@ -31,6 +32,7 @@ export default function RootLayout({
             <Navbar />
             <main className="flex-1 pt-16">{children}</main>
             <Footer />
+            <WhatsAppButton />
           </AuthProvider>
         </Providers>
       </body>
