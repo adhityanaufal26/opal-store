@@ -157,6 +157,12 @@ function PaymentSuccessContent() {
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Varian</span>
               <span style={{ color: "white", fontSize: "14px", fontWeight: "600" }}>{orderData?.variantName}</span>
             </div>
+            {orderData?.duration > 0 && (
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Durasi</span>
+                <span style={{ color: "white", fontSize: "14px", fontWeight: "600" }}>{orderData.duration} Bulan</span>
+              </div>
+            )}
             <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Jumlah</span>
               <span style={{ color: "white", fontSize: "14px", fontWeight: "600" }}>{orderData?.quantity}x</span>

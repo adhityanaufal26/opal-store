@@ -50,13 +50,28 @@ export async function GET(req: NextRequest) {
     // If already success, return immediately
     if (transaction.status === "success") {
       const product = await Product.findOne({ name: transaction.productName });
+      const variant = product?.variants?.find((v: any) => v.name === transaction.variantName);
+      const duration = variant?.duration || 0;
+      // Use actual amount from Tripay if available (includes fee)
+      let displayAmount = transaction.amount;
+      if (transaction.tripayReference) {
+        try {
+          const apiKey = process.env.TRIPAY_API_KEY;
+          const tripayRes = await fetch(TRIPAY_BASE_URL + "/transaction/detail?reference=" + transaction.tripayReference, { headers: { Authorization: "Bearer " + apiKey } });
+          const tripayData = await tripayRes.json();
+          if (tripayData.success && tripayData.data.amount) {
+            displayAmount = tripayData.data.amount;
+          }
+        } catch (e) {}
+      }
       return NextResponse.json({
         status: "success",
         orderId: transaction.orderId,
         productName: transaction.productName,
         variantName: transaction.variantName,
         quantity: transaction.quantity,
-        amount: transaction.amount,
+        amount: displayAmount,
+        duration: duration,
         outputType: product?.outputType || "text",
         outputValue: product?.outputValue || "Pesanan Anda sedang diproses. Admin akan menghubungi Anda via WhatsApp dalam 1x24 jam.",
       });
@@ -64,6 +79,8 @@ export async function GET(req: NextRequest) {
 
     // Check status from Tripay
     if (!transaction.tripayReference) {
+      const product = await Product.findOne({ name: transaction.productName });
+      const variant = product?.variants?.find((v: any) => v.name === transaction.variantName);
       return NextResponse.json({
         status: transaction.status,
         orderId: transaction.orderId,
@@ -71,6 +88,7 @@ export async function GET(req: NextRequest) {
         variantName: transaction.variantName,
         quantity: transaction.quantity,
         amount: transaction.amount,
+        duration: variant?.duration || 0,
       });
     }
 
@@ -82,6 +100,8 @@ export async function GET(req: NextRequest) {
     const data = await res.json();
 
     if (!data.success) {
+      const product = await Product.findOne({ name: transaction.productName });
+      const variant = product?.variants?.find((v: any) => v.name === transaction.variantName);
       return NextResponse.json({
         status: transaction.status,
         orderId: transaction.orderId,
@@ -89,6 +109,7 @@ export async function GET(req: NextRequest) {
         variantName: transaction.variantName,
         quantity: transaction.quantity,
         amount: transaction.amount,
+        duration: variant?.duration || 0,
       });
     }
 
@@ -112,6 +133,10 @@ export async function GET(req: NextRequest) {
     }
 
     const product = await Product.findOne({ name: transaction.productName });
+    const variant = product?.variants?.find((v: any) => v.name === transaction.variantName);
+    const duration = variant?.duration || 0;
+    // Use actual amount from Tripay (includes fee paid by buyer)
+    const actualAmount = data.data.amount || transaction.amount;
 
     return NextResponse.json({
       status: newStatus,
@@ -119,7 +144,8 @@ export async function GET(req: NextRequest) {
       productName: transaction.productName,
       variantName: transaction.variantName,
       quantity: transaction.quantity,
-      amount: transaction.amount,
+      amount: actualAmount,
+      duration: duration,
       outputType: newStatus === "success" ? (product?.outputType || "text") : undefined,
       outputValue: newStatus === "success" ? (product?.outputValue || "Pesanan Anda sedang diproses. Admin akan menghubungi Anda via WhatsApp dalam 1x24 jam.") : undefined,
     });
