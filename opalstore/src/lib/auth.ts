@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
+          image: user.image || null,
           role: user.email.includes("admin") ? "admin" : "user",
         };
       },
@@ -82,6 +83,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role || "user";
         token.id = user.id;
+        token.image = (user as any).image || null;
       }
       if (account?.provider === "google") {
         token.role = "user";
@@ -92,6 +94,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as any).role = token.role;
         (session.user as any).id = token.id;
+        (session.user as any).image = token.image;
       }
       return session;
     },
