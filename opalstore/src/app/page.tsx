@@ -115,8 +115,8 @@ export default function HomePage() {
             {[
               { num: "1", title: "Pilih Produk", desc: "Browse katalog dan pilih produk yang Anda butuhkan" },
               { num: "2", title: "Pilih Paket", desc: "Pilih durasi langganan yang sesuai kebutuhan Anda" },
-              { num: "3", title: "Bayar", desc: "Lakukan pembayaran via QRIS, e-wallet, atau transfer bank" },
-              { num: "4", title: "Terima Akses", desc: "Akses produk dikirim via WhatsApp setelah pembayaran terkonfirmasi" },
+              { num: "3", title: "Bayar", desc: "Lakukan pembayaran via QRIS atau e-wallet" },
+              { num: "4", title: "Terima Akses", desc: "Akses produk dikirim setelah pembayaran" },
             ].map((step, i) => (
               <div key={i} style={{ textAlign: "center" }}>
                 <div style={{ width: "48px", height: "48px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", borderRadius: "6px", fontSize: "18px", fontWeight: "700", margin: "0 auto 16px" }}>
