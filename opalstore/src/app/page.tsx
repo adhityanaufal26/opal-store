@@ -22,23 +22,23 @@ export default function HomePage() {
   const faqs = [
     {
       q: "Apa itu OpalStore?",
-      a: "OpalStore adalah toko digital yang menjual akses langganan AI premium seperti Gemini Pro dengan harga terjangkau.",
+      a: "OpalStore adalah toko digital yang menjual langganan premium dan produk digital seperti ChatGPT Plus, Gemini Pro, Netflix, Canva, Spotify, dan VPS dengan harga terjangkau.",
     },
     {
       q: "Bagaimana cara membeli produk?",
-      a: "Pilih produk, pilih paket yang diinginkan, isi data pembeli, lalu lakukan pembayaran. Setelah pembayaran terkonfirmasi, akses produk akan dikirim via WhatsApp.",
+      a: "Pilih produk, pilih paket yang diinginkan, lalu lakukan pembayaran. Setelah pembayaran terkonfirmasi, akses produk akan langsung dikirim.",
     },
     {
       q: "Metode pembayaran apa saja yang tersedia?",
-      a: "Saat ini kami menerima pembayaran melalui Midtrans (QRIS, GoPay, OVO, Dana, ShopeePay, dan Virtual Account bank).",
+      a: "Saat ini kami menerima pembayaran melalui QRIS, OVO, DANA, dan ShopeePay.",
     },
     {
       q: "Berapa lama akses produk aktif?",
-      a: "Tergantung paket yang dipilih. Tersedia paket 4 bulan dan 18 bulan. Detail durasi tertera di halaman produk.",
+      a: "Tergantung paket yang dipilih. Tersedia berbagai pilihan durasi langganan. Detail durasi tertera di halaman produk.",
     },
     {
       q: "Bagaimana jika ada masalah dengan produk?",
-      a: "Hubungi kami via WhatsApp. Kami akan membantu menyelesaikan masalah Anda.",
+      a: "Hubungi kami via WhatsApp atau email. Kami akan membantu menyelesaikan masalah Anda.",
     },
   ];
 
@@ -163,7 +163,7 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto" style={{ textAlign: "center" }}>
           <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.01em" }}>Mulai Sekarang</h2>
           <p style={{ color: "#999999", fontSize: "15px", marginBottom: "40px" }}>
-            Dapatkan akses Gemini Pro dengan harga mulai dari Rp 40.000
+            Dapatkan akses ChatGPT Plus dengan harga terjangkau
           </p>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Link
