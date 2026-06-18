@@ -47,20 +47,17 @@ export default function HomePage() {
       {/* HERO */}
       <section style={{ minHeight: "85vh", display: "flex", alignItems: "center" }}>
         <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="mb-6">
-            <span style={{ display: "block", fontSize: "14px", fontWeight: "500", color: "#999999", marginBottom: "8px" }}>
-              Toko Digital Indonesia
-            </span>
-          </div>
-
           <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: "800", lineHeight: "1.1", marginBottom: "24px", letterSpacing: "-0.02em" }}>
-            Akses AI Premium
+            Akses Kebutuhan Digital
             <br />
             <span style={{ color: "#FF6B2C" }}>Harga Terjangkau</span>
           </h1>
 
-          <p style={{ fontSize: "16px", color: "#999999", maxWidth: "560px", margin: "0 auto 40px", lineHeight: "1.7" }}>
-            Dapatkan akses langganan Gemini Pro dan produk digital lainnya dengan harga yang ramah di kantong.
+          <p style={{ fontSize: "16px", color: "#999999", maxWidth: "560px", margin: "0 auto 12px", lineHeight: "1.7" }}>
+            Dapatkan langganan premium maupun produk digital lainnya dengan harga yang ramah di kantong.
+          </p>
+          <p style={{ fontSize: "14px", color: "#666666", maxWidth: "560px", margin: "0 auto 40px", lineHeight: "1.7" }}>
+            Gemini Pro, ChatGPT Plus, Netflix, Canva, Spotify, VPS
           </p>
 
           <div style={{ display: "flex", justifyContent: "center" }}>
