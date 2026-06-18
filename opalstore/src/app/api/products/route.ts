@@ -48,6 +48,13 @@ export async function GET(request: NextRequest) {
       isAdminRequest = !!session;
     }
 
+    // Return distinct categories
+    const distinct = searchParams.get("distinct");
+    if (distinct === "category") {
+      const cats = await Product.distinct("category");
+      return NextResponse.json({ success: true, data: cats.filter(Boolean) });
+    }
+
     let query: any = {};
     if (slug) query.slug = slug;
     if (category && category !== "all") query.category = category;

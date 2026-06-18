@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import ProductCard from "@/components/ProductCard";
-import { categories } from "@/lib/data";
+
 import { Product } from "@/lib/types";
 
 function SearchIcon() {
@@ -19,9 +19,13 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
     fetchProducts();
+    fetch("/api/products?distinct=category").then(r => r.json()).then(d => {
+      if (d.success) setCategories(d.data);
+    });
   }, []);
 
   const fetchProducts = async () => {
@@ -82,10 +86,10 @@ function DashboardContent() {
             >Semua</button>
             {categories.map(cat => (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.name)}
-                style={{ padding: "10px 20px", borderRadius: "4px", border: selectedCategory === cat.name ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat.name ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat.name ? "#FF6B2C" : "#999999", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
-              >{cat.name}</button>
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{ padding: "10px 20px", borderRadius: "4px", border: selectedCategory === cat ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.08)", background: selectedCategory === cat ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)", color: selectedCategory === cat ? "#FF6B2C" : "#999999", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+              >{cat}</button>
             ))}
           </div>
         </div>

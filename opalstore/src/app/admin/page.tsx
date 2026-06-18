@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { useSession } from "next-auth/react";
-import { isAdmin, categories } from "@/lib/data";
+import { isAdmin } from "@/lib/data";
 
 interface Variant {
   name: string;
@@ -39,6 +39,7 @@ export default function AdminPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -65,7 +66,12 @@ export default function AdminPage() {
   }, [user, session, isLoading, isUserAdmin, router]);
 
   useEffect(() => {
-    if (isUserAdmin) fetchProducts();
+    if (isUserAdmin) {
+      fetchProducts();
+      fetch("/api/products?distinct=category").then(r => r.json()).then(d => {
+        if (d.success) setCategoryOptions(d.data);
+      });
+    }
   }, [isUserAdmin]);
 
   const fetchProducts = async () => {
@@ -188,6 +194,9 @@ export default function AdminPage() {
         setShowModal(false);
         resetForm();
         fetchProducts();
+        fetch("/api/products?distinct=category").then(r => r.json()).then(d => {
+          if (d.success) setCategoryOptions(d.data);
+        });
       } else {
         alert("Error: " + (data.error || "Gagal menyimpan"));
       }
@@ -356,15 +365,19 @@ export default function AdminPage() {
                 {/* Category */}
                 <div style={{ marginBottom: "16px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Kategori</label>
-                  <select
+                  <input
+                    type="text"
+                    list="category-list"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", cursor: "pointer" }}
-                  >
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.name} style={{ background: "#141414" }}>{cat.name}</option>
+                    placeholder="Ketik atau pilih kategori..."
+                    style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none" }}
+                  />
+                  <datalist id="category-list">
+                    {categoryOptions.map(cat => (
+                      <option key={cat} value={cat} />
                     ))}
-                  </select>
+                  </datalist>
                 </div>
 
                 {/* Variants */}
