@@ -168,28 +168,11 @@ function PaymentSuccessContent() {
           </div>
         </div>
 
-        {/* Product Output — only show if paid */}
-        {isPaid && orderData?.outputValue && (
+        {/* Order Status — only show if paid */}
+        {isPaid && (
           <div style={{ background: "#161b22", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.08)", padding: "24px", marginBottom: "24px" }}>
-            <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "white", marginBottom: "20px" }}><span style={{ marginRight: "8px" }}>🎁</span>Produk Anda</h2>
-
-            {orderData.outputType === "link" ? (
-              <div>
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "16px" }}>Klik link di bawah untuk mengakses produk Anda:</p>
-                <div style={{ background: "rgba(255,107,44,0.1)", border: "1px solid rgba(255,107,44,0.3)", borderRadius: "12px", padding: "16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
-                  <a href={orderData.outputValue} target="_blank" rel="noopener noreferrer" style={{ color: "#FF6B2C", fontSize: "14px", textDecoration: "none", wordBreak: "break-all", flex: 1 }}>{orderData.outputValue}</a>
-                  <button onClick={() => copyToClipboard(orderData.outputValue)} style={{ padding: "8px 16px", borderRadius: "8px", background: "rgba(255,107,44,0.2)", border: "1px solid rgba(255,107,44,0.3)", color: "#FF6B2C", fontSize: "12px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>Salin</button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", marginBottom: "16px" }}>Berikut adalah akses produk Anda:</p>
-                <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "20px", position: "relative" }}>
-                  <pre style={{ color: "white", fontSize: "14px", fontFamily: "monospace", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>{orderData.outputValue}</pre>
-                  <button onClick={() => copyToClipboard(orderData.outputValue)} style={{ position: "absolute", top: "12px", right: "12px", padding: "8px 16px", borderRadius: "8px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.1)", color: "white", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Salin</button>
-                </div>
-              </div>
-            )}
+            <h2 style={{ fontSize: "18px", fontWeight: "bold", color: "white", marginBottom: "20px" }}><span style={{ marginRight: "8px" }}>🎁</span>Status Pesanan</h2>
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", lineHeight: "1.6" }}>Pesanan anda sedang diproses, mohon tunggu beberapa menit, admin akan mengirimkan detail produk melalui WA atau email anda, jika produk tidak dikirimkan dalam 8 jam silahkan hubungi support.</p>
           </div>
         )}
 
@@ -199,7 +182,7 @@ function PaymentSuccessContent() {
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#facc15" style={{ flexShrink: 0, marginTop: "2px" }}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <div>
               <p style={{ color: "#facc15", fontSize: "14px", fontWeight: "600", marginBottom: "4px" }}>Simpan bukti pembayaran</p>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>Screenshot halaman ini atau simpan link-nya untuk referensi pembelian Anda.</p>
+              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>Screenshot halaman ini untuk referensi pembelian Anda.</p>
             </div>
           </div>
         )}
