@@ -51,7 +51,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         style={{ padding: 0, opacity: isOutOfStock ? 0.6 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}
       >
         {/* Image */}
-        <div className="relative overflow-hidden" style={{ aspectRatio: "4/3", height: "auto", background: "linear-gradient(135deg, rgba(255,107,44,0.08), rgba(139,92,246,0.08))" }}>
+        <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", height: "auto", background: "linear-gradient(135deg, rgba(255,107,44,0.08), rgba(139,92,246,0.08))" }}>
           <img src={imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           {totalStock > 0 ? (
             <div className="absolute top-3 right-3">
@@ -63,7 +63,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <>
               {/* Out-of-stock badge in top-right */}
               <div className="absolute top-3 right-3 z-10">
-                <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
+                <span style={{ padding: "2px 6px", fontSize: "10px", fontWeight: "600", borderRadius: "4px", background: "rgba(248,113,113,0.2)", color: "#f87171", border: "1px solid rgba(248,113,113,0.3)" }}>
                   Habis
                 </span>
               </div>
