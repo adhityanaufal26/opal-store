@@ -134,8 +134,7 @@ function LoginContent() {
             <span className="auth-branding-gradient">Kembali</span>
           </h1>
           <p className="auth-branding-desc">
-            Dapatkan akses ke koleksi template, tools automation, AI prompts,
-            dan resources premium untuk meningkatkan produktivitas bisnis Anda.
+            Dapatkan akses digital subscription, kebutuhan AI agent, automation tools, dan produk digital lainnya dengan harga termurah.
           </p>
 
         </div>
