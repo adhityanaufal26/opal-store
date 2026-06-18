@@ -137,25 +137,7 @@ function LoginContent() {
             Dapatkan akses ke koleksi template, tools automation, AI prompts,
             dan resources premium untuk meningkatkan produktivitas bisnis Anda.
           </p>
-          <div className="auth-branding-stats">
-            {[
-              { icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', value: 'SSL Terenkripsi', label: 'Transaksi Aman' },
-              { icon: 'M13 10V3L4 14h7v7l9-11h-7z', value: 'Instant Access', label: 'Langsung Aktif' },
-              { icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z', value: '1,000+', label: 'Pengguna Aktif' },
-            ].map((stat, i) => (
-              <div key={i} className="auth-branding-stat">
-                <div className="auth-branding-stat-icon">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={stat.icon} />
-                  </svg>
-                </div>
-                <div>
-                  <div className="auth-branding-stat-value">{stat.value}</div>
-                  <div className="auth-branding-stat-label">{stat.label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+
         </div>
 
         {/* Right Side - Form */}
