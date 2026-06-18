@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import Transaction from "@/models/Transaction";
 
 export async function GET(req: NextRequest) {
   try {
@@ -6,36 +8,33 @@ export async function GET(req: NextRequest) {
     const orderId = searchParams.get("order_id");
 
     if (!orderId) {
-      return NextResponse.json(
-        { error: "Order ID required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Order ID required" }, { status: 400 });
     }
 
-    // In production, fetch from database
-    // For now, parse from order ID format or return mock data
-    
-    // For demo, we'll return a success response
-    // In real implementation, query your database with orderId
+    await connectDB();
+    const transaction = await Transaction.findOne({ orderId }).lean();
+
+    if (!transaction) {
+      return NextResponse.json({ error: "Transaksi tidak ditemukan" }, { status: 404 });
+    }
+
     return NextResponse.json({
-      orderId: orderId,
-      paymentStatus: "paid",
-      customerEmail: "customer@example.com",
-      customerWhatsapp: "",
-      productName: "Product",
-      variantName: "Variant",
-      quantity: 1,
-      totalAmount: 0,
+      orderId: transaction.orderId,
+      paymentStatus: transaction.status,
+      customerEmail: transaction.email,
+      customerWhatsapp: transaction.whatsappNumber,
+      productName: transaction.productName,
+      variantName: transaction.variantName,
+      quantity: transaction.quantity,
+      totalAmount: transaction.amount,
+      tripayStatus: transaction.tripayStatus,
+      tripayReference: transaction.tripayReference,
       outputType: "text",
       outputValue: "Pesanan Anda sedang diproses. Admin akan menghubungi Anda via WhatsApp dalam 1x24 jam.",
-      paidAt: new Date().toISOString(),
+      paidAt: transaction.status === "success" ? transaction.updatedAt : null,
     });
-
   } catch (error: any) {
     console.error("Fetch order error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch order details" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Failed to fetch order details" }, { status: 500 });
   }
 }

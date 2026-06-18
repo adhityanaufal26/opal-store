@@ -11,7 +11,6 @@ interface Variant {
   name: string;
   price: string;
   stock: string;
-  durationMonths: string;
 }
 
 interface Product {
@@ -20,7 +19,7 @@ interface Product {
   name: string;
   slug: string;
   description: string;
-  category: string;
+  category: string[];
   image: string;
   isActive: boolean;
   variants: { name: string; price: number; stock: number }[];
@@ -39,8 +38,6 @@ export default function AdminPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [newCategory, setNewCategory] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -50,7 +47,9 @@ export default function AdminPage() {
     image: "/images/products/default.jpg",
     isActive: true,
   });
-  const [variants, setVariants] = useState<Variant[]>([{ name: "", price: "", stock: "", durationMonths: "" }]);
+  const [variants, setVariants] = useState<Variant[]>([{ name: "", price: "", stock: "" }]);
+  const [existingCategories, setExistingCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState("");
 
   const currentEmail = session?.user?.email || user?.email || "";
   const isUserAdmin = isAdmin(currentEmail);
@@ -67,19 +66,22 @@ export default function AdminPage() {
   }, [user, session, isLoading, isUserAdmin, router]);
 
   useEffect(() => {
-    if (isUserAdmin) {
-      fetchProducts();
-      fetch("/api/products?distinct=category").then(r => r.json()).then(d => {
-        if (d.success) setCategoryOptions(d.data);
-      });
-    }
+    if (isUserAdmin) fetchProducts();
   }, [isUserAdmin]);
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("/api/products?admin=true");
+      const res = await fetch("/api/products");
       const data = await res.json();
-      if (data.success) setProducts(data.data);
+      if (data.success) {
+        setProducts(data.data);
+        const cats = new Set<string>();
+        data.data.forEach((p: any) => {
+          if (Array.isArray(p.category)) p.category.forEach((c: string) => cats.add(c));
+          else if (p.category) cats.add(p.category);
+        });
+        setExistingCategories(Array.from(cats).sort());
+      }
     } catch (err) {
       console.error("Error fetching products:", err);
     } finally {
@@ -96,9 +98,8 @@ export default function AdminPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", slug: "", description: "", category: [], image: "/images/products/default.jpg", isActive: true });
-    setNewCategory("");
-    setVariants([{ name: "", price: "", stock: "", durationMonths: "" }]);
+    setFormData({ name: "", slug: "", description: "", category: [] as string[], image: "/images/products/default.jpg", isActive: true });
+    setVariants([{ name: "", price: "", stock: "" }]);
     setEditingProduct(null);
   };
 
@@ -118,8 +119,8 @@ export default function AdminPage() {
     });
     setVariants(
       product.variants?.length > 0
-        ? product.variants.map(v => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString(), durationMonths: (v as any).durationMonths?.toString() || "" }))
-        : [{ name: "", price: "", stock: "", durationMonths: "" }]
+        ? product.variants.map(v => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString() }))
+        : [{ name: "", price: "", stock: "" }]
     );
     setEditingProduct(product);
     setShowModal(true);
@@ -170,7 +171,7 @@ export default function AdminPage() {
       category: formData.category,
       image: formData.image,
       isActive: formData.isActive,
-      variants: validVariants.map(v => ({ name: v.name, price: parseInt(v.price), stock: parseInt(v.stock), durationMonths: v.durationMonths ? parseInt(v.durationMonths) : undefined })),
+      variants: validVariants.map(v => ({ name: v.name, price: parseInt(v.price), stock: parseInt(v.stock) })),
     };
 
     try {
@@ -196,9 +197,6 @@ export default function AdminPage() {
         setShowModal(false);
         resetForm();
         fetchProducts();
-        fetch("/api/products?distinct=category").then(r => r.json()).then(d => {
-          if (d.success) setCategoryOptions(d.data);
-        });
       } else {
         alert("Error: " + (data.error || "Gagal menyimpan"));
       }
@@ -237,7 +235,7 @@ export default function AdminPage() {
     }
   };
 
-  const addVariant = () => setVariants([...variants, { name: "", price: "", stock: "", durationMonths: "" }]);
+  const addVariant = () => setVariants([...variants, { name: "", price: "", stock: "" }]);
   const removeVariant = (i: number) => { if (variants.length > 1) setVariants(variants.filter((_, idx) => idx !== i)); };
   const updateVariant = (i: number, field: string, val: string) => {
     const updated = [...variants];
@@ -264,7 +262,7 @@ export default function AdminPage() {
             <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "white" }}>Admin Panel</h1>
             <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Kelola produk Anda</p>
           </div>
-          <button onClick={openAddModal} style={{ padding: "12px 24px", borderRadius: "6px", background: "#FF6B2C", color: "white", fontWeight: "600", fontSize: "14px", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
+          <button onClick={openAddModal} style={{ padding: "12px 24px", borderRadius: "12px", background: "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", fontWeight: "600", fontSize: "14px", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
             Tambah Produk
           </button>
@@ -275,9 +273,9 @@ export default function AdminPage() {
           {products.map((product) => {
             const id = product._id || product.id;
             return (
-              <div key={id} style={{ background: "#141414", borderRadius: "4px", border: "2px solid #2A2A2A", padding: "20px", display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
+              <div key={id} style={{ background: "#161b22", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.08)", padding: "20px", display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
                 {/* Image */}
-                <div style={{ width: "80px", height: "80px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "rgba(255,255,255,0.05)" }}>
+                <div style={{ width: "80px", height: "80px", borderRadius: "12px", overflow: "hidden", flexShrink: 0, background: "rgba(255,255,255,0.05)" }}>
                   <img src={product.image} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
 
@@ -286,20 +284,23 @@ export default function AdminPage() {
                   <h3 style={{ color: "white", fontSize: "18px", fontWeight: "600", marginBottom: "4px" }}>{product.name}</h3>
                   <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", marginBottom: "8px" }}>{product.description?.substring(0, 80)}...</p>
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    {Array.isArray(product.category) && product.category.map((cat: string) => (
+                      <span key={cat} style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(139,92,246,0.1)", color: "#a78bfa", fontSize: "12px" }}>{cat}</span>
+                    ))}
                     <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px" }}>{product.variants?.length || 0} variant</span>
-                    <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px" }}>{formatPrice(Math.min(...(product.variants?.map(v => v.price) || [0])))}</span>
+                    <span style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(139,92,246,0.1)", color: "#a78bfa", fontSize: "12px" }}>{formatPrice(Math.min(...(product.variants?.map(v => v.price) || [0])))}</span>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <button onClick={() => toggleActive(product)} style={{ padding: "6px 14px", borderRadius: "4px", border: "none", background: product.isActive ? "rgba(52,211,153,0.1)" : "rgba(255,77,106,0.1)", color: product.isActive ? "#00D68F" : "#FF4D6A", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
+                  <button onClick={() => toggleActive(product)} style={{ padding: "6px 14px", borderRadius: "8px", border: "none", background: product.isActive ? "rgba(52,211,153,0.1)" : "rgba(239,68,68,0.1)", color: product.isActive ? "#34d399" : "#ef4444", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
                     {product.isActive ? "Aktif" : "Nonaktif"}
                   </button>
-                  <button onClick={() => openEditModal(product)} style={{ padding: "8px", borderRadius: "4px", border: "2px solid #2A2A2A", background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.7)", cursor: "pointer" }} title="Edit">
+                  <button onClick={() => openEditModal(product)} style={{ padding: "8px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.7)", cursor: "pointer" }} title="Edit">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                   </button>
-                  <button onClick={() => id ? setDeleteConfirm(id) : null} style={{ padding: "8px", borderRadius: "4px", border: "1px solid rgba(255,77,106,0.3)", background: "rgba(255,77,106,0.1)", color: "#FF4D6A", cursor: "pointer" }} title="Hapus">
+                  <button onClick={() => id ? setDeleteConfirm(id) : null} style={{ padding: "8px", borderRadius: "8px", border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.1)", color: "#ef4444", cursor: "pointer" }} title="Hapus">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   </button>
                 </div>
@@ -308,7 +309,7 @@ export default function AdminPage() {
           })}
 
           {products.length === 0 && (
-            <div style={{ background: "#141414", borderRadius: "4px", border: "2px solid #2A2A2A", padding: "60px", textAlign: "center" }}>
+            <div style={{ background: "#161b22", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.08)", padding: "60px", textAlign: "center" }}>
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "16px" }}>Belum ada produk. Klik "Tambah Produk" untuk menambahkan.</p>
             </div>
           )}
@@ -320,9 +321,9 @@ export default function AdminPage() {
         <>
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 100 }} onClick={() => setShowModal(false)} />
           <div style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 110, padding: "16px" }}>
-            <div style={{ background: "#141414", borderRadius: "6px", border: "2px solid #2A2A2A", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflow: "auto" }}>
+            <div style={{ background: "#161b22", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", width: "100%", maxWidth: "600px", maxHeight: "90vh", overflow: "auto" }}>
               {/* Modal Header */}
-              <div style={{ padding: "24px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#141414", zIndex: 10 }}>
+              <div style={{ padding: "24px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#161b22", zIndex: 10 }}>
                 <h2 style={{ fontSize: "20px", fontWeight: "bold", color: "white" }}>{editingProduct ? "Edit Produk" : "Tambah Produk"}</h2>
                 <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
                   <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -335,7 +336,7 @@ export default function AdminPage() {
                 <div style={{ marginBottom: "20px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "8px" }}>Foto Produk</label>
                   <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-                    <div style={{ width: "100px", height: "100px", borderRadius: "6px", overflow: "hidden", background: "rgba(255,255,255,0.05)", border: "2px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "100px", height: "100px", borderRadius: "12px", overflow: "hidden", background: "rgba(255,255,255,0.05)", border: "2px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {formData.image && formData.image !== "/images/products/default.jpg" ? (
                         <img src={formData.image} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       ) : (
@@ -344,7 +345,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
-                      <button onClick={() => fileInputRef.current?.click()} disabled={uploading} style={{ padding: "10px 20px", borderRadius: "4px", border: "1px solid rgba(255,107,44,0.3)", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "8px" }}>
+                      <button onClick={() => fileInputRef.current?.click()} disabled={uploading} style={{ padding: "10px 20px", borderRadius: "10px", border: "1px solid rgba(255,107,44,0.3)", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "13px", fontWeight: "600", cursor: "pointer", marginBottom: "8px" }}>
                         {uploading ? "Uploading..." : "Upload Foto"}
                       </button>
                       <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>JPG, PNG, WebP (max 5MB)</p>
@@ -355,64 +356,48 @@ export default function AdminPage() {
                 {/* Name */}
                 <div style={{ marginBottom: "16px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Nama Produk *</label>
-                  <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: generateSlug(e.target.value) })} placeholder="Contoh: Gemini Pro" style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none" }} />
+                  <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: generateSlug(e.target.value) })} placeholder="Contoh: Gemini Pro" style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none" }} />
                 </div>
 
                 {/* Description */}
                 <div style={{ marginBottom: "16px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Deskripsi *</label>
-                  <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Deskripsi produk..." rows={4} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", resize: "vertical" }} />
+                  <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Deskripsi produk..." rows={4} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none", resize: "vertical" }} />
                 </div>
 
-                {/* Category - Multi Select */}
-                <div style={{ marginBottom: "16px" }}>
+                {/* Categories */}
+                <div style={{ marginBottom: "20px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "8px" }}>Kategori (bisa pilih lebih dari 1)</label>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "8px" }}>
-                    {categoryOptions.map(cat => {
-                      const selected = formData.category.includes(cat);
-                      return (
-                        <button type="button" key={cat} onClick={() => {
-                          setFormData(prev => ({
-                            ...prev,
-                            category: selected ? prev.category.filter(c => c !== cat) : [...prev.category, cat]
-                          }));
-                        }} style={{
-                          padding: "8px 14px", borderRadius: "6px", fontSize: "13px", fontWeight: "600", cursor: "pointer",
-                          border: selected ? "1px solid rgba(255,107,44,0.5)" : "1px solid #2A2A2A",
-                          background: selected ? "rgba(255,107,44,0.12)" : "rgba(255,255,255,0.04)",
-                          color: selected ? "#FF6B2C" : "#999999"
-                        }}>
-                          {selected ? "\u2713 " : ""}{cat}
-                        </button>
-                      );
-                    })}
-                    {categoryOptions.length === 0 && (
-                      <span style={{ color: "#555555", fontSize: "13px" }}>Belum ada kategori</span>
-                    )}
+                    {existingCategories.map(cat => (
+                      <button key={cat} type="button" onClick={() => {
+                        setFormData(prev => ({ ...prev, category: prev.category.includes(cat) ? prev.category.filter(c => c !== cat) : [...prev.category, cat] }));
+                      }} style={{
+                        padding: "6px 14px", borderRadius: "8px",
+                        border: formData.category.includes(cat) ? "1px solid rgba(255,107,44,0.5)" : "1px solid rgba(255,255,255,0.1)",
+                        background: formData.category.includes(cat) ? "rgba(255,107,44,0.15)" : "rgba(255,255,255,0.05)",
+                        color: formData.category.includes(cat) ? "#FF6B2C" : "rgba(255,255,255,0.6)",
+                        fontSize: "12px", fontWeight: "600", cursor: "pointer",
+                      }}>{cat}</button>
+                    ))}
                   </div>
                   <div style={{ display: "flex", gap: "8px" }}>
-                    <input
-                      type="text"
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
-                      placeholder="Tambah kategori baru..."
-                      style={{ flex: 1, padding: "10px 14px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "13px", outline: "none" }}
-                    />
+                    <input type="text" placeholder="Tambah kategori baru..." value={newCategory} onChange={(e) => setNewCategory(e.target.value)}
+                      style={{ flex: 1, padding: "10px 14px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none" }} />
                     <button type="button" onClick={() => {
-                      const trimmed = newCategory.trim();
-                      if (trimmed && !formData.category.includes(trimmed)) {
-                        setFormData(prev => ({ ...prev, category: [...prev.category, trimmed] }));
-                        if (!categoryOptions.includes(trimmed)) setCategoryOptions(prev => [...prev, trimmed]);
+                      if (newCategory.trim() && !formData.category.includes(newCategory.trim())) {
+                        setFormData(prev => ({ ...prev, category: [...prev.category, newCategory.trim()] }));
+                        if (!existingCategories.includes(newCategory.trim())) setExistingCategories(prev => [...prev, newCategory.trim()].sort());
                         setNewCategory("");
                       }
-                    }} style={{ padding: "10px 16px", borderRadius: "6px", border: "1px solid rgba(255,107,44,0.3)", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "13px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>+ Tambah</button>
+                    }} style={{ padding: "10px 16px", borderRadius: "8px", background: "rgba(255,107,44,0.15)", border: "1px solid rgba(255,107,44,0.3)", color: "#FF6B2C", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>Tambah</button>
                   </div>
                   {formData.category.length > 0 && (
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px" }}>
                       {formData.category.map(cat => (
-                        <span key={cat} style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span key={cat} style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px", display: "flex", alignItems: "center", gap: "4px" }}>
                           {cat}
-                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, category: prev.category.filter(c => c !== cat) }))} style={{ background: "none", border: "none", color: "#FF6B2C", cursor: "pointer", padding: 0, fontSize: "14px", lineHeight: 1 }}>&times;</button>
+                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, category: prev.category.filter(c => c !== cat) }))} style={{ background: "none", border: "none", color: "#FF6B2C", cursor: "pointer", fontSize: "14px", padding: "0 2px" }}>x</button>
                         </span>
                       ))}
                     </div>
@@ -423,38 +408,27 @@ export default function AdminPage() {
                 <div style={{ marginBottom: "20px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                     <label style={{ color: "rgba(255,255,255,0.6)", fontSize: "13px" }}>Variant Produk *</label>
-                    <button type="button" onClick={addVariant} style={{ padding: "6px 12px", borderRadius: "4px", border: "1px solid rgba(255,107,44,0.3)", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px", cursor: "pointer" }}>+ Tambah Variant</button>
+                    <button type="button" onClick={addVariant} style={{ padding: "6px 12px", borderRadius: "8px", border: "1px solid rgba(255,107,44,0.3)", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px", cursor: "pointer" }}>+ Tambah Variant</button>
                   </div>
                   {variants.map((variant, index) => (
-                    <div key={index} style={{ background: "rgba(255,255,255,0.03)", borderRadius: "6px", padding: "16px", marginBottom: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <div key={index} style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "16px", marginBottom: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
                         <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>Variant {index + 1}</span>
-                        {variants.length > 1 && <button type="button" onClick={() => removeVariant(index)} style={{ background: "none", border: "none", color: "#FF4D6A", fontSize: "12px", cursor: "pointer" }}>Hapus</button>}
+                        {variants.length > 1 && <button type="button" onClick={() => removeVariant(index)} style={{ background: "none", border: "none", color: "#ef4444", fontSize: "12px", cursor: "pointer" }}>Hapus</button>}
                       </div>
-                      <input type="text" value={variant.name} onChange={(e) => updateVariant(index, "name", e.target.value)} placeholder="Nama variant" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none", marginBottom: "8px" }} />
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
-                        <input type="number" value={variant.price} onChange={(e) => updateVariant(index, "price", e.target.value)} placeholder="Harga (Rp)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none" }} />
-                        <input type="number" value={variant.stock} onChange={(e) => updateVariant(index, "stock", e.target.value)} placeholder="Stok" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none" }} />
-                        <input type="number" value={variant.durationMonths} onChange={(e) => updateVariant(index, "durationMonths", e.target.value)} placeholder="Durasi (bln)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none" }} />
+                      <input type="text" value={variant.name} onChange={(e) => updateVariant(index, "name", e.target.value)} placeholder="Nama variant" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none", marginBottom: "8px" }} />
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                        <input type="number" value={variant.price} onChange={(e) => updateVariant(index, "price", e.target.value)} placeholder="Harga (Rp)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none" }} />
+                        <input type="number" value={variant.stock} onChange={(e) => updateVariant(index, "stock", e.target.value)} placeholder="Stok" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "white", fontSize: "13px", outline: "none" }} />
                       </div>
                     </div>
                   ))}
-                  {variants.some(v => v.price && v.durationMonths && parseInt(v.durationMonths) > 0) && (
-                    <div style={{ marginTop: "12px", padding: "12px", background: "rgba(255,107,44,0.06)", borderRadius: "4px", border: "1px solid rgba(255,107,44,0.15)" }}>
-                      <p style={{ color: "#FF6B2C", fontSize: "12px", fontWeight: "600", marginBottom: "4px" }}>Preview Harga/bulan:</p>
-                      {variants.filter(v => v.price && v.durationMonths && parseInt(v.durationMonths) > 0).map((v, i) => (
-                        <p key={i} style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>
-                          {v.name || `Variant ${variants.indexOf(v) + 1}`}: Rp{Math.round(parseInt(v.price) / parseInt(v.durationMonths)).toLocaleString("id-ID")}/bln
-                        </p>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 {/* Active Toggle */}
                 <div style={{ marginBottom: "24px" }}>
                   <label style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }} onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}>
-                    <div style={{ width: "44px", height: "24px", borderRadius: "6px", background: formData.isActive ? "#FF6B2C" : "rgba(255,255,255,0.1)", position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
+                    <div style={{ width: "44px", height: "24px", borderRadius: "12px", background: formData.isActive ? "#FF6B2C" : "rgba(255,255,255,0.1)", position: "relative", cursor: "pointer", transition: "background 0.2s" }}>
                       <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "white", position: "absolute", top: "2px", left: formData.isActive ? "22px" : "2px", transition: "left 0.2s" }} />
                     </div>
                     <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px" }}>{formData.isActive ? "Produk Aktif" : "Produk Nonaktif"}</span>
@@ -462,7 +436,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Save Button */}
-                <button onClick={handleSave} disabled={saving} style={{ width: "100%", padding: "14px", borderRadius: "6px", background: saving ? "rgba(255,255,255,0.1)" : "#FF6B2C", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: saving ? "not-allowed" : "pointer" }}>
+                <button onClick={handleSave} disabled={saving} style={{ width: "100%", padding: "14px", borderRadius: "12px", background: saving ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: saving ? "not-allowed" : "pointer" }}>
                   {saving ? "Menyimpan..." : (editingProduct ? "Simpan Perubahan" : "Tambah Produk")}
                 </button>
               </div>
@@ -476,15 +450,15 @@ export default function AdminPage() {
         <>
           <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", zIndex: 100 }} onClick={() => setDeleteConfirm(null)} />
           <div style={{ position: "fixed", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 110, padding: "16px" }}>
-            <div style={{ background: "#141414", borderRadius: "6px", border: "2px solid #2A2A2A", padding: "32px", maxWidth: "400px", textAlign: "center" }}>
-              <div style={{ width: "60px", height: "60px", borderRadius: "50%", background: "rgba(255,77,106,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-                <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="#FF4D6A"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            <div style={{ background: "#161b22", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.1)", padding: "32px", maxWidth: "400px", textAlign: "center" }}>
+              <div style={{ width: "60px", height: "60px", borderRadius: "50%", background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="#ef4444"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </div>
               <h3 style={{ color: "white", fontSize: "18px", fontWeight: "bold", marginBottom: "8px" }}>Hapus Produk?</h3>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "24px" }}>Produk akan dihapus permanen.</p>
               <div style={{ display: "flex", gap: "12px" }}>
-                <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: "12px", borderRadius: "6px", border: "2px solid #2A2A2A", background: "rgba(255,255,255,0.05)", color: "white", fontSize: "14px", cursor: "pointer" }}>Batal</button>
-                <button onClick={() => handleDelete(deleteConfirm)} style={{ flex: 1, padding: "12px", borderRadius: "6px", background: "#FF4D6A", color: "white", fontSize: "14px", fontWeight: "600", border: "none", cursor: "pointer" }}>Hapus</button>
+                <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: "12px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", color: "white", fontSize: "14px", cursor: "pointer" }}>Batal</button>
+                <button onClick={() => handleDelete(deleteConfirm)} style={{ flex: 1, padding: "12px", borderRadius: "12px", background: "#ef4444", color: "white", fontSize: "14px", fontWeight: "600", border: "none", cursor: "pointer" }}>Hapus</button>
               </div>
             </div>
           </div>

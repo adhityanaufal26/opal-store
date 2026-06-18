@@ -2,25 +2,28 @@ import Link from "next/link";
 import { Product } from "@/lib/types";
 
 interface ProductCardProps {
-  product: Product & { variants?: { name: string; price: number; stock?: number; inStock?: boolean }[]; image?: string };
+  product: Product & { variants?: { name: string; price: number; stock: number }[]; image?: string };
 }
 
 function getTotalStock(product: ProductCardProps["product"]): number {
   if (product.variants && product.variants.length > 0) {
     return product.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
   }
-  return 0;
+  return product.stock || 0;
 }
 
 function getMinMonthlyPrice(product: ProductCardProps["product"]): number | null {
   if (!product.variants || product.variants.length === 0) return null;
   let minMonthly = Infinity;
   for (const variant of product.variants) {
-    const months = variant.durationMonths || (() => {
+    // Try durationMonths first (stored in DB)
+    let months = (variant as any).durationMonths;
+    // Fallback: parse from variant name
+    if (!months) {
       const match = variant.name.match(/(\d+)\s*Bulan/i);
-      return match ? parseInt(match[1]) : 0;
-    })();
-    if (months > 0) {
+      if (match) months = parseInt(match[1]);
+    }
+    if (months && months > 0) {
       const monthly = variant.price / months;
       if (monthly < minMonthly) minMonthly = monthly;
     }
@@ -38,37 +41,48 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageUrl = product.image || product.preview_image;
   const isOutOfStock = totalStock === 0;
 
+  // Don't show monthly price if all variants have 0 stock
+  const showMonthlyPrice = minMonthly && !isOutOfStock;
+
   return (
-    <Link href={`/dashboard/${product.slug}`} style={{ textDecoration: "none" }}>
-      <div className="card" style={{ padding: 0, opacity: isOutOfStock ? 0.5 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}>
-        <div style={{ position: "relative", aspectRatio: "1/1", background: "#0C0C0C", overflow: "hidden", padding: "12px", borderRadius: "8px" }}>
-          <img src={imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+    <Link href={`/dashboard/${product.slug}`}>
+      <div
+        className="card group overflow-hidden h-full"
+        style={{ padding: 0, opacity: isOutOfStock ? 0.6 : 1, transition: "opacity 0.2s ease", overflow: "hidden" }}
+      >
+        {/* Image */}
+        <div className="relative overflow-hidden" style={{ aspectRatio: "4/3", height: "auto", background: "linear-gradient(135deg, rgba(255,107,44,0.08), rgba(139,92,246,0.08))" }}>
+          <img src={imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           {totalStock > 0 ? (
-            <span style={{ position: "absolute", top: "6px", right: "6px", padding: "2px 7px", fontSize: "10px", fontWeight: "600", borderRadius: "6px", background: "rgba(0,214,143,0.15)", color: "#00D68F", border: "1px solid rgba(0,214,143,0.2)" }}>
-              Stok: {totalStock}
-            </span>
-          ) : (
-            <span style={{ position: "absolute", top: "6px", right: "6px", padding: "2px 7px", fontSize: "10px", fontWeight: "600", borderRadius: "6px", background: "rgba(255,77,106,0.15)", color: "#FF4D6A", border: "1px solid rgba(255,77,106,0.2)" }}>
-              Habis
-            </span>
-          )}
-          {(() => {
-            const cats = Array.isArray(product.category) ? product.category : (product.category ? [String(product.category)] : []);
-            return cats.length > 0 ? (
-              <span style={{ position: "absolute", bottom: "6px", left: "6px", padding: "2px 7px", fontSize: "9px", fontWeight: "600", borderRadius: "6px", background: "rgba(255,255,255,0.08)", color: "#999999", border: "1px solid rgba(255,255,255,0.06)" }}>
-                {cats.join(", ")}
+            <div className="absolute top-3 right-3">
+              <span style={{ padding: "2px 6px", fontSize: "10px", fontWeight: "600", borderRadius: "4px", background: "rgba(52,211,153,0.2)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}>
+                Stok: {totalStock}
               </span>
-            ) : null;
-          })()}
+            </div>
+          ) : (
+            <>
+              {/* Out-of-stock badge in top-right */}
+              <div className="absolute top-3 right-3 z-10">
+                <span className="px-2 py-1 text-xs font-semibold rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
+                  Habis
+                </span>
+              </div>
+            </>
+          )}
         </div>
 
-        <div style={{ padding: "10px 8px", minHeight: "44px" }}>
-          <h3 style={{ fontWeight: "700", fontSize: "12px", textAlign: "center", marginBottom: "3px", color: isOutOfStock ? "#555555" : "#fff", lineHeight: "1.3" }}>
+        {/* Name & Price */}
+        <div style={{ padding: "10px" }}>
+          <h3
+            style={{ fontWeight: "700", fontSize: "13px", textAlign: "center", marginBottom: "4px", color: isOutOfStock ? "#9ca3af" : "white", lineHeight: "1.3" }}
+          >
             {product.name}
           </h3>
-          <p style={{ textAlign: "center", fontSize: "11px", color: isOutOfStock ? "transparent" : "#FF6B2C", fontWeight: "600" }}>
-            {minMonthly && !isOutOfStock ? `Mulai ${formatPrice(minMonthly)}/bln` : "\u00A0"}
-          </p>
+          {showMonthlyPrice && (
+            <p style={{ textAlign: "center", fontSize: "11px", color: "#FF6B2C", fontWeight: "600" }}>
+              Mulai {formatPrice(minMonthly)}/bulan
+            </p>
+          )}
         </div>
       </div>
     </Link>

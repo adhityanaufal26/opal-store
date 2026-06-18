@@ -36,6 +36,13 @@ export async function GET(request: NextRequest) {
       query.status = status;
     }
 
+    // Auto-cancel pending transactions older than 30 minutes
+    const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
+    await Transaction.updateMany(
+      { userId, status: "pending", createdAt: { $lt: thirtyMinAgo } },
+      { status: "cancelled" }
+    );
+
     const transactions = await Transaction.find(query).sort({ createdAt: -1 });
     return NextResponse.json({ success: true, data: transactions });
   } catch (error) {
@@ -59,5 +66,32 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating transaction:", error);
     return NextResponse.json({ success: false, error: "Failed to create transaction" }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    await connectDB();
+    const body = await request.json();
+    const { orderId, status } = body;
+
+    if (!orderId || !status) {
+      return NextResponse.json({ success: false, error: "Missing orderId or status" }, { status: 400 });
+    }
+
+    const transaction = await Transaction.findOneAndUpdate(
+      { orderId },
+      { status },
+      { new: true }
+    );
+
+    if (!transaction) {
+      return NextResponse.json({ success: false, error: "Transaction not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, data: transaction });
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+    return NextResponse.json({ success: false, error: "Failed to update transaction" }, { status: 500 });
   }
 }

@@ -14,6 +14,8 @@ export interface ITransaction extends Document {
   status: 'pending' | 'success' | 'failed' | 'cancelled';
   midtransToken?: string;
   midtransStatus?: string;
+  tripayStatus?: string;
+  tripayReference?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,7 +23,7 @@ export interface ITransaction extends Document {
 const TransactionSchema = new Schema<ITransaction>({
   orderId: { type: String, required: true, unique: true },
   userId: { type: String, required: true },
-  productId: { type: String, required: true },
+  productId: { type: String, default: "" },
   productName: { type: String, required: true },
   variantName: { type: String, required: true },
   quantity: { type: Number, required: true, default: 1 },
@@ -32,6 +34,8 @@ const TransactionSchema = new Schema<ITransaction>({
   status: { type: String, required: true, default: 'pending', enum: ['pending', 'success', 'failed', 'cancelled'] },
   midtransToken: { type: String },
   midtransStatus: { type: String },
+  tripayStatus: { type: String },
+  tripayReference: { type: String },
 }, { timestamps: true });
 
 export default mongoose.models.Transaction || mongoose.model<ITransaction>('Transaction', TransactionSchema);

@@ -16,6 +16,8 @@ export interface IProduct extends Document {
   image: string;
   variants: IProductVariant[];
   isActive: boolean;
+  outputType?: string;
+  outputValue?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +38,8 @@ const ProductSchema = new Schema<IProduct>({
   image: { type: String, required: true },
   variants: [ProductVariantSchema],
   isActive: { type: Boolean, default: true },
+  outputType: { type: String, enum: ["text", "link", "file", "email"], default: "text" },
+  outputValue: { type: String, default: "" },
 }, { timestamps: true });
 
 export default mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);
