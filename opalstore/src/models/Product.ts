@@ -12,7 +12,7 @@ export interface IProduct extends Document {
   name: string;
   slug: string;
   description: string;
-  category: string;
+  category: string[];
   image: string;
   variants: IProductVariant[];
   isActive: boolean;
@@ -32,7 +32,7 @@ const ProductSchema = new Schema<IProduct>({
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   description: { type: String, required: true },
-  category: { type: String, required: true },
+  category: { type: [String], default: [] },
   image: { type: String, required: true },
   variants: [ProductVariantSchema],
   isActive: { type: Boolean, default: true },

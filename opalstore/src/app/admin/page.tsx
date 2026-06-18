@@ -40,12 +40,13 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
     description: "",
-    category: "",
+    category: [] as string[],
     image: "/images/products/default.jpg",
     isActive: true,
   });
@@ -95,7 +96,8 @@ export default function AdminPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", slug: "", description: "", category: "", image: "/images/products/default.jpg", isActive: true });
+    setFormData({ name: "", slug: "", description: "", category: [], image: "/images/products/default.jpg", isActive: true });
+    setNewCategory("");
     setVariants([{ name: "", price: "", stock: "", durationMonths: "" }]);
     setEditingProduct(null);
   };
@@ -110,7 +112,7 @@ export default function AdminPage() {
       name: product.name,
       slug: product.slug,
       description: product.description,
-      category: product.category || "Digital Subscription",
+      category: Array.isArray(product.category) ? product.category : (product.category ? [product.category] : []),
       image: product.image || "/images/products/default.jpg",
       isActive: product.isActive !== false,
     });
@@ -360,34 +362,6 @@ export default function AdminPage() {
                 <div style={{ marginBottom: "16px" }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Deskripsi *</label>
                   <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Deskripsi produk..." rows={4} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", resize: "vertical" }} />
-                </div>
-
-                {/* Category */}
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Kategori</label>
-                  <select
-                    value={categoryOptions.includes(formData.category) ? formData.category : "__custom__"}
-                    onChange={(e) => {
-                      if (e.target.value !== "__custom__") setFormData({ ...formData, category: e.target.value });
-                      else setFormData({ ...formData, category: "" });
-                    }}
-                    style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", cursor: "pointer", marginBottom: "8px" }}
-                  >
-                    <option value="" style={{ background: "#141414" }} disabled>Pilih kategori...</option>
-                    {categoryOptions.map(cat => (
-                      <option key={cat} value={cat} style={{ background: "#141414" }}>{cat}</option>
-                    ))}
-                    <option value="__custom__" style={{ background: "#141414", color: "#FF6B2C" }}>+ Ketik manual...</option>
-                  </select>
-                  {(!formData.category || !categoryOptions.includes(formData.category)) && (
-                    <input
-                      type="text"
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      placeholder="Ketik nama kategori baru..."
-                      style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none" }}
-                    />
-                  )}
                 </div>
 
                 {/* Variants */}

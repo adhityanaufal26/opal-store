@@ -52,11 +52,14 @@ export default function ProductCard({ product }: ProductCardProps) {
               Habis
             </span>
           )}
-          {product.category && (
-            <span style={{ position: "absolute", bottom: "6px", left: "6px", padding: "2px 7px", fontSize: "9px", fontWeight: "600", borderRadius: "6px", background: "rgba(255,255,255,0.08)", color: "#999999", border: "1px solid rgba(255,255,255,0.06)" }}>
-              {typeof product.category === 'object' ? (product.category as any).name : String(product.category)}
-            </span>
-          )}
+          {(() => {
+            const cats = Array.isArray(product.category) ? product.category : (product.category ? [String(product.category)] : []);
+            return cats.length > 0 ? (
+              <span style={{ position: "absolute", bottom: "6px", left: "6px", padding: "2px 7px", fontSize: "9px", fontWeight: "600", borderRadius: "6px", background: "rgba(255,255,255,0.08)", color: "#999999", border: "1px solid rgba(255,255,255,0.06)" }}>
+                {cats.join(", ")}
+              </span>
+            ) : null;
+          })()}
         </div>
 
         <div style={{ padding: "10px 8px", minHeight: "44px" }}>

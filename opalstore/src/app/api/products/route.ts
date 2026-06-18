@@ -52,12 +52,13 @@ export async function GET(request: NextRequest) {
     const distinct = searchParams.get("distinct");
     if (distinct === "category") {
       const cats = await Product.distinct("category");
-      return NextResponse.json({ success: true, data: cats.filter(Boolean) });
+      const flat = cats.flat().filter(Boolean);
+      return NextResponse.json({ success: true, data: [...new Set(flat)] });
     }
 
     let query: any = {};
     if (slug) query.slug = slug;
-    if (category && category !== "all") query.category = category;
+    if (category && category !== "all") query.category = { $in: [category] };
     if (search) query.name = { $regex: search, $options: "i" };
 
     const products = await Product.find(query).sort({ createdAt: -1 });
