@@ -45,7 +45,7 @@ function DashboardContent() {
   const filtered = activeProducts.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
                         p.description.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = selectedCategory === "all" || p.category === selectedCategory;
+    const matchCategory = selectedCategory === "all" || (Array.isArray(p.category) ? p.category.includes(selectedCategory) : p.category === selectedCategory);
     return matchSearch && matchCategory;
   });
 
