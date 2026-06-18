@@ -104,10 +104,10 @@ function CheckoutContent() {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {[
-                { id: 'qris', name: 'QRIS', desc: 'Scan QR untuk bayar', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg' },
-                { id: 'ovo', name: 'OVO', desc: 'Bayar dengan OVO', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/200px-Logo_ovo_purple.svg.png' },
-                { id: 'dana', name: 'DANA', desc: 'Bayar dengan DANA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/200px-Logo_dana_blue.svg.png' },
-                { id: 'shopeepay', name: 'ShopeePay', desc: 'Bayar dengan ShopeePay', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee_logo.svg/200px-Shopee_logo.svg.png' },
+                { id: 'qris', name: 'QRIS', desc: 'Scan QR untuk bayar', logo: '/logos/qris.svg' },
+                { id: 'ovo', name: 'OVO', desc: 'Bayar dengan OVO', logo: '/logos/ovo.svg' },
+                { id: 'dana', name: 'DANA', desc: 'Bayar dengan DANA', logo: '/logos/dana.svg' },
+                { id: 'shopeepay', name: 'ShopeePay', desc: 'Bayar dengan ShopeePay', logo: '/logos/shopeepay.svg' },
               ].map(method => (
                 <button
                   key={method.id}

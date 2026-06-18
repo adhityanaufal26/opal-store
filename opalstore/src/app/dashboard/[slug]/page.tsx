@@ -9,10 +9,10 @@ import { useTransactions } from "@/lib/transaction-context";
 
 // Payment method options
 const PAYMENT_METHODS = [
-  { code: "QRISC", name: "QRIS", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" },
-  { code: "OVO", name: "OVO", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/200px-Logo_ovo_purple.svg.png" },
-  { code: "DANA", name: "DANA", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/200px-Logo_dana_blue.svg.png" },
-  { code: "SHOPEEPAY", name: "ShopeePay", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee_logo.svg/200px-Shopee_logo.svg.png" },
+  { code: "QRISC", name: "QRIS", logo: "/logos/qris.svg" },
+  { code: "OVO", name: "OVO", logo: "/logos/ovo.svg" },
+  { code: "DANA", name: "DANA", logo: "/logos/dana.svg" },
+  { code: "SHOPEEPAY", name: "ShopeePay", logo: "/logos/shopeepay.svg" },
 ];
 
 export default function ProductDetailPage() {
