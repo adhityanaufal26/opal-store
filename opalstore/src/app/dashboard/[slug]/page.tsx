@@ -368,9 +368,6 @@ export default function ProductDetailPage() {
               )}
             </button>
 
-            <div style={{ textAlign: "center", marginTop: "12px" }}>
-              <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "11px" }}>Powered by <span style={{ color: "rgba(255,255,255,0.5)" }}>Tripay</span> • Pembayaran aman & terenkripsi</p>
-            </div>
           </div>
           {displayStock <= 0 && (
             <div style={{ position: "relative", marginTop: "-16px", marginBottom: "16px", padding: "20px", background: "rgba(248,113,113,0.15)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "16px", textAlign: "center" }}>
