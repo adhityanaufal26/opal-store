@@ -26,7 +26,7 @@ export default function ProductDetailPage() {
   const [selectedVariant, setSelectedVariant] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState<string>("QRIS");
+  const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [fee, setFee] = useState<number>(0);
   const [feeLoading, setFeeLoading] = useState<boolean>(false);
   const [confirmData, setConfirmData] = useState<{checkoutUrl: string, fee: number, total: number} | null>(null);
@@ -153,6 +153,10 @@ export default function ProductDetailPage() {
     }
     if (quantity > displayStock) {
       alert("Stok tidak cukup! Maksimal " + displayStock + " pcs.");
+      return;
+    }
+    if (!selectedPayment) {
+      alert("Pilih metode pembayaran terlebih dahulu!");
       return;
     }
 
@@ -366,7 +370,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <button type="submit" disabled={isSubmitting || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || displayStock <= 0) ? "rgba(255,255,255,0.1)" : "#FF6B2C", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: (isSubmitting || displayStock <= 0) ? "not-allowed" : "pointer", opacity: (isSubmitting || displayStock <= 0) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            <button type="submit" disabled={isSubmitting || !selectedPayment || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || !selectedPayment || displayStock <= 0) ? "rgba(255,255,255,0.1)" : "#FF6B2C", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: (isSubmitting || !selectedPayment || displayStock <= 0) ? "not-allowed" : "pointer", opacity: (isSubmitting || !selectedPayment || displayStock <= 0) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
               {isSubmitting ? (
                 <><div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>Memproses...</>
               ) : (
