@@ -10,7 +10,7 @@ import { useTransactions } from "@/lib/transaction-context";
 // Payment method options
 const PAYMENT_METHODS = [
   { code: "QRISC", name: "QRIS", logo: "/logos/qris.png" },
-  { code: "OVO", name: "OVO", logo: "/logos/ovo.svg" },
+  { code: "OVO", name: "OVO", logo: "/logos/ovo.jpg" },
   { code: "DANA", name: "DANA", logo: "/logos/dana.jpg" },
   { code: "SHOPEEPAY", name: "ShopeePay", logo: "/logos/shopeepay.jpg" },
 ];
