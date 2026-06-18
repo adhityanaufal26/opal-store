@@ -35,7 +35,7 @@ function CheckoutContent() {
     fullName: user?.name || '',
     email: user?.email || '',
     whatsapp: user?.phone || '',
-    paymentMethod: 'qris' as 'bank_transfer' | 'qris' | 'ewallet',
+    paymentMethod: '' as string,
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -154,18 +154,18 @@ function CheckoutContent() {
             
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !formData.paymentMethod}
               style={{
                 width: '100%',
                 padding: '16px',
                 borderRadius: '12px',
-                background: isSubmitting ? 'rgba(255,255,255,0.1)' : '#FF6B2C',
+                background: (isSubmitting || !formData.paymentMethod) ? 'rgba(255,255,255,0.1)' : '#FF6B2C',
                 color: 'white',
                 fontWeight: 'bold',
                 fontSize: '16px',
                 border: 'none',
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                opacity: isSubmitting ? 0.7 : 1,
+                cursor: (isSubmitting || !formData.paymentMethod) ? 'not-allowed' : 'pointer',
+                opacity: (isSubmitting || !formData.paymentMethod) ? 0.7 : 1,
               }}
             >
               {isSubmitting ? 'Memproses...' : 'Bayar Sekarang'}
