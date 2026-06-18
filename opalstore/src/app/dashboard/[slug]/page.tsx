@@ -12,7 +12,7 @@ const PAYMENT_METHODS = [
   { code: "QRISC", name: "QRIS", logo: "/logos/qris.png" },
   { code: "OVO", name: "OVO", logo: "/logos/ovo.svg" },
   { code: "DANA", name: "DANA", logo: "/logos/dana.jpg" },
-  { code: "SHOPEEPAY", name: "ShopeePay", logo: "/logos/shopeepay.svg" },
+  { code: "SHOPEEPAY", name: "ShopeePay", logo: "/logos/shopeepay.jpg" },
 ];
 
 export default function ProductDetailPage() {
