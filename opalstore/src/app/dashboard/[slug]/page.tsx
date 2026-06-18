@@ -360,7 +360,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <button type="submit" disabled={isSubmitting || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || displayStock <= 0) ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg, #e84393, #6c5ce7)", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: (isSubmitting || displayStock <= 0) ? "not-allowed" : "pointer", opacity: (isSubmitting || displayStock <= 0) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            <button type="submit" disabled={isSubmitting || !displayStock || displayStock <= 0} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: (isSubmitting || displayStock <= 0) ? "rgba(255,255,255,0.1)" : "#FF6B2C", color: "white", fontWeight: "bold", fontSize: "16px", border: "none", cursor: (isSubmitting || displayStock <= 0) ? "not-allowed" : "pointer", opacity: (isSubmitting || displayStock <= 0) ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
               {isSubmitting ? (
                 <><div style={{ width: "20px", height: "20px", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>Memproses...</>
               ) : (

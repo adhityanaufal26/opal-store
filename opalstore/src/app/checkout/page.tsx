@@ -155,7 +155,7 @@ function CheckoutContent() {
                 width: '100%',
                 padding: '16px',
                 borderRadius: '12px',
-                background: isSubmitting ? 'rgba(255,255,255,0.1)' : 'linear-gradient(135deg, #e84393, #6c5ce7)',
+                background: isSubmitting ? 'rgba(255,255,255,0.1)' : '#FF6B2C',
                 color: 'white',
                 fontWeight: 'bold',
                 fontSize: '16px',
