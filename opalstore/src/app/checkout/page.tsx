@@ -104,9 +104,10 @@ function CheckoutContent() {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {[
-                { id: 'qris', name: 'QRIS', desc: 'Scan QR untuk bayar' },
-                { id: 'bank_transfer', name: 'Bank Transfer', desc: 'Transfer ke rekening bank' },
-                { id: 'ewallet', name: 'E-Wallet', desc: 'GoPay, OVO, Dana, ShopeePay' },
+                { id: 'qris', name: 'QRIS', desc: 'Scan QR untuk bayar', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg' },
+                { id: 'ovo', name: 'OVO', desc: 'Bayar dengan OVO', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/200px-Logo_ovo_purple.svg.png' },
+                { id: 'dana', name: 'DANA', desc: 'Bayar dengan DANA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/200px-Logo_dana_blue.svg.png' },
+                { id: 'shopeepay', name: 'ShopeePay', desc: 'Bayar dengan ShopeePay', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee_logo.svg/200px-Shopee_logo.svg.png' },
               ].map(method => (
                 <button
                   key={method.id}
@@ -125,9 +126,12 @@ function CheckoutContent() {
                     textAlign: 'left',
                   }}
                 >
-                  <div>
-                    <p style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{method.name}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{method.desc}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img src={method.logo} alt={method.name} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                    <div>
+                      <p style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{method.name}</p>
+                      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>{method.desc}</p>
+                    </div>
                   </div>
                   <div style={{ 
                     width: '20px', 

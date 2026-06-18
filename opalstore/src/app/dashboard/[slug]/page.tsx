@@ -9,10 +9,10 @@ import { useTransactions } from "@/lib/transaction-context";
 
 // Payment method options
 const PAYMENT_METHODS = [
-  { code: "QRISC", name: "QRIS", icon: "📱" },
-  { code: "OVO", name: "OVO", icon: "💜" },
-  { code: "DANA", name: "DANA", icon: "💙" },
-  { code: "SHOPEEPAY", name: "ShopeePay", icon: "🧡" },
+  { code: "QRISC", name: "QRIS", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e1/QRIS_logo.svg" },
+  { code: "OVO", name: "OVO", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/200px-Logo_ovo_purple.svg.png" },
+  { code: "DANA", name: "DANA", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Logo_dana_blue.svg/200px-Logo_dana_blue.svg.png" },
+  { code: "SHOPEEPAY", name: "ShopeePay", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee_logo.svg/200px-Shopee_logo.svg.png" },
 ];
 
 export default function ProductDetailPage() {
@@ -331,7 +331,7 @@ export default function ProductDetailPage() {
                       transition: "all 0.2s",
                     }}
                   >
-                    <span style={{ fontSize: "18px" }}>{method.icon}</span>
+                    <img src={method.logo} alt={method.name} style={{ width: "28px", height: "28px", objectFit: "contain" }} />
                     <span style={{ color: selectedPayment === method.code ? "white" : "rgba(255,255,255,0.7)", fontSize: "13px", fontWeight: selectedPayment === method.code ? "600" : "400" }}>{method.name}</span>
                   </button>
                 ))}
