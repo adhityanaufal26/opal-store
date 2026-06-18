@@ -107,11 +107,11 @@ export default function ProductDetailPage() {
 
   const getMonthlyPrice = (): number | null => {
     if (!currentVariant) return null;
-    const match = currentVariant.name.match(/(\d+)\s*Bulan/i);
-    if (match) {
-      const months = parseInt(match[1]);
-      return Math.round(currentVariant.price / months);
-    }
+    const months = currentVariant.durationMonths || (() => {
+      const match = currentVariant.name.match(/(\d+)\s*Bulan/i);
+      return match ? parseInt(match[1]) : 0;
+    })();
+    if (months > 0) return Math.round(currentVariant.price / months);
     return null;
   };
 
@@ -301,8 +301,11 @@ export default function ProductDetailPage() {
                 <p style={{ color: "#555555", fontSize: "13px", marginBottom: "12px", fontWeight: "600" }}>Pilih Paket:</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {product.variants.map((variant: any) => {
-                    const variantMatch = variant.name.match(/(\d+)\s*Bulan/i);
-                    const variantMonthly = variantMatch ? Math.round(variant.price / parseInt(variantMatch[1])) : null;
+                    const variantMonths = variant.durationMonths || (() => {
+                      const match = variant.name.match(/(\d+)\s*Bulan/i);
+                      return match ? parseInt(match[1]) : 0;
+                    })();
+                    const variantMonthly = variantMonths > 0 ? Math.round(variant.price / variantMonths) : null;
                     const variantOutOfStock = variant.inStock === false;
                     return (
                       <button type="button" key={variant.name} disabled={variantOutOfStock} onClick={() => { if (!variantOutOfStock) setSelectedVariant(variant.name); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderRadius: "4px", border: selectedVariant === variant.name ? "1px solid rgba(255,107,44,0.4)" : "1px solid rgba(255,255,255,0.06)", background: selectedVariant === variant.name ? "rgba(255,107,44,0.08)" : "rgba(255,255,255,0.02)", cursor: variantOutOfStock ? "not-allowed" : "pointer", opacity: variantOutOfStock ? 0.35 : 1 }}>

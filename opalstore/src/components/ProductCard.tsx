@@ -16,9 +16,11 @@ function getMinMonthlyPrice(product: ProductCardProps["product"]): number | null
   if (!product.variants || product.variants.length === 0) return null;
   let minMonthly = Infinity;
   for (const variant of product.variants) {
-    const match = variant.name.match(/(\d+)\s*Bulan/i);
-    if (match) {
-      const months = parseInt(match[1]);
+    const months = variant.durationMonths || (() => {
+      const match = variant.name.match(/(\d+)\s*Bulan/i);
+      return match ? parseInt(match[1]) : 0;
+    })();
+    if (months > 0) {
       const monthly = variant.price / months;
       if (monthly < minMonthly) minMonthly = monthly;
     }
@@ -48,6 +50,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           ) : (
             <span style={{ position: "absolute", top: "6px", right: "6px", padding: "2px 7px", fontSize: "10px", fontWeight: "600", borderRadius: "6px", background: "rgba(255,77,106,0.15)", color: "#FF4D6A", border: "1px solid rgba(255,77,106,0.2)" }}>
               Habis
+            </span>
+          )}
+          {product.category && (
+            <span style={{ position: "absolute", bottom: "6px", left: "6px", padding: "2px 7px", fontSize: "9px", fontWeight: "600", borderRadius: "6px", background: "rgba(255,255,255,0.08)", color: "#999999", border: "1px solid rgba(255,255,255,0.06)" }}>
+              {typeof product.category === 'object' ? (product.category as any).name : String(product.category)}
             </span>
           )}
         </div>

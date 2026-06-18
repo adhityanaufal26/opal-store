@@ -28,6 +28,7 @@ function serializeProduct(product: any) {
       price: v.price,
       stock: v.stock || 0,
       inStock: (v.stock || 0) > 0,
+      durationMonths: v.durationMonths || null,
     })),
   };
 }

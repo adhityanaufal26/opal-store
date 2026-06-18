@@ -14,6 +14,10 @@ export function isAdmin(email: string | null | undefined): boolean {
 // Categories
 export const categories: Category[] = [
   { id: '1', name: 'Digital Subscription', slug: 'digital-subscription', created_at: '2024-01-01' },
+  { id: '2', name: 'AI Tools', slug: 'ai-tools', created_at: '2024-01-01' },
+  { id: '3', name: 'Entertainment', slug: 'entertainment', created_at: '2024-01-01' },
+  { id: '4', name: 'Productivity', slug: 'productivity', created_at: '2024-01-01' },
+  { id: '5', name: 'VPS & Hosting', slug: 'vps-hosting', created_at: '2024-01-01' },
 ];
 
 // Products with variants

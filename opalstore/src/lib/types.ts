@@ -22,6 +22,7 @@ export interface ProductVariant {
   price: number;
   stock?: number;
   inStock?: boolean;
+  durationMonths?: number;
 }
 
 export interface Product {

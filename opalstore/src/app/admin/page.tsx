@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { useSession } from "next-auth/react";
-import { isAdmin } from "@/lib/data";
+import { isAdmin, categories } from "@/lib/data";
 
 interface Variant {
   name: string;
   price: string;
   stock: string;
+  durationMonths: string;
 }
 
 interface Product {
@@ -47,7 +48,7 @@ export default function AdminPage() {
     image: "/images/products/default.jpg",
     isActive: true,
   });
-  const [variants, setVariants] = useState<Variant[]>([{ name: "", price: "", stock: "" }]);
+  const [variants, setVariants] = useState<Variant[]>([{ name: "", price: "", stock: "", durationMonths: "" }]);
 
   const currentEmail = session?.user?.email || user?.email || "";
   const isUserAdmin = isAdmin(currentEmail);
@@ -89,7 +90,7 @@ export default function AdminPage() {
 
   const resetForm = () => {
     setFormData({ name: "", slug: "", description: "", category: "Digital Subscription", image: "/images/products/default.jpg", isActive: true });
-    setVariants([{ name: "", price: "", stock: "" }]);
+    setVariants([{ name: "", price: "", stock: "", durationMonths: "" }]);
     setEditingProduct(null);
   };
 
@@ -109,8 +110,8 @@ export default function AdminPage() {
     });
     setVariants(
       product.variants?.length > 0
-        ? product.variants.map(v => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString() }))
-        : [{ name: "", price: "", stock: "" }]
+        ? product.variants.map(v => ({ name: v.name, price: v.price.toString(), stock: v.stock.toString(), durationMonths: (v as any).durationMonths?.toString() || "" }))
+        : [{ name: "", price: "", stock: "", durationMonths: "" }]
     );
     setEditingProduct(product);
     setShowModal(true);
@@ -161,7 +162,7 @@ export default function AdminPage() {
       category: formData.category,
       image: formData.image,
       isActive: formData.isActive,
-      variants: validVariants.map(v => ({ name: v.name, price: parseInt(v.price), stock: parseInt(v.stock) })),
+      variants: validVariants.map(v => ({ name: v.name, price: parseInt(v.price), stock: parseInt(v.stock), durationMonths: v.durationMonths ? parseInt(v.durationMonths) : undefined })),
     };
 
     try {
@@ -225,7 +226,7 @@ export default function AdminPage() {
     }
   };
 
-  const addVariant = () => setVariants([...variants, { name: "", price: "", stock: "" }]);
+  const addVariant = () => setVariants([...variants, { name: "", price: "", stock: "", durationMonths: "" }]);
   const removeVariant = (i: number) => { if (variants.length > 1) setVariants(variants.filter((_, idx) => idx !== i)); };
   const updateVariant = (i: number, field: string, val: string) => {
     const updated = [...variants];
@@ -352,6 +353,20 @@ export default function AdminPage() {
                   <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Deskripsi produk..." rows={4} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", resize: "vertical" }} />
                 </div>
 
+                {/* Category */}
+                <div style={{ marginBottom: "16px" }}>
+                  <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Kategori</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", cursor: "pointer" }}
+                  >
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.name} style={{ background: "#141414" }}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* Variants */}
                 <div style={{ marginBottom: "20px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
@@ -365,12 +380,23 @@ export default function AdminPage() {
                         {variants.length > 1 && <button type="button" onClick={() => removeVariant(index)} style={{ background: "none", border: "none", color: "#FF4D6A", fontSize: "12px", cursor: "pointer" }}>Hapus</button>}
                       </div>
                       <input type="text" value={variant.name} onChange={(e) => updateVariant(index, "name", e.target.value)} placeholder="Nama variant" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none", marginBottom: "8px" }} />
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
                         <input type="number" value={variant.price} onChange={(e) => updateVariant(index, "price", e.target.value)} placeholder="Harga (Rp)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none" }} />
                         <input type="number" value={variant.stock} onChange={(e) => updateVariant(index, "stock", e.target.value)} placeholder="Stok" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none" }} />
+                        <input type="number" value={variant.durationMonths} onChange={(e) => updateVariant(index, "durationMonths", e.target.value)} placeholder="Durasi (bln)" style={{ width: "100%", padding: "10px 12px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "4px", color: "white", fontSize: "13px", outline: "none" }} />
                       </div>
                     </div>
                   ))}
+                  {variants.some(v => v.price && v.durationMonths && parseInt(v.durationMonths) > 0) && (
+                    <div style={{ marginTop: "12px", padding: "12px", background: "rgba(255,107,44,0.06)", borderRadius: "4px", border: "1px solid rgba(255,107,44,0.15)" }}>
+                      <p style={{ color: "#FF6B2C", fontSize: "12px", fontWeight: "600", marginBottom: "4px" }}>Preview Harga/bulan:</p>
+                      {variants.filter(v => v.price && v.durationMonths && parseInt(v.durationMonths) > 0).map((v, i) => (
+                        <p key={i} style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>
+                          {v.name || `Variant ${variants.indexOf(v) + 1}`}: Rp{Math.round(parseInt(v.price) / parseInt(v.durationMonths)).toLocaleString("id-ID")}/bln
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Active Toggle */}
