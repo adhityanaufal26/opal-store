@@ -23,6 +23,7 @@ export interface ProductVariant {
   stock?: number;
   inStock?: boolean;
   durationMonths?: number;
+  duration?: number;
 }
 
 export interface Product {
