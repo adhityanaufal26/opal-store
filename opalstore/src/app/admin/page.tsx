@@ -364,6 +364,61 @@ export default function AdminPage() {
                   <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Deskripsi produk..." rows={4} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "14px", outline: "none", resize: "vertical" }} />
                 </div>
 
+                {/* Category - Multi Select */}
+                <div style={{ marginBottom: "16px" }}>
+                  <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "8px" }}>Kategori (bisa pilih lebih dari 1)</label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "8px" }}>
+                    {categoryOptions.map(cat => {
+                      const selected = formData.category.includes(cat);
+                      return (
+                        <button type="button" key={cat} onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            category: selected ? prev.category.filter(c => c !== cat) : [...prev.category, cat]
+                          }));
+                        }} style={{
+                          padding: "8px 14px", borderRadius: "6px", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+                          border: selected ? "1px solid rgba(255,107,44,0.5)" : "1px solid #2A2A2A",
+                          background: selected ? "rgba(255,107,44,0.12)" : "rgba(255,255,255,0.04)",
+                          color: selected ? "#FF6B2C" : "#999999"
+                        }}>
+                          {selected ? "\u2713 " : ""}{cat}
+                        </button>
+                      );
+                    })}
+                    {categoryOptions.length === 0 && (
+                      <span style={{ color: "#555555", fontSize: "13px" }}>Belum ada kategori</span>
+                    )}
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input
+                      type="text"
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      placeholder="Tambah kategori baru..."
+                      style={{ flex: 1, padding: "10px 14px", background: "rgba(255,255,255,0.06)", border: "2px solid #2A2A2A", borderRadius: "6px", color: "white", fontSize: "13px", outline: "none" }}
+                    />
+                    <button type="button" onClick={() => {
+                      const trimmed = newCategory.trim();
+                      if (trimmed && !formData.category.includes(trimmed)) {
+                        setFormData(prev => ({ ...prev, category: [...prev.category, trimmed] }));
+                        if (!categoryOptions.includes(trimmed)) setCategoryOptions(prev => [...prev, trimmed]);
+                        setNewCategory("");
+                      }
+                    }} style={{ padding: "10px 16px", borderRadius: "6px", border: "1px solid rgba(255,107,44,0.3)", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "13px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap" }}>+ Tambah</button>
+                  </div>
+                  {formData.category.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px" }}>
+                      {formData.category.map(cat => (
+                        <span key={cat} style={{ padding: "4px 10px", borderRadius: "6px", background: "rgba(255,107,44,0.1)", color: "#FF6B2C", fontSize: "12px", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}>
+                          {cat}
+                          <button type="button" onClick={() => setFormData(prev => ({ ...prev, category: prev.category.filter(c => c !== cat) }))} style={{ background: "none", border: "none", color: "#FF6B2C", cursor: "pointer", padding: 0, fontSize: "14px", lineHeight: 1 }}>&times;</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* Variants */}
                 <div style={{ marginBottom: "20px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
