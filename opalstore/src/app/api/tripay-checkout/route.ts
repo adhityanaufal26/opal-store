@@ -8,6 +8,40 @@ const TRIPAY_PRIVATE_KEY = process.env.TRIPAY_PRIVATE_KEY!;
 const TRIPAY_MERCHANT_CODE = process.env.TRIPAY_MERCHANT_CODE!;
 const TRIPAY_BASE_URL = process.env.TRIPAY_BASE_URL || "https://tripay.co.id/api-sandbox";
 
+// Telegram admin notification (fire-and-forget)
+function notifyAdmin(data: { orderId: string; product: string; variant: string; qty: number; email: string; wa: string; amount: number; method: string; status: string; duration: number | null }) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+  if (!token || !chatId) return;
+  const fmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.amount);
+  const statusLabel = data.status === "pending" ? "⏳ Pending" : data.status === "success" ? "✅ Paid" : "❌ " + data.status;
+  const durationLabel = data.duration ? data.duration + " bulan" : "-";
+  const lines = [
+    "🔔 *Transaksi Baru*",
+    "",
+    "🆔 `" + data.orderId + "`",
+    "📦 " + data.product + " — " + data.variant,
+    "🔢 Qty: " + data.qty,
+    "⏰ Durasi: " + durationLabel,
+    "💰 " + fmt,
+    "💳 " + data.method,
+    "📋 Status: " + statusLabel,
+    "",
+    "👤 " + data.email,
+    "📱 " + data.wa,
+  ];
+  fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text: lines.join("\n"), parse_mode: "Markdown" }),
+  }).catch(() => {});
+}
+
+function parseDuration(variantName: string): number | null {
+  const match = variantName.match(/(\d+)\s*Bulan/i);
+  return match ? parseInt(match[1]) : null;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -120,6 +154,19 @@ export async function POST(req: NextRequest) {
         tripayReference: result.data.reference,
       });
       console.log("Transaction saved to MongoDB:", merchantRef);
+      // Notify admin via Telegram
+      notifyAdmin({
+        orderId: merchantRef,
+        product: productName,
+        variant: variantName,
+        qty: quantity,
+        email: customerEmail,
+        wa: customerWhatsapp || "",
+        amount: totalAmount,
+        method: paymentMethod,
+        status: "pending",
+        duration: parseDuration(variantName),
+      });
     } catch (dbError) {
       console.error("Failed to save transaction to DB:", dbError);
       // Continue anyway — Tripay transaction is created, callback will handle it

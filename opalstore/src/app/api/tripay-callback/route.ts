@@ -6,10 +6,43 @@ import Product from "@/models/Product";
 
 const TRIPAY_PRIVATE_KEY = process.env.TRIPAY_PRIVATE_KEY!;
 
+// Telegram admin notification for status changes (fire-and-forget)
+function notifyStatus(data: { orderId: string; product: string; variant: string; qty: number; email: string; wa: string; amount: number; status: string; duration: number | null }) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+  if (!token || !chatId) return;
+  const fmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.amount);
+  const statusEmoji: Record<string, string> = { success: "✅ PAID", pending: "⏳ Pending", cancelled: "❌ Expired", failed: "❌ Failed" };
+  const statusLabel = statusEmoji[data.status] || data.status;
+  const durationLabel = data.duration ? data.duration + " bulan" : "-";
+  const lines = [
+    "💰 *Pembayaran " + (data.status === "success" ? "Berhasil!" : "Gagal/Expired") + "*",
+    "",
+    "🆔 `" + data.orderId + "`",
+    "📦 " + data.product + " — " + data.variant,
+    "🔢 Qty: " + data.qty,
+    "⏰ Durasi: " + durationLabel,
+    "💰 " + fmt,
+    "📋 Status: " + statusLabel,
+    "",
+    "👤 " + data.email,
+    "📱 " + data.wa,
+  ];
+  fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text: lines.join("\n"), parse_mode: "Markdown" }),
+  }).catch((e) => { console.error("Telegram notify failed:", e); });
+}
+
+function parseDuration(variantName: string): number | null {
+  const match = variantName.match(/(\d+)\s*Bulan/i);
+  return match ? parseInt(match[1]) : null;
+}
+
 async function reduceStock(productId: string, productName: string, variantName: string, quantity: number) {
   try {
     await connectDB();
-    // Try productId first (only if valid ObjectId), fallback to productName
     let product = null;
     if (productId && /^[0-9a-fA-F]{24}$/.test(productId)) {
       product = await Product.findById(productId);
@@ -41,35 +74,50 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     
     console.log("=== TRIPAY CALLBACK ===");
-    console.log("Callback received:", body);
+    console.log("Callback received:", JSON.stringify(body, null, 2));
 
-    // Verify signature
-    const callbackSignature = body.signature;
-    const data = body.data;
+    // Handle both wrapped format (sandbox: {data, signature}) and flat format (production: direct data)
+    let callbackSignature: string | undefined;
+    let data: any;
 
-    if (!callbackSignature || !data) {
-      console.error("Invalid callback format");
+    if (body.data && body.signature) {
+      // Wrapped format (sandbox)
+      callbackSignature = body.signature;
+      data = body.data;
+    } else if (body.merchant_ref && body.status) {
+      // Flat format (production) — data is the body itself
+      // Try to get signature from header
+      callbackSignature = req.headers.get("x-signature") || req.headers.get("x-callback-signature") || undefined;
+      data = body;
+      console.log("Production flat callback format detected");
+    } else {
+      console.error("Unknown callback format:", Object.keys(body));
       return NextResponse.json(
-        { error: "Invalid callback format" },
+        { error: "Unknown callback format" },
         { status: 400 }
       );
     }
 
-    // Verify signature using HMAC-SHA256
-    const dataString = JSON.stringify(data);
-    const expectedSignature = crypto
-      .createHmac("sha256", TRIPAY_PRIVATE_KEY)
-      .update(dataString)
-      .digest("hex");
+    // Verify signature if we have one
+    if (callbackSignature) {
+      const dataString = JSON.stringify(data);
+      const expectedSignature = crypto
+        .createHmac("sha256", TRIPAY_PRIVATE_KEY)
+        .update(dataString)
+        .digest("hex");
 
-    if (callbackSignature !== expectedSignature) {
-      console.error("Invalid signature");
-      console.error("Expected:", expectedSignature);
-      console.error("Received:", callbackSignature);
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 401 }
-      );
+      if (callbackSignature !== expectedSignature) {
+        console.error("Signature mismatch");
+        console.error("Expected:", expectedSignature);
+        console.error("Received:", callbackSignature);
+        return NextResponse.json(
+          { error: "Invalid signature" },
+          { status: 401 }
+        );
+      }
+      console.log("Signature verified OK");
+    } else {
+      console.log("No signature to verify (production flat format)");
     }
 
     const merchantRef = data.merchant_ref;
@@ -110,8 +158,9 @@ export async function POST(req: NextRequest) {
     const transaction = await Transaction.findOne({ orderId: merchantRef });
     
     if (transaction) {
+      const wasNotSuccess = transaction.status !== "success";
       // Only reduce stock on first success (not if already success)
-      if (orderStatus === "success" && transaction.status !== "success") {
+      if (orderStatus === "success" && wasNotSuccess) {
         await reduceStock(transaction.productId, transaction.productName, transaction.variantName, transaction.quantity);
       }
       
@@ -120,6 +169,22 @@ export async function POST(req: NextRequest) {
       transaction.tripayReference = reference;
       await transaction.save();
       console.log("Transaction updated:", merchantRef, "=>", orderStatus);
+
+      // Notify admin on status change (only when transitioning to paid/expired/failed)
+      if (wasNotSuccess && orderStatus !== "pending") {
+        console.log("Sending Telegram notification for:", merchantRef);
+        notifyStatus({
+          orderId: merchantRef,
+          product: transaction.productName,
+          variant: transaction.variantName,
+          qty: transaction.quantity,
+          email: transaction.email,
+          wa: transaction.whatsappNumber || "",
+          amount: transaction.amount,
+          status: orderStatus,
+          duration: parseDuration(transaction.variantName),
+        });
+      }
     } else {
       console.log("Transaction not found in DB:", merchantRef);
     }

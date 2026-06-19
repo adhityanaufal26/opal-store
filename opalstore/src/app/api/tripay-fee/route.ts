@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Fee structure from Tripay (fee_customer) — verified from sandbox API
+// Fee structure from Tripay (fee_customer) — verified from production API
 const FEE_STRUCTURE: Record<string, { flat: number; percent: number; min: number }> = {
-  QRISC: { flat: 750, percent: 0.7, min: 855 },
+  QRIS: { flat: 750, percent: 0.7, min: 855 },
   OVO: { flat: 0, percent: 3, min: 1000 },
   DANA: { flat: 0, percent: 3, min: 1000 },
   SHOPEEPAY: { flat: 0, percent: 3, min: 1000 },
