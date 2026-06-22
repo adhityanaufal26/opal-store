@@ -51,6 +51,9 @@ function DashboardContent() {
                         p.description.toLowerCase().includes(search.toLowerCase());
     const matchCategory = selectedCategory === "all" || (Array.isArray(p.category) ? p.category.includes(selectedCategory) : p.category === selectedCategory);
     return matchSearch && matchCategory;
+  }).sort((a, b) => {
+    const getStock = (p: any) => p.variants?.length > 0 ? p.variants.reduce((s: number, v: any) => s + (v.stock || 0), 0) : (p.stock || 0);
+    return getStock(b) - getStock(a);
   });
 
   if (loading) {
