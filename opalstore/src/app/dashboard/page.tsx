@@ -99,7 +99,7 @@ function DashboardContent() {
         </div>
 
         {/* Products Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
+        <div className="product-grid">
           {filtered.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
