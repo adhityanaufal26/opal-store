@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 import Product from "@/models/Product";
@@ -22,10 +24,16 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+  const sessionEmail = session?.user?.email || null;
+  if (!sessionEmail) {
+    return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const { id } = await params;
-    const transaction = await Transaction.findOne({ orderId: id });
+    const transaction = await Transaction.findOne({ orderId: id, userId: sessionEmail });
     if (!transaction) {
       return NextResponse.json({ success: false, error: "Transaction not found" }, { status: 404 });
     }
@@ -39,22 +47,25 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+  const sessionEmail = session?.user?.email || null;
+  if (!sessionEmail) {
+    return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const { id } = await params;
     const body = await request.json();
 
-    // If setting status to success, reduce stock
-    if (body.status === "success") {
-      const existing = await Transaction.findOne({ orderId: id });
-      if (existing && existing.status !== "success") {
-        await reduceStock(existing.productName, existing.variantName, existing.quantity);
-      }
+    // Only allow cancelling own transactions
+    if (body.status !== "cancelled") {
+      return NextResponse.json({ success: false, error: "Only cancellation is allowed" }, { status: 403 });
     }
 
     const transaction = await Transaction.findOneAndUpdate(
-      { orderId: id },
-      body,
+      { orderId: id, userId: sessionEmail },
+      { status: "cancelled" },
       { new: true }
     );
     if (!transaction) {
@@ -66,64 +77,63 @@ export async function PUT(
   }
 }
 
-// PATCH handler for fetch keepalive (same as PUT)
+// PATCH handler - auth required, only allow cancel
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+  const sessionEmail = session?.user?.email || null;
+  if (!sessionEmail) {
+    return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const { id } = await params;
     const body = await request.json();
 
-    console.log(`[PATCH] Updating transaction ${id}:`, body);
-
-    // If setting status to success, reduce stock
-    if (body.status === "success") {
-      const existing = await Transaction.findOne({ orderId: id });
-      if (existing && existing.status !== "success") {
-        await reduceStock(existing.productName, existing.variantName, existing.quantity);
-      }
+    if (body.status !== "cancelled") {
+      return NextResponse.json({ success: false, error: "Only cancellation is allowed" }, { status: 403 });
     }
 
     const transaction = await Transaction.findOneAndUpdate(
-      { orderId: id },
-      body,
+      { orderId: id, userId: sessionEmail },
+      { status: "cancelled" },
       { new: true }
     );
     if (!transaction) {
-      console.log(`[PATCH] Transaction not found: ${id}`);
       return NextResponse.json({ success: false, error: "Transaction not found" }, { status: 404 });
     }
-    console.log(`[PATCH] Transaction updated: ${id} => ${transaction.status}`);
     return NextResponse.json({ success: true, data: transaction });
   } catch (error) {
-    console.error("[PATCH] Error:", error);
     return NextResponse.json({ success: false, error: "Failed to update transaction" }, { status: 500 });
   }
 }
 
-// POST handler for sendBeacon (always sends POST)
+// POST handler - auth required, only allow cancel
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+  const sessionEmail = session?.user?.email || null;
+  if (!sessionEmail) {
+    return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const { id } = await params;
     const body = await request.json();
 
-    // If setting status to success, reduce stock
-    if (body.status === "success") {
-      const existing = await Transaction.findOne({ orderId: id });
-      if (existing && existing.status !== "success") {
-        await reduceStock(existing.productName, existing.variantName, existing.quantity);
-      }
+    if (body.status !== "cancelled") {
+      return NextResponse.json({ success: false, error: "Only cancellation is allowed" }, { status: 403 });
     }
 
     const transaction = await Transaction.findOneAndUpdate(
-      { orderId: id },
-      body,
+      { orderId: id, userId: sessionEmail },
+      { status: "cancelled" },
       { new: true }
     );
     if (!transaction) {

@@ -103,27 +103,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify signature if we have one
-    if (callbackSignature) {
-      const dataString = JSON.stringify(data);
-      const expectedSignature = crypto
-        .createHmac("sha256", TRIPAY_PRIVATE_KEY)
-        .update(dataString)
-        .digest("hex");
-
-      if (callbackSignature !== expectedSignature) {
-        console.error("Signature mismatch");
-        console.error("Expected:", expectedSignature);
-        console.error("Received:", callbackSignature);
-        return NextResponse.json(
-          { error: "Invalid signature" },
-          { status: 401 }
-        );
-      }
-      console.log("Signature verified OK");
-    } else {
-      console.log("No signature to verify (production flat format)");
+    // Signature is mandatory
+    if (!callbackSignature) {
+      console.error("No signature provided — rejecting callback");
+      return NextResponse.json(
+        { error: "Missing signature" },
+        { status: 401 }
+      );
     }
+
+    const dataString = JSON.stringify(data);
+    const expectedSignature = crypto
+      .createHmac("sha256", TRIPAY_PRIVATE_KEY)
+      .update(dataString)
+      .digest("hex");
+
+    if (callbackSignature !== expectedSignature) {
+      console.error("Signature mismatch");
+      console.error("Expected:", expectedSignature);
+      console.error("Received:", callbackSignature);
+      return NextResponse.json(
+        { error: "Invalid signature" },
+        { status: 401 }
+      );
+    }
+    console.log("Signature verified OK");
 
     const merchantRef = data.merchant_ref;
     const status = data.status;

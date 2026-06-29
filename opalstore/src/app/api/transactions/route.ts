@@ -52,16 +52,29 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Require authentication
+  const session = await getServerSession(authOptions);
+  const sessionEmail = session?.user?.email || null;
+  if (!sessionEmail) {
+    return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const body = await request.json();
 
     // Basic validation
-    if (!body.orderId || !body.userId || !body.productName) {
+    if (!body.orderId || !body.productName) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 });
     }
 
-    const transaction = await Transaction.create(body);
+    // Force userId and email to session user, status always pending
+    const transaction = await Transaction.create({
+      ...body,
+      userId: sessionEmail,
+      email: sessionEmail,
+      status: "pending",
+    });
     return NextResponse.json({ success: true, data: transaction }, { status: 201 });
   } catch (error) {
     console.error("Error creating transaction:", error);
@@ -70,6 +83,13 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  // Require authentication
+  const session = await getServerSession(authOptions);
+  const sessionEmail = session?.user?.email || null;
+  if (!sessionEmail) {
+    return NextResponse.json({ success: false, error: "Authentication required" }, { status: 401 });
+  }
+
   try {
     await connectDB();
     const body = await request.json();
@@ -79,8 +99,13 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing orderId or status" }, { status: 400 });
     }
 
+    // Only allow cancelling own transactions
+    if (status !== "cancelled") {
+      return NextResponse.json({ success: false, error: "Only cancellation is allowed" }, { status: 403 });
+    }
+
     const transaction = await Transaction.findOneAndUpdate(
-      { orderId },
+      { orderId, userId: sessionEmail },
       { status },
       { new: true }
     );
