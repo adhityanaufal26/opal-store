@@ -121,10 +121,8 @@ export default function ProductDetailPage() {
   };
 
   const validateWhatsapp = (value: string) => {
-    const cleaned = value.replace(/[\s\-]/g, "");
-    if (!cleaned) return "Nomor WhatsApp wajib diisi";
-    if (!cleaned.startsWith("62")) return "Nomor harus diawali 62 (contoh: 628123456789)";
-    if (!/^62\d{8,13}$/.test(cleaned)) return "Format nomor tidak valid (8-13 digit setelah 62)";
+    const digits = value.replace(/[^0-9]/g, "");
+    if (!digits) return "Nomor WhatsApp wajib diisi";
     return "";
   };
 
@@ -136,7 +134,7 @@ export default function ProductDetailPage() {
   };
 
   const handleWhatsappChange = (value: string) => {
-    const filtered = value.replace(/[^0-9\s\-]/g, "");
+    const filtered = value.replace(/[^0-9+]/g, "");
     setFormData({ ...formData, whatsapp: filtered });
     if (errors.whatsapp) setErrors({ ...errors, whatsapp: "" });
   };
@@ -176,7 +174,7 @@ export default function ProductDetailPage() {
           customerWhatsapp: formData.whatsapp,
           customerName: user?.name || session?.user?.name || "Customer",
           paymentMethod: selectedPayment,
-          productId: product._id,
+          productId: product.id || product._id,
         }),
       });
 
@@ -307,7 +305,7 @@ export default function ProductDetailPage() {
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px", marginBottom: "16px", fontWeight: "600" }}>Data Pembeli:</p>
               <div style={{ marginBottom: "16px" }}>
                 <label style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: "13px", marginBottom: "6px" }}>Nomor WhatsApp *</label>
-                <input type="tel" required placeholder="628123456789" value={formData.whatsapp} onChange={(e) => handleWhatsappChange(e.target.value)} onBlur={() => setErrors({ ...errors, whatsapp: validateWhatsapp(formData.whatsapp) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: errors.whatsapp ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none" }} />
+                <input type="tel" required placeholder="Nomor WhatsApp" value={formData.whatsapp} onChange={(e) => handleWhatsappChange(e.target.value)} onBlur={() => setErrors({ ...errors, whatsapp: validateWhatsapp(formData.whatsapp) })} style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.06)", border: errors.whatsapp ? "1px solid #ef4444" : "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white", fontSize: "14px", outline: "none" }} />
                 {errors.whatsapp && <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "6px" }}>{errors.whatsapp}</p>}
               </div>
               <div>

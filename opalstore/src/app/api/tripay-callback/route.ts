@@ -7,14 +7,18 @@ import Product from "@/models/Product";
 const TRIPAY_PRIVATE_KEY = process.env.TRIPAY_PRIVATE_KEY!;
 
 // Telegram admin notification for status changes (fire-and-forget)
-function notifyStatus(data: { orderId: string; product: string; variant: string; qty: number; email: string; wa: string; amount: number; status: string; duration: number | null }) {
+function notifyStatus(data: { orderId: string; product: string; variant: string; qty: number; email: string; wa: string; amount: number; expectedAmount: number; unitPrice: number; status: string; duration: number | null }) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
   if (!token || !chatId) return;
   const fmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.amount);
+  const unitFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.unitPrice);
+  const expectedFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.expectedAmount);
   const statusEmoji: Record<string, string> = { success: "✅ PAID", pending: "⏳ Pending", cancelled: "❌ Expired", failed: "❌ Failed" };
   const statusLabel = statusEmoji[data.status] || data.status;
   const durationLabel = data.duration ? data.duration + " bulan" : "-";
+  const waClean = data.wa.replace(/[^0-9]/g, "");
+  const waLink = waClean ? "https://wa.me/" + waClean : "";
   const lines = [
     "💰 *Pembayaran " + (data.status === "success" ? "Berhasil!" : "Gagal/Expired") + "*",
     "",
@@ -22,11 +26,12 @@ function notifyStatus(data: { orderId: string; product: string; variant: string;
     "📦 " + data.product + " — " + data.variant,
     "🔢 Qty: " + data.qty,
     "⏰ Durasi: " + durationLabel,
-    "💰 " + fmt,
+    "💰 Harga: " + unitFmt + " × " + data.qty + " = " + expectedFmt,
     "📋 Status: " + statusLabel,
     "",
     "👤 " + data.email,
     "📱 " + data.wa,
+    ...(waLink ? ["💬 [Chat WhatsApp](" + waLink + ")"] : []),
   ];
   fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
     method: "POST",
@@ -181,6 +186,8 @@ export async function POST(req: NextRequest) {
           email: transaction.email,
           wa: transaction.whatsappNumber || "",
           amount: transaction.amount,
+          expectedAmount: Math.round(transaction.amount / transaction.quantity) * transaction.quantity,
+          unitPrice: Math.round(transaction.amount / transaction.quantity),
           status: orderStatus,
           duration: parseDuration(transaction.variantName),
         });

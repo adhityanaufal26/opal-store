@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { connectDB } from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
+import Product from "@/models/Product";
 
 const TRIPAY_API_KEY = process.env.TRIPAY_API_KEY!;
 const TRIPAY_PRIVATE_KEY = process.env.TRIPAY_PRIVATE_KEY!;
@@ -9,13 +10,17 @@ const TRIPAY_MERCHANT_CODE = process.env.TRIPAY_MERCHANT_CODE!;
 const TRIPAY_BASE_URL = process.env.TRIPAY_BASE_URL || "https://tripay.co.id/api-sandbox";
 
 // Telegram admin notification (fire-and-forget)
-function notifyAdmin(data: { orderId: string; product: string; variant: string; qty: number; email: string; wa: string; amount: number; method: string; status: string; duration: number | null }) {
+function notifyAdmin(data: { orderId: string; product: string; variant: string; qty: number; email: string; wa: string; amount: number; expectedAmount: number; unitPrice: number; method: string; status: string; duration: number | null }) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
   if (!token || !chatId) return;
   const fmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.amount);
+  const unitFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.unitPrice);
+  const expectedFmt = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(data.expectedAmount);
   const statusLabel = data.status === "pending" ? "⏳ Pending" : data.status === "success" ? "✅ Paid" : "❌ " + data.status;
   const durationLabel = data.duration ? data.duration + " bulan" : "-";
+  const waClean = data.wa.replace(/[^0-9]/g, "");
+  const waLink = waClean ? "https://wa.me/" + waClean : "";
   const lines = [
     "🔔 *Transaksi Baru*",
     "",
@@ -23,12 +28,13 @@ function notifyAdmin(data: { orderId: string; product: string; variant: string; 
     "📦 " + data.product + " — " + data.variant,
     "🔢 Qty: " + data.qty,
     "⏰ Durasi: " + durationLabel,
-    "💰 " + fmt,
+    "💰 Harga: " + unitFmt + " × " + data.qty + " = " + expectedFmt,
     "💳 " + data.method,
     "📋 Status: " + statusLabel,
     "",
     "👤 " + data.email,
     "📱 " + data.wa,
+    ...(waLink ? ["💬 [Chat WhatsApp](" + waLink + ")"] : []),
   ];
   fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
     method: "POST",
@@ -68,14 +74,49 @@ export async function POST(req: NextRequest) {
     console.log("paymentMethod:", paymentMethod);
     console.log("userId:", userId);
 
-    if (!productName || !price || !customerEmail || !paymentMethod) {
+    if (!productName || !customerEmail || !paymentMethod) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const totalAmount = price * quantity + (fee || 0);
+    if (!productId) {
+      return NextResponse.json(
+        { error: "Missing product ID" },
+        { status: 400 }
+      );
+    }
+
+    // SERVER-SIDE price validation — never trust client price
+    await connectDB();
+    const productDoc = await Product.findById(productId);
+    if (!productDoc || !productDoc.isActive) {
+      return NextResponse.json(
+        { error: "Product not found or inactive" },
+        { status: 400 }
+      );
+    }
+
+    const variant = productDoc.variants.find((v: any) => v.name === variantName);
+    if (!variant) {
+      return NextResponse.json(
+        { error: "Variant not found" },
+        { status: 400 }
+      );
+    }
+
+    const serverPrice = variant.price;
+    const qty = Math.max(1, Math.floor(Number(quantity) || 1));
+
+    if (variant.stock < qty) {
+      return NextResponse.json(
+        { error: "Insufficient stock" },
+        { status: 400 }
+      );
+    }
+
+    const totalAmount = serverPrice * qty + (Number(fee) || 0);
     const merchantRef = "OPAL-" + Date.now() + "-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
     console.log("merchantRef:", merchantRef);
@@ -145,7 +186,7 @@ export async function POST(req: NextRequest) {
         productId: productId || "",
         productName: productName,
         variantName: variantName,
-        quantity: quantity,
+        quantity: qty,
         amount: totalAmount,
         paymentMethod: "tripay",
         whatsappNumber: customerWhatsapp || "",
@@ -159,10 +200,12 @@ export async function POST(req: NextRequest) {
         orderId: merchantRef,
         product: productName,
         variant: variantName,
-        qty: quantity,
+        qty: qty,
         email: customerEmail,
         wa: customerWhatsapp || "",
         amount: totalAmount,
+        expectedAmount: totalAmount,
+        unitPrice: serverPrice,
         method: paymentMethod,
         status: "pending",
         duration: parseDuration(variantName),
